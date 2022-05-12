@@ -63,8 +63,8 @@ def train_model():
                                           learning_rate=learning_rate,
                                           optimizer=optimizer)
 
-    model = ClassificationModel(model_type="roberta", 
-                              model_name="roberta-base", 
+    model = ClassificationModel(model_type="xlmroberta", 
+                              model_name="xlm-roberta-base", 
                               args = model_args, 
                               num_labels=4, 
                               use_cuda=cuda_available)
