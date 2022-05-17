@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader # for the dataloader
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 
 # Convert dataframe into dictionary of text and labels
 def reader(df):
@@ -75,12 +75,14 @@ def train_model():
     y_true = df_val['labels']
     print("Validation Set Classification Report")
     print(classification_report(y_true, y_pred))
+    print(confusion_matrix(y_true, y_pred))
     
     # Test Set (Internal)
     y_pred, _ = model.predict(df_test.text.tolist())
     y_true = df_test['labels']
     print("Test Set Classification Report")
     print(classification_report(y_true, y_pred))
+    print(confusion_matrix(y_true, y_pred))
 
 if __name__ == "__main__":
     GPU = True
