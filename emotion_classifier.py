@@ -51,7 +51,7 @@ class OlidDataset(Dataset):
 # train model
 def train_model():
     optimizer = 'AdamW'
-    learning_rate = 1.35e-04
+    learning_rate = 5e-05
     epochs = 10
     
     model_args = ClassificationArgs(num_train_epochs=epochs, 
