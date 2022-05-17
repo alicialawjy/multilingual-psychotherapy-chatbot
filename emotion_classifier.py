@@ -61,8 +61,8 @@ def train_model():
                                           learning_rate=learning_rate,
                                           optimizer=optimizer)
 
-    model = ClassificationModel(model_type="xlmroberta", 
-                              model_name="xlm-roberta-base", 
+    model = ClassificationModel(model_type="bert",      # tried xlmroberta, bert
+                              model_name="bert-base-chinese",  # tried bert-base-chinese, xlm-roberta-base
                               args = model_args, 
                               num_labels=4, 
                               use_cuda=cuda_available)
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/EN/emotionlabeled_full.csv', index_col=0)
-    # df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv', index_col=0)
-    df_test = pd.read_csv('data/ZH/emotionlabeled_full.csv', index_col=0)
+    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv', index_col=0)
+    df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv', index_col=0)
+    df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv', index_col=0)
 
     train_model()
