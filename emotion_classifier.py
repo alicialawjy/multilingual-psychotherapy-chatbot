@@ -70,12 +70,12 @@ def train_model():
     print('Training Model')
     model.train_model(df_train[['text', 'labels']])
 
-    # # Validation Set (Internal)
-    # y_pred, _ = model.predict(df_val.text.tolist())
-    # y_true = df_val['labels']
-    # print("Validation Set Classification Report")
-    # print(classification_report(y_true, y_pred))
-    # print(confusion_matrix(y_true, y_pred))
+    # Validation Set (Internal)
+    y_pred, _ = model.predict(df_val.text.tolist())
+    y_true = df_val['labels']
+    print("Validation Set Classification Report")
+    print(classification_report(y_true, y_pred))
+    print(confusion_matrix(y_true, y_pred))
     
     # Test Set (Internal)
     y_pred, _ = model.predict(df_test.text.tolist())
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/EN/emotionlabeled_full.csv', index_col=0)
-    # df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv', index_col=0)
-    df_test = pd.read_csv('data/ZH/emotionlabeled_full.csv', index_col=0)
+    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv', index_col=0)
+    df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv', index_col=0)
+    df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv', index_col=0)
 
     train_model()
