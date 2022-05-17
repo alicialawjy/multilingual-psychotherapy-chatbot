@@ -11,8 +11,6 @@ def reader(df):
 
     return {'texts':texts, 'labels':labels}
 
-df = pd.read_csv('data/emotionlabeled_train.csv')
-
 # DataLoader
 class OlidDataset(Dataset):
   def __init__(self, tokenizer, input_set):
@@ -27,7 +25,7 @@ class OlidDataset(Dataset):
 
     for b in batch:
       texts.append(str(b['text']))
-      labels.append(b['label'])
+      labels.append(b['labels'])
 
     print(texts)
     print(labels)
@@ -54,7 +52,7 @@ class OlidDataset(Dataset):
 def train_model():
     optimizer = 'AdamW'
     learning_rate = 1.35e-04
-    epochs = 1
+    epochs = 10
     
     model_args = ClassificationArgs(num_train_epochs=epochs, 
                                           no_save=True, 
@@ -93,8 +91,8 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/emotionlabeled_train.csv', index_col=0)
-    df_val = pd.read_csv('data/emotionlabeled_val.csv', index_col=0)
-    df_test = pd.read_csv('data/emotionlabeled_test.csv', index_col=0)
+    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv', index_col=0)
+    df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv', index_col=0)
+    df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv', index_col=0)
 
     train_model()
