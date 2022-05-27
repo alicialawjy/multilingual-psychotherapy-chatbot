@@ -75,7 +75,7 @@ def train_model():
       # Validation Set (Internal)
       y_pred, _ = model.predict(df_val.text.tolist())
       y_true = df_val['labels']
-      print(f"XLM-R Translate-Train-All epoch {epoch} lr {lr}")
+      print(f"Chinese BERT Translate-Train-All epoch {epoch} lr {lr}")
       print("Validation Set Classification Report")
       print(classification_report(y_true, y_pred))
       # print(confusion_matrix(y_true, y_pred))
