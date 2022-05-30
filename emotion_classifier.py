@@ -50,7 +50,7 @@ class OlidDataset(Dataset):
 
 # train model
 def train_model():
-  for epoch in range(1,10,2):
+  for epoch in range(2,10,2):
     for lr in [1e-05, 3e-05, 5e-05, 7e-05, 9e-05, 1e-04]:
       optimizer = 'AdamW' 
       learning_rate = lr
