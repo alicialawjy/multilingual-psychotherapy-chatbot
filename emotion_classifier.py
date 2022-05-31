@@ -66,7 +66,7 @@ def train_model():
                                             optimizer=optimizer)
 
       model = ClassificationModel(model_type="xlmroberta",      # tried xlmroberta, bert
-                                model_name="xlm-roberta-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                                model_name="microsoft/infoxlm-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                                 args = model_args, 
                                 num_labels=4, 
                                 use_cuda=cuda_available)
