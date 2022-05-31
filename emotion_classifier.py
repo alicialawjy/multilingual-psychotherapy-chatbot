@@ -50,43 +50,43 @@ class OlidDataset(Dataset):
 
 # train model
 def train_model():
-  for epoch in range(1,11):
-    for lr in [1e-05, 3e-05, 5e-05, 7e-05, 9e-05, 1e-04]:
-      optimizer = 'AdamW' 
-      learning_rate = lr
-      epochs = epoch
-      
-      model_args = ClassificationArgs(num_train_epochs=epochs, 
-                                            no_save=True, 
-                                            no_cache=True, 
-                                            overwrite_output_dir=True,
-                                            learning_rate=learning_rate,
-                                            optimizer=optimizer)
+  #for epoch in range(1,11):
+  #  for lr in [1e-05, 3e-05, 5e-05, 7e-05, 9e-05, 1e-04]:
+  optimizer = 'AdamW' 
+  learning_rate = 1e-05
+  epochs = 1
+  
+  model_args = ClassificationArgs(num_train_epochs=epochs, 
+                                        no_save=True, 
+                                        no_cache=True, 
+                                        overwrite_output_dir=True,
+                                        learning_rate=learning_rate,
+                                        optimizer=optimizer)
 
-      model = ClassificationModel(model_type="bert",            # tried xlmroberta, bert
-                                model_name="bert-base-chinese",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
-                                args = model_args, 
-                                num_labels=4, 
-                                use_cuda=cuda_available)
-      
-      print('Training Model')
-      model.train_model(df_train[['text', 'labels']])
+  model = ClassificationModel(model_type="xlmroberta",            # tried xlmroberta, bert
+                            model_name="xlm-roberta-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                            args = model_args, 
+                            num_labels=4, 
+                            use_cuda=cuda_available)
+  
+  print('Training Model')
+  model.train_model(df_train[['text', 'labels']])
 
-      # Validation Set (Internal)
-      y_pred, _ = model.predict(df_val.text.tolist())
-      y_true = df_val['labels']
-      print(f"hfl/chinese-bert-wwm-ext Translate-Train-All F1 score epoch {epoch} lr {lr}")
-      # print("Validation Set Classification Report")
-      print(f1_score(y_true, y_pred,average='weighted'))
-      # print(classification_report(y_true, y_pred))
-      # print(confusion_matrix(y_true, y_pred))
-      
-      # # Test Set (Internal)
-      # y_pred, _ = model.predict(df_test.text.tolist())
-      # y_true = df_test['labels']
-      # print("Test Set Classification Report")
-      # print(classification_report(y_true, y_pred))
-      # print(confusion_matrix(y_true, y_pred))
+  # Validation Set (Internal)
+  y_pred, _ = model.predict(df_val.text.tolist())
+  y_true = df_val['labels']
+  print(f"XLM-R Translate-Train-All F1 score") #epoch {epoch} lr {lr}
+  # print("Validation Set Classification Report")
+  print(f1_score(y_true, y_pred,average='weighted'))
+  # print(classification_report(y_true, y_pred))
+  # print(confusion_matrix(y_true, y_pred))
+  
+  # # Test Set (Internal)
+  # y_pred, _ = model.predict(df_test.text.tolist())
+  # y_true = df_test['labels']
+  # print("Test Set Classification Report")
+  # print(classification_report(y_true, y_pred))
+  # print(confusion_matrix(y_true, y_pred))
 
 if __name__ == "__main__":
     GPU = True
