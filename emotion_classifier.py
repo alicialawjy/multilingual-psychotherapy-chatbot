@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader # for the dataloader
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, f1_score
 
 # Convert dataframe into dictionary of text and labels
 def reader(df):
@@ -64,7 +64,7 @@ def train_model():
                                             optimizer=optimizer)
 
       model = ClassificationModel(model_type="bert",            # tried xlmroberta, bert
-                                model_name="hfl/chinese-bert-wwm-ext",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                                model_name="bert-base-chinese",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                                 args = model_args, 
                                 num_labels=4, 
                                 use_cuda=cuda_available)
@@ -75,9 +75,10 @@ def train_model():
       # Validation Set (Internal)
       y_pred, _ = model.predict(df_val.text.tolist())
       y_true = df_val['labels']
-      print(f"hfl/chinese-bert-wwm-ext Translate-Train-All epoch {epoch} lr {lr}")
-      print("Validation Set Classification Report")
-      print(classification_report(y_true, y_pred))
+      print(f"hfl/chinese-bert-wwm-ext Translate-Train-All F1 score epoch {epoch} lr {lr}")
+      # print("Validation Set Classification Report")
+      print(f1_score(y_true, y_pred,average='weighted'))
+      # print(classification_report(y_true, y_pred))
       # print(confusion_matrix(y_true, y_pred))
       
       # # Test Set (Internal)
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/EN-ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv')
     df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv')
 
