@@ -53,8 +53,8 @@ def train_model():
   #for epoch in range(1,11):
   #  for lr in [1e-05, 3e-05, 5e-05, 7e-05, 9e-05, 1e-04]:
   optimizer = 'AdamW' 
-  learning_rate = 1e-05
-  epochs = 1
+  learning_rate = 7e-05
+  epochs = 7
   
   model_args = ClassificationArgs(num_train_epochs=epochs, 
                                         no_save=True, 
@@ -64,7 +64,7 @@ def train_model():
                                         optimizer=optimizer)
 
   model = ClassificationModel(model_type="xlmroberta",            # tried xlmroberta, bert
-                            model_name="xlm-roberta-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                            model_name="microsoft/infoxlm-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                             args = model_args, 
                             num_labels=4, 
                             use_cuda=cuda_available)
@@ -75,7 +75,7 @@ def train_model():
   # Validation Set (Internal)
   y_pred, _ = model.predict(df_val.text.tolist())
   y_true = df_val['labels']
-  print(f"XLM-R Translate-Train-All F1 score") #epoch {epoch} lr {lr}
+  print(f"InfoXLM Translate-Train-All F1 score") #epoch {epoch} lr {lr}
   # print("Validation Set Classification Report")
   print(f1_score(y_true, y_pred,average='weighted'))
   # print(classification_report(y_true, y_pred))
