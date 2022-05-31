@@ -97,7 +97,7 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/ZH-EN/emotionlabeled_train.csv')
     df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv')
 
