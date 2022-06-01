@@ -51,8 +51,8 @@ class OlidDataset(Dataset):
 # train model
 def train_model():
   optimizer = 'AdamW' 
-  learning_rate = 7e-05
-  epochs = 4
+  learning_rate = 3e-05
+  epochs = 8
   
   model_args = ClassificationArgs(num_train_epochs=epochs, 
                                         no_save=True, 
@@ -62,7 +62,7 @@ def train_model():
                                         optimizer=optimizer)
 
   model = ClassificationModel(model_type="xlmroberta",      # tried xlmroberta, bert
-                            model_name="xlm-roberta-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                            model_name="microsoft/infoxlm-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                             args = model_args, 
                             num_labels=4, 
                             use_cuda=cuda_available)
@@ -74,7 +74,7 @@ def train_model():
   y_pred, _ = model.predict(df_val.text.tolist())
   y_true = df_val['labels']
 
-  print("Validation Set Classification Report - XLMR EN-only")
+  print("Validation Set Classification Report - InfoXLM EN-only")
   # print(f1_score(y_true, y_pred,average='weighted'))
   print(classification_report(y_true, y_pred))
   # print(confusion_matrix(y_true, y_pred))
