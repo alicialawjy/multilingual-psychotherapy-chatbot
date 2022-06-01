@@ -74,7 +74,7 @@ def train_model():
   y_pred, _ = model.predict(df_val.text.tolist())
   y_true = df_val['labels']
 
-  print("Validation Set Classification Report - InfoXLM ZH-only")
+  print("Validation Set Classification Report - InfoXLM EN-only")
   # print(f1_score(y_true, y_pred,average='weighted'))
   print(classification_report(y_true, y_pred))
   # print(confusion_matrix(y_true, y_pred))
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/EN/emotionlabeled_train.csv')
     df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv')
 
