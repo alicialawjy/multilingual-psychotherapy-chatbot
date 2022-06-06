@@ -53,7 +53,7 @@ def train_model():
   F1 = []
   for epoch in range(1,11):
     F1_epoch = []
-    for lr in [1e-05, 3e-05, 5e-05, 7e-05, 9e-05, 1e-04]:
+    for lr in [1e-05, 2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05, 8e-05]:
       optimizer = 'AdamW' 
       learning_rate = lr
       epochs = epoch
