@@ -85,13 +85,6 @@ def train_model():
       # print(f1_score(y_true, y_pred,average='weighted'))
       # print(classification_report(y_true, y_pred))
       # print(confusion_matrix(y_true, y_pred))
-      
-      # # Test Set (Internal)
-      # y_pred, _ = model.predict(df_test.text.tolist())
-      # y_true = df_test['labels']
-      # print("Test Set Classification Report")
-      # print(classification_report(y_true, y_pred))
-      # print(confusion_matrix(y_true, y_pred))
 
     F1.append(F1_epoch)
 
@@ -104,8 +97,8 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/EN-ZH/emotionlabeled_train.csv')
-    df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv')
-    df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+    df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 
     train_model()

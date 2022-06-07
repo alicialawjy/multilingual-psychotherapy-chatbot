@@ -51,40 +51,42 @@ class OlidDataset(Dataset):
 # train model
 def train_model():
   optimizer = 'AdamW' 
-  learning_rate = 3e-05
-  epochs = 8
+  learning_rate = 4e-05
+  epochs = 7
   
   model_args = ClassificationArgs(num_train_epochs=epochs, 
                                         no_save=True, 
                                         no_cache=True, 
+                                        save_steps=-1,
+                                        save_model_every_epoch=False,
                                         overwrite_output_dir=True,
                                         learning_rate=learning_rate,
                                         optimizer=optimizer)
 
   model = ClassificationModel(model_type="xlmroberta",      # tried xlmroberta, bert
-                            model_name="microsoft/infoxlm-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+                            model_name="xlm-roberta-base",  # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                             args = model_args, 
-                            num_labels=4, 
+                            num_labels=4,
                             use_cuda=cuda_available)
   
-  print('Training Model')
   model.train_model(df_train[['text', 'labels']])
+  model.save_model('finetuned-model/')
 
-  # Validation Set (Internal)
-  y_pred, _ = model.predict(df_val.text.tolist())
-  y_true = df_val['labels']
+  # # Validation Set (Internal)
+  # y_pred, _ = model.predict(df_val.text.tolist())
+  # y_true = df_val['labels']
 
-  print("Validation Set Classification Report - InfoXLM EN-only")
+  # print("Classification Report")
   # print(f1_score(y_true, y_pred,average='weighted'))
-  print(classification_report(y_true, y_pred))
-  # print(confusion_matrix(y_true, y_pred))
-  
-  # # Test Set (Internal)
-  # y_pred, _ = model.predict(df_test.text.tolist())
-  # y_true = df_test['labels']
-  # print("Test Set Classification Report")
   # print(classification_report(y_true, y_pred))
   # print(confusion_matrix(y_true, y_pred))
+  
+  # Test Set (Internal)
+  y_pred, _ = model.predict(df_test.text.tolist())
+  y_true = df_test['labels']
+  print("Test Set Classification Report")
+  print(classification_report(y_true, y_pred))
+  print(confusion_matrix(y_true, y_pred))
 
 if __name__ == "__main__":
     GPU = True
@@ -95,8 +97,8 @@ if __name__ == "__main__":
     print(f"Using {device}")
 
     cuda_available = torch.cuda.is_available()
-    df_train = pd.read_csv('data/EN/emotionlabeled_train.csv')
-    df_val = pd.read_csv('data/ZH/emotionlabeled_val.csv')
-    df_test = pd.read_csv('data/ZH/emotionlabeled_test.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+    df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 
     train_model()
