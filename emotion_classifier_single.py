@@ -80,11 +80,11 @@ def train_model():
   print(confusion_matrix(y_true, y_pred))
 
   # Native Test Set
-  y_pred, _ = model.predict(df_native_test.text.tolist())
-  y_true = df_native_test['labels']
-  print("Test Set Classification Report")
-  print(classification_report(y_true, y_pred))
-  print(confusion_matrix(y_true, y_pred))
+  # y_pred, _ = model.predict(df_native_test.text.tolist())
+  # y_true = df_native_test['labels']
+  # print("Native Test Set Classification Report")
+  # print(classification_report(y_true, y_pred))
+  # print(confusion_matrix(y_true, y_pred))
 
 if __name__ == "__main__":
     GPU = True
