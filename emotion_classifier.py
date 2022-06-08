@@ -51,9 +51,9 @@ class OlidDataset(Dataset):
 
     return item
 
-def train_model(epoch,
+def train_model(epoch, 
                 best_model_dir, 
-                use_early_stopping = False,
+                use_early_stopping = False, 
                 early_stopping_delta = 0,
                 early_stopping_metric = "eval_loss",
                 early_stopping_metric_minimize = True,
@@ -64,7 +64,7 @@ def train_model(epoch,
                 learning_rate,
                 model_name,
                 train_df,
-                eval_df)
+                eval_df):
 
   model_args = ClassificationArgs(num_train_epochs=epoch,           
                                   best_model_dir=best_model_dir,  
@@ -175,3 +175,4 @@ if __name__ == "__main__":
   print('Best Model on Held-Out Test Set')
   evaluate(model_best, df_test_EP)
 
+# Last Run: 52653
