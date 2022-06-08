@@ -51,20 +51,38 @@ class OlidDataset(Dataset):
 
     return item
 
+def train_model(epoch,
+                best_model_dir, 
+                use_early_stopping = False,
+                early_stopping_delta = 0,
+                early_stopping_metric = "eval_loss",
+                early_stopping_metric_minimize = True,
+                early_stopping_patience = 3,
+                evaluate_during_training_steps = 2000, 
+                evaluate_during_training=False,  # best model determined by validation set performance
+                output_dir,
+                learning_rate,
+                model_name,
+                train_df,
+                eval_df)
 
-def train_model(model_name, epoch, learning_rate, evaluate_during_training, best_model_dir, output_dir, train_df, eval_df):
-  optimizer = 'AdamW' 
-  
-  model_args = ClassificationArgs(num_train_epochs=epoch,           # number of epochs
-                                  best_model_dir=best_model_dir,  # directory to save best model
-                                  evaluate_during_training=evaluate_during_training,  # best model determined by validation set performance
+  model_args = ClassificationArgs(num_train_epochs=epoch,           
+                                  best_model_dir=best_model_dir,  
+                                  use_early_stopping = use_early_stopping,
+                                  early_stopping_delta = early_stopping_delta,
+                                  early_stopping_metric = early_stopping_metric,
+                                  early_stopping_metric_minimize = early_stopping_metric_minimize,
+                                  early_stopping_patience = early_stopping_patience,
+                                  evaluate_during_training_steps = evaluate_during_training_steps, 
+                                  evaluate_during_training=evaluate_during_training,  
+                                  use_early_stopping=use_early_stopping,
                                   no_cache=True,                  
                                   save_steps=-1,                  
                                   save_model_every_epoch=False,
                                   output_dir = output_dir,
                                   overwrite_output_dir = True,
-                                  learning_rate=learning_rate,    # learning rate
-                                  optimizer=optimizer)            # optimizer
+                                  learning_rate=learning_rate,    
+                                  optimizer='AdamW')            
 
   model = ClassificationModel(model_type="xlmroberta",  # tried xlmroberta, bert
                             model_name=model_name,      # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
@@ -110,26 +128,29 @@ if __name__ == "__main__":
   cuda_available = torch.cuda.is_available()
 
   # Begin First Finetune 
-  model = train_model(model_name = "xlm-roberta-base",
-                      epoch = 5,
-                      learning_rate = 3e-05,
-                      evaluate_during_training = True,
-                      best_model_dir = 'emotion_classifier/best_model_twitter',
-                      output_dir = 'emotion_classifier/outputs/first-tune-twitter',
-                      train_df = df_train_twitter[['text','labels']],
-                      eval_df = df_test_twitter[['text','labels']])
+  model = train_model(epoch = 5,
+                        best_model_dir= 'emotion_classifier/best_model_twitter',
+                        use_early_stopping = True,
+                        early_stopping_delta = 0.01,
+                        early_stopping_metric_minimize = False,
+                        early_stopping_patience = 5,
+                        evaluate_during_training_steps = 1000, 
+                        evaluate_during_training=True,  # best model determined by validation set performance
+                        output_dir='emotion_classifier/outputs/first-tune-twitter',
+                        learning_rate=3e-05,
+                        model_name = "xlm-roberta-base",
+                        train_df = df_train_twitter[['text','labels']],
+                        eval_df = df_test_twitter[['text','labels']])
 
   # Second Finetune (Hyperparam Tune)
   best_F1 = 0
   best_epoch = 1
 
   for epoch in range(1,11):
-    model = train_model(model_name = "emotion_classifier/best_model_twitter",
+    model = train_model(epoch = epoch,
                         output_dir = 'emotion_classifier/outputs/second-tune-EP/'+str(epoch),
-                        evaluate_during_training=False,
-                        best_model_dir = 'emotion_classifier/best_model_EP',
-                        epoch = epoch,
                         learning_rate=4e-05,
+                        model_name = 'emotion_classifier/best_model_twitter',
                         train_df = df_train_EP[['text','labels']],
                         eval_df = df_val_EP[['text','labels']])
 
@@ -141,10 +162,10 @@ if __name__ == "__main__":
       best_epoch = epoch
 
   # Load the best model
-  model_best = ClassificationModel(model_type="xlmroberta",      
-                              model_name='emotion_classifier/outputs/second-tune-EP/'+str(best_epoch),
-                              num_labels=4,               # 4 labels - sad, happy, fear, anger
-                              use_cuda=cuda_available)    # use GPU)
+  model_best = ClassificationModel(model_type="xlmroberta",
+                                    model_name='emotion_classifier/outputs/second-tune-EP/'+str(best_epoch),
+                                    num_labels=4,               # 4 labels - sad, happy, fear, anger
+                                    use_cuda=cuda_available)    # use GPU)
 
   # Check if same results obtained
   print('Evaluating best model')
