@@ -58,6 +58,7 @@ def train_model():
                                         no_save=True, 
                                         no_cache=True, 
                                         save_steps=-1,
+                                        output_dir="emotion_classifier/outputs/single-tune",
                                         save_model_every_epoch=False,
                                         overwrite_output_dir=True,
                                         learning_rate=learning_rate,
@@ -70,20 +71,17 @@ def train_model():
                             use_cuda=cuda_available)
   
   model.train_model(df_train[['text', 'labels']])
-  model.save_model('finetuned-model/')
 
-  # # Validation Set (Internal)
-  # y_pred, _ = model.predict(df_val.text.tolist())
-  # y_true = df_val['labels']
-
-  # print("Classification Report")
-  # print(f1_score(y_true, y_pred,average='weighted'))
-  # print(classification_report(y_true, y_pred))
-  # print(confusion_matrix(y_true, y_pred))
-  
   # Test Set (Internal)
   y_pred, _ = model.predict(df_test.text.tolist())
   y_true = df_test['labels']
+  print("Test Set Classification Report")
+  print(classification_report(y_true, y_pred))
+  print(confusion_matrix(y_true, y_pred))
+
+  # Native Test Set
+  y_pred, _ = model.predict(df_native_test.text.tolist())
+  y_true = df_native_test['labels']
   print("Test Set Classification Report")
   print(classification_report(y_true, y_pred))
   print(confusion_matrix(y_true, y_pred))
@@ -100,5 +98,6 @@ if __name__ == "__main__":
     df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+    df_native_test = pd.read_excel('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).xlsx')
 
     train_model()
