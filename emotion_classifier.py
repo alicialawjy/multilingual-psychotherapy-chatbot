@@ -52,12 +52,12 @@ class OlidDataset(Dataset):
     return item
 
 def train_model(epoch, 
-                best_model_dir, 
                 output_dir,
                 learning_rate,
                 model_name,
                 train_df,
                 eval_df,
+                best_model_dir = 'outputs/best_model', 
                 use_early_stopping=False, 
                 early_stopping_delta=0,
                 early_stopping_metric = "eval_loss",
@@ -107,72 +107,76 @@ def evaluate(model, df_dataset):
 
 # Run double finetuning
 if __name__ == "__main__":
-  ## Datasets
-  # Emotion (Twitter) Dataset (First Tune)
-  df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
-  df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+    ## Datasets
+    # Emotion (Twitter) Dataset (First Tune)
+    df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
+    df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
 
-  # EmpatheticPersonas (EP) Dataset (Second Tune)
-  df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
-  df_val_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-  df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+    # EmpatheticPersonas (EP) Dataset (Second Tune)
+    df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_val_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+    df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 
-  # Use GPU
-  GPU = True
-  if GPU:
-      device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-  else:
-      device = torch.device("cpu")
-  print(f"Using {device}")
+    # Use GPU
+    GPU = True
+    if GPU:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device("cpu")
+    print(f"Using {device}")
 
-  cuda_available = torch.cuda.is_available()
+    cuda_available = torch.cuda.is_available()
 
-  # Begin First Finetune 
-  model = train_model(epoch = 5,
-                    best_model_dir= 'emotion_classifier/best_model_twitter',
-                    use_early_stopping = True,
-                    early_stopping_delta = 0.01,
-                    early_stopping_metric_minimize = False,
-                    early_stopping_patience = 5,
-                    evaluate_during_training_steps = 1000, 
-                    evaluate_during_training=True,  # best model determined by validation set performance
-                    output_dir='emotion_classifier/outputs/first-tune-twitter',
-                    learning_rate=3e-05,
-                    model_name = "xlm-roberta-base",
-                    train_df = df_train_twitter[['text','labels']],
-                    eval_df = df_test_twitter[['text','labels']])
+    #   # Begin First Finetune 
+    #   model = train_model(epoch = 5,
+    #                     best_model_dir= 'emotion_classifier/best_model_twitter',
+    #                     use_early_stopping = True,
+    #                     early_stopping_delta = 0.01,
+    #                     early_stopping_metric_minimize = False,
+    #                     early_stopping_patience = 5,
+    #                     evaluate_during_training_steps = 1000, 
+    #                     evaluate_during_training=True,  # best model determined by validation set performance
+    #                     output_dir='emotion_classifier/outputs/first-tune-twitter',
+    #                     learning_rate=3e-05,
+    #                     model_name = "xlm-roberta-base",
+    #                     train_df = df_train_twitter[['text','labels']],
+    #                     eval_df = df_test_twitter[['text','labels']])
 
-  # Second Finetune (Hyperparam Tune)
-  best_F1 = 0
-  best_epoch = 1
+    # Second Finetune (Hyperparam Tune)
+    best_F1 = 0
+    best_epoch = 1
+    best_lr = 1e-05
 
-  for epoch in range(1,11):
-    model = train_model(epoch = epoch,
-                        output_dir = 'emotion_classifier/outputs/second-tune-EP/'+str(epoch),
-                        learning_rate=4e-05,
-                        model_name = 'emotion_classifier/best_model_twitter',
-                        train_df = df_train_EP[['text','labels']],
-                        eval_df = df_val_EP[['text','labels']])
+    learning_rate = [1e-05, 2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
+    for epoch in range(1,11):
+        for lr in learning_rate:
+            model = train_model(epoch = epoch,
+                                output_dir = f'emotion_classifier/outputs/second-tune-EP/{str(epoch)}/{str(lr)}',
+                                learning_rate = lr,
+                                model_name = 'emotion_classifier/best_model_twitter',
+                                train_df = df_train_EP[['text','labels']],
+                                eval_df = df_val_EP[['text','labels']])
 
-    # evaluate each epoch's performance
-    print(f'epoch {epoch}')
-    F1 = evaluate(model, df_val_EP)
-    if F1 > best_F1:
-      best_F1 = F1
-      best_epoch = epoch
+            # evaluate each epoch's performance
+            print(f'epoch {epoch}, learning rate {lr}')
+            F1 = evaluate(model, df_val_EP)
+            if F1 > best_F1:
+                best_F1 = F1
+                best_epoch = epoch
+                best_lr = lr
 
-  # Load the best model
-  model_best = ClassificationModel(model_type="xlmroberta",
-                                    model_name='emotion_classifier/outputs/second-tune-EP/'+str(best_epoch),
-                                    num_labels=4,               # 4 labels - sad, happy, fear, anger
-                                    use_cuda=cuda_available)    # use GPU)
+    # Load the best model
+    model_best = ClassificationModel(model_type="xlmroberta", 
+                                    model_name=f'emotion_classifier/outputs/second-tune-EP/{str(best_epoch)}/{str(best_lr)}', 
+                                    num_labels=4, 
+                                    use_cuda=cuda_available)
 
-  # Check if same results obtained
-  print('Evaluating best model')
-  evaluate(model_best, df_val_EP)
+    # Check if same results obtained
+    print('Evaluating best model')
+    evaluate(model_best, df_val_EP)
 
-  # Evaluate saved model on test results
-  print('Best Model on Held-Out Test Set')
-  evaluate(model_best, df_test_EP)
+    # Evaluate saved model on test results
+    print('Best Model on Held-Out Test Set')
+    evaluate(model_best, df_test_EP)
 
-# Last Run: 52654
+# Last Run: 52657
