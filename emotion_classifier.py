@@ -53,18 +53,19 @@ class OlidDataset(Dataset):
 
 def train_model(epoch, 
                 best_model_dir, 
-                use_early_stopping = False, 
-                early_stopping_delta = 0,
-                early_stopping_metric = "eval_loss",
-                early_stopping_metric_minimize = True,
-                early_stopping_patience = 3,
-                evaluate_during_training_steps = 2000, 
-                evaluate_during_training=False,  # best model determined by validation set performance
                 output_dir,
                 learning_rate,
                 model_name,
                 train_df,
-                eval_df):
+                eval_df,
+                use_early_stopping=False, 
+                early_stopping_delta=0,
+                early_stopping_metric = "eval_loss",
+                early_stopping_metric_minimize = True,
+                early_stopping_patience = 3,
+                evaluate_during_training_steps = 2000, 
+                evaluate_during_training=False  # best model determined by validation set performance
+                ):
 
   model_args = ClassificationArgs(num_train_epochs=epoch,           
                                   best_model_dir=best_model_dir,  
@@ -74,8 +75,7 @@ def train_model(epoch,
                                   early_stopping_metric_minimize = early_stopping_metric_minimize,
                                   early_stopping_patience = early_stopping_patience,
                                   evaluate_during_training_steps = evaluate_during_training_steps, 
-                                  evaluate_during_training=evaluate_during_training,  
-                                  use_early_stopping=use_early_stopping,
+                                  evaluate_during_training=evaluate_during_training,
                                   no_cache=True,                  
                                   save_steps=-1,                  
                                   save_model_every_epoch=False,
@@ -129,18 +129,18 @@ if __name__ == "__main__":
 
   # Begin First Finetune 
   model = train_model(epoch = 5,
-                        best_model_dir= 'emotion_classifier/best_model_twitter',
-                        use_early_stopping = True,
-                        early_stopping_delta = 0.01,
-                        early_stopping_metric_minimize = False,
-                        early_stopping_patience = 5,
-                        evaluate_during_training_steps = 1000, 
-                        evaluate_during_training=True,  # best model determined by validation set performance
-                        output_dir='emotion_classifier/outputs/first-tune-twitter',
-                        learning_rate=3e-05,
-                        model_name = "xlm-roberta-base",
-                        train_df = df_train_twitter[['text','labels']],
-                        eval_df = df_test_twitter[['text','labels']])
+                    best_model_dir= 'emotion_classifier/best_model_twitter',
+                    use_early_stopping = True,
+                    early_stopping_delta = 0.01,
+                    early_stopping_metric_minimize = False,
+                    early_stopping_patience = 5,
+                    evaluate_during_training_steps = 1000, 
+                    evaluate_during_training=True,  # best model determined by validation set performance
+                    output_dir='emotion_classifier/outputs/first-tune-twitter',
+                    learning_rate=3e-05,
+                    model_name = "xlm-roberta-base",
+                    train_df = df_train_twitter[['text','labels']],
+                    eval_df = df_test_twitter[['text','labels']])
 
   # Second Finetune (Hyperparam Tune)
   best_F1 = 0
@@ -175,4 +175,4 @@ if __name__ == "__main__":
   print('Best Model on Held-Out Test Set')
   evaluate(model_best, df_test_EP)
 
-# Last Run: 52653
+# Last Run: 52654
