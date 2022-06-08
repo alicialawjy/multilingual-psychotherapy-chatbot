@@ -105,16 +105,16 @@ def evaluate(model, df_dataset):
   print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
   return f1_score(y_true, y_pred,average='weighted')
 
-# Run double finetuning
+# Run finetuning
 if __name__ == "__main__":
     ## Datasets
     # # Emotion (Twitter) Dataset (First Tune)
     # df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
     # df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
 
-    # sentiment-40k Dataset (First Tune)
-    df_train_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-    df_test_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+    # # sentiment-40k Dataset (First Tune)
+    # df_train_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
+    # df_test_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
     # EmpatheticPersonas (EP) Dataset (Second Tune)
     df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
@@ -146,20 +146,20 @@ if __name__ == "__main__":
     #                     train_df = df_train_twitter[['text','labels']],
     #                     eval_df = df_test_twitter[['text','labels']])
 
-    # Begin First Finetune (Sentiment-40k)
-    model = train_model(epoch = 5,
-                    best_model_dir= 'emotion_classifier/best_model_sentiment40k',
-                    use_early_stopping = True,
-                    early_stopping_delta = 0.01,
-                    early_stopping_metric_minimize = False,
-                    early_stopping_patience = 5,
-                    evaluate_during_training_steps = 1000, 
-                    evaluate_during_training=True,  
-                    output_dir='emotion_classifier/outputs/first-tune-sentiment40k',
-                    learning_rate=3e-05,
-                    model_name = "xlm-roberta-base",
-                    train_df = df_train_sentiment40k[['text','labels']],
-                    eval_df = df_test_sentiment40k[['text','labels']])
+    # # Begin First Finetune (Sentiment-40k)
+    # model = train_model(epoch = 5,
+    #                 best_model_dir= 'emotion_classifier/best_model_sentiment40k',
+    #                 use_early_stopping = True,
+    #                 early_stopping_delta = 0.01,
+    #                 early_stopping_metric_minimize = False,
+    #                 early_stopping_patience = 5,
+    #                 evaluate_during_training_steps = 1000, 
+    #                 evaluate_during_training=True,  
+    #                 output_dir='emotion_classifier/outputs/first-tune-sentiment40k',
+    #                 learning_rate=3e-05,
+    #                 model_name = "xlm-roberta-base",
+    #                 train_df = df_train_sentiment40k[['text','labels']],
+    #                 eval_df = df_test_sentiment40k[['text','labels']])
 
     # Second Finetune (Hyperparam Tune)
     best_F1 = 0
@@ -170,9 +170,9 @@ if __name__ == "__main__":
     for epoch in range(1,11):
         for lr in learning_rate:
             model = train_model(epoch = epoch,
-                                output_dir = f'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}',
+                                output_dir = f'emotion_classifier/outputs/single-tune/{str(epoch)}/{str(lr)}', # f'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}',
                                 learning_rate = lr,
-                                model_name = 'emotion_classifier/best_model_sentiment40k',
+                                model_name = "xlm-roberta-base", # 'emotion_classifier/best_model_sentiment40k',
                                 train_df = df_train_EP[['text','labels']],
                                 eval_df = df_val_EP[['text','labels']])
 
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     # Load the best model
     model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name=f'emotion_classifier/outputs/second-tune-EP40k/{str(best_epoch)}/{str(best_lr)}', 
+                                    model_name=f'emotion_classifier/outputs/single-tune/{str(best_epoch)}/{str(best_lr)}', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
@@ -202,3 +202,4 @@ if __name__ == "__main__":
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
 # 52660 for hyperparm tuning of twitter model on EP
+# 52666 for sentiment40k finetuning + hyperparam tune on EP
