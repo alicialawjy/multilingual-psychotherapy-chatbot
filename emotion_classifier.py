@@ -108,9 +108,13 @@ def evaluate(model, df_dataset):
 # Run double finetuning
 if __name__ == "__main__":
     ## Datasets
-    # Emotion (Twitter) Dataset (First Tune)
-    df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
-    df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+    # # Emotion (Twitter) Dataset (First Tune)
+    # df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
+    # df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+
+    # sentiment-40k Dataset (First Tune)
+    df_train_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
+    df_test_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
     # EmpatheticPersonas (EP) Dataset (Second Tune)
     df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
@@ -127,7 +131,7 @@ if __name__ == "__main__":
 
     cuda_available = torch.cuda.is_available()
 
-    #   # Begin First Finetune 
+    #   # Begin First Finetune (Twitter)
     #   model = train_model(epoch = 5,
     #                     best_model_dir= 'emotion_classifier/best_model_twitter',
     #                     use_early_stopping = True,
@@ -142,6 +146,21 @@ if __name__ == "__main__":
     #                     train_df = df_train_twitter[['text','labels']],
     #                     eval_df = df_test_twitter[['text','labels']])
 
+    # Begin First Finetune (Sentiment-40k)
+    model = train_model(epoch = 5,
+                    best_model_dir= 'emotion_classifier/best_model_sentiment40k',
+                    use_early_stopping = True,
+                    early_stopping_delta = 0.01,
+                    early_stopping_metric_minimize = False,
+                    early_stopping_patience = 5,
+                    evaluate_during_training_steps = 1000, 
+                    evaluate_during_training=True,  
+                    output_dir='emotion_classifier/outputs/first-tune-sentiment40k',
+                    learning_rate=3e-05,
+                    model_name = "xlm-roberta-base",
+                    train_df = df_train_sentiment40k[['text','labels']],
+                    eval_df = df_test_sentiment40k[['text','labels']])
+
     # Second Finetune (Hyperparam Tune)
     best_F1 = 0
     best_epoch = 1
@@ -151,9 +170,9 @@ if __name__ == "__main__":
     for epoch in range(1,11):
         for lr in learning_rate:
             model = train_model(epoch = epoch,
-                                output_dir = f'emotion_classifier/outputs/second-tune-EP/{str(epoch)}/{str(lr)}',
+                                output_dir = f'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}',
                                 learning_rate = lr,
-                                model_name = 'emotion_classifier/best_model_twitter',
+                                model_name = 'emotion_classifier/best_model_sentiment40k',
                                 train_df = df_train_EP[['text','labels']],
                                 eval_df = df_val_EP[['text','labels']])
 
@@ -164,10 +183,11 @@ if __name__ == "__main__":
                 best_F1 = F1
                 best_epoch = epoch
                 best_lr = lr
+                print(f'best model updated! lr:{best_lr} epoch: {best_epoch}')
 
     # Load the best model
     model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name=f'emotion_classifier/outputs/second-tune-EP/{str(best_epoch)}/{str(best_lr)}', 
+                                    model_name=f'emotion_classifier/outputs/second-tune-EP40k/{str(best_epoch)}/{str(best_lr)}', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
@@ -179,4 +199,6 @@ if __name__ == "__main__":
     print('Best Model on Held-Out Test Set')
     evaluate(model_best, df_test_EP)
 
-# Last Run: 52657
+# LOGS:
+# Last Run: 52657 for Twitter Finetuning
+# 52660 for hyperparm tuning of twitter model on EP
