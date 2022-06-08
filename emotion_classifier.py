@@ -51,9 +51,8 @@ class OlidDataset(Dataset):
     return item
 
 
-def train_model(model_name, epoch, output_dir, train_df, eval_df):
+def train_model(model_name, epoch, learning_rate, output_dir, train_df, eval_df):
   optimizer = 'AdamW' 
-  learning_rate = 4e-05
   
   model_args = ClassificationArgs(num_train_epochs=epoch,        # number of epochs
                                   # best_model_dir=best_model_dir,  # directory to save best model
@@ -111,6 +110,7 @@ if __name__ == "__main__":
   # Begin First Finetune 
   model = train_model(model_name = "xlm-roberta-base",
                       epoch = 3,
+                      learning_rate = 1e-05,
                       output_dir = 'emotion_classifier/outputs/first-tune-twitter',
                       train_df = df_train_twitter[['text','labels']],
                       eval_df = df_val_EP[['text','labels']])
@@ -126,6 +126,7 @@ if __name__ == "__main__":
     model = train_model(model_name = "emotion_classifier/outputs/first-tune-twitter",
                         output_dir = 'emotion_classifier/outputs/second-tune-EP/'+str(epoch),
                         epoch = epoch,
+                        learning_rate=4e-05,
                         train_df = df_train_EP[['text','labels']],
                         eval_df = df_val_EP[['text','labels']])
 
