@@ -110,7 +110,7 @@ if __name__ == "__main__":
   # Begin First Finetune 
   model = train_model(model_name = "xlm-roberta-base",
                       epoch = 3,
-                      learning_rate = 1e-05,
+                      learning_rate = 4e-05,
                       output_dir = 'emotion_classifier/outputs/first-tune-twitter',
                       train_df = df_train_twitter[['text','labels']],
                       eval_df = df_val_EP[['text','labels']])
