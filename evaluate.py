@@ -22,7 +22,7 @@ df_codeswitch = pd.read_csv('data/emotions/codeswitch/data/codeswitch.csv')
 # fill in with the best params 
 models = {'single': 'emotion_classifier/outputs/single-tune/{str(best_epoch)}/{str(best_lr)}', # single tune best
 'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}', # sentiment-40k best
-'twitter': 'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}'} # twitter best
+'twitter': 'emotion_classifier/outputs/second-tune-EP/{str(epoch)}/{str(lr)}'} # twitter best
 
 for (ft, model_name) in models.items():
     cuda_available = torch.cuda.is_available()
