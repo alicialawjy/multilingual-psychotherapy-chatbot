@@ -13,9 +13,9 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-df_EP_ZH_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+# df_EP_ZH_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
 df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-# df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+df_EP_ZH_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 
 # check the test performance
 models = {'single': 'emotion_classifier/outputs/single-tune/', # single tune best
@@ -23,13 +23,13 @@ models = {'single': 'emotion_classifier/outputs/single-tune/', # single tune bes
 'twitter': 'emotion_classifier/outputs/second-tune-EP/'} # twitter best
 cuda_available = torch.cuda.is_available()
 learning_rate = [1e-05, 2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
-train = {}
+test = {}
 val = {}
 for (ft, model_name) in models.items():
-    ft_epoch_train= []
+    ft_epoch_test= []
     ft_epoch_val= []
     for epoch in range(1,11):
-        ft_lr_train=[]
+        ft_lr_test=[]
         ft_lr_val=[]
         for lr in learning_rate:
             # Load the model
@@ -44,19 +44,19 @@ for (ft, model_name) in models.items():
             ft_lr_val.append(F1_val)
 
             # 2: Train (EN-ZH) Performance
-            print('EN-ZH Train Set')
-            F1_train = evaluate(model, df_EP_ZH_train)
-            ft_lr_train.append(F1_train)
+            print('EN-ZH Test Set')
+            F1_test = evaluate(model, df_EP_ZH_test)
+            ft_lr_test.append(F1_test)
 
-        ft_epoch_train.append(ft_lr_train)
+        ft_epoch_test.append(ft_lr_test)
         ft_epoch_val.append(ft_lr_val)
-    train[ft]=ft_epoch_train
+    test[ft]=ft_epoch_test
     val[ft]=ft_epoch_val
 
 # print results
 print('Validation and Test Scores')
-print(train)
+print(test)
 print(val)
 
-# Slurm 52717
-
+# Slurm 52717: test-val
+# 52725: train-val
