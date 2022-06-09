@@ -13,16 +13,16 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+# df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
 df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 df_ZH_native = pd.read_csv('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
-df_codeswitch = pd.read_csv('data/emotions/codeswitch/data/codeswitch.csv')
+df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
-models = {'single': 'emotion_classifier/outputs/single-tune/{str(best_epoch)}/{str(best_lr)}', # single tune best
-'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}', # sentiment-40k best
-'twitter': 'emotion_classifier/outputs/second-tune-EP/{str(epoch)}/{str(lr)}'} # twitter best
+models = {'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
+'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/6/6e-05', # sentiment-40k best
+'twitter': 'emotion_classifier/outputs/second-tune-EP/8/4e-05'} # twitter best
 
 for (ft, model_name) in models.items():
     cuda_available = torch.cuda.is_available()
@@ -35,9 +35,9 @@ for (ft, model_name) in models.items():
     
     print(f'Results for {ft} finetuning')
 
-    # 1: Sanity Check
-    print('Sanity Check on Validation Set')
-    evaluate(model_best, df_EP_ZH_val)
+    # # 1: Sanity Check
+    # print('Sanity Check on Validation Set')
+    # evaluate(model_best, df_EP_ZH_val)
 
     # 2: Test (ZH) Performance
     print('ZH Test Set')
