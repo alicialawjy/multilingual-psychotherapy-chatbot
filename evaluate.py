@@ -22,7 +22,7 @@ df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('da
 # df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
-models = {'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/2/3e-05'}, # sentiment-40k best
+models = {'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/2/3e-05'} # sentiment-40k best
 # 'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
 # 
 # 'twitter': 'emotion_classifier/outputs/second-tune-EP/10/3e-05'} # twitter best
@@ -62,4 +62,5 @@ for (ft, model_name) in models.items():
 # 52789 for cleaned en test dataset
 # 52812 for native roy 
 # sentiment-40k
-#   2, 3e-05
+#   2, 3e-05: 52823
+#   5, 3e-05: 52825
