@@ -16,7 +16,7 @@ def evaluate(model, df_dataset):
 # df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
 # df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 # df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-df_ZH_native = pd.read_csv('/Users/alicialawjy/Desktop/multilingual-psychotherapy-chatbot/data/emotions/Native Dataset/roy_native.csv') # ('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
+df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
 # df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
@@ -57,3 +57,4 @@ for (ft, model_name) in models.items():
 
 # ran on job 52784
 # 52789 for cleaned en test dataset
+# 52810 for native roy 
