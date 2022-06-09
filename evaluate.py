@@ -7,6 +7,8 @@ def evaluate(model, df_dataset):
   y_pred, _ = model.predict(df_dataset.text.tolist())
   y_true = df_dataset['labels']
 
+  print(df_dataset.text.tolist()[y_pred!=y_true])
+
   print("Classification Report", classification_report(y_true, y_pred))
   print("Confusion Matrix", confusion_matrix(y_true, y_pred))
   print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
