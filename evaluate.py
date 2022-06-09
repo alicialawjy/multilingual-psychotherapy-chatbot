@@ -20,9 +20,9 @@ df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('da
 # df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
-models = {'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
-'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/6/6e-05', # sentiment-40k best
-'twitter': 'emotion_classifier/outputs/second-tune-EP/8/4e-05'} # twitter best
+models = {'twitter': 'emotion_classifier/outputs/second-tune-EP/10/3e-05'} # twitter best
+# 'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
+# 'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/6/6e-05', # sentiment-40k best
 
 for (ft, model_name) in models.items():
     cuda_available = torch.cuda.is_available()
@@ -57,4 +57,4 @@ for (ft, model_name) in models.items():
 
 # ran on job 52784
 # 52789 for cleaned en test dataset
-# 52810 for native roy 
+# 52812 for native roy 
