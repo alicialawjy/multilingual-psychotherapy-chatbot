@@ -17,14 +17,15 @@ def evaluate(model, df_dataset):
 # test data
 # df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
 # df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-# df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
 # df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
-models = {'twitter': 'emotion_classifier/outputs/second-tune-EP/10/3e-05'} # twitter best
+models = {'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/2/3e-05'}, # sentiment-40k best
 # 'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
-# 'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/6/6e-05', # sentiment-40k best
+# 
+# 'twitter': 'emotion_classifier/outputs/second-tune-EP/10/3e-05'} # twitter best
 
 for (ft, model_name) in models.items():
     cuda_available = torch.cuda.is_available()
@@ -45,9 +46,9 @@ for (ft, model_name) in models.items():
     # print('ZH Test Set')
     # evaluate(model_best, df_EP_ZH)
 
-    # # 3: Test (EN) Performance
-    # print('EN Test Set')
-    # evaluate(model_best, df_EP_EN)
+    # 3: Test (EN) Performance
+    print('EN Test Set')
+    evaluate(model_best, df_EP_EN)
 
     # 4: Native ZH Performance
     print('ZH Native Set')
@@ -60,3 +61,5 @@ for (ft, model_name) in models.items():
 # ran on job 52784
 # 52789 for cleaned en test dataset
 # 52812 for native roy 
+# sentiment-40k
+#   2, 3e-05
