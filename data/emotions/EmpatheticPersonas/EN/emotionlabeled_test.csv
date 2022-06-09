@@ -1,115 +1,115 @@
-text,labels
-"i am not ok, i got really angry when a stranger hit my car",1
-"I am angry at my boss, she's always so demanding and does not think about people's mental health at all",1
-I feel quite uneasy,3
-Excellent thanks for asking,2
-I have been better.,0
-I am under a lot of pressure at the moment. I am dealing with a lot happening at home right now.,3
-optimistic,2
-I'm looking forward to going out for a meal with my friends.,2
-I'm pissed.,1
-"Today, I'm really content.",2
-"very content within myself, i feel in high spirits.",2
-Just worried about the next few days,3
-positive,2
-I'm not feeling so great. I lost my favorite toy and I can't find it,0
-"I am feeling really unwell today, like I am being followed the whole time.",3
-"i am not good, i feel really sad",0
-Not so well. My dog died last night.,0
-"I'm depressed, I've never been able to get a girlfriend",0
-I am so mad at my boss for writing me up.,1
-"I'm having an awesome day, everything's going well.",2
-"not great today, anxious",3
-I feel uneasy today,3
-"I am so sad today, nothing seems to be going right.",0
-I feel afraid for my safety,3
-I'm pretty pissed right now.,1
-Great. Thank you.,2
-I am feeling anxious as I am in isolation.,3
-"Okay, I guess.",0
-"I'm feeling awful, my best friend has been given some worrying health news!",3
-i am not good because my friends are bullying me,1
-"To be honest, I'm feeling really worried about things.",3
-I have been beeling so much anger and hate lately towards the political situations going on.,1
- Feeling kind of blah today as I got some bad news about some financial issues.,0
-I just don't see the point in getting out of bed. Nothing feels good.,0
-I don't f* know,1
-I am pissed off.,1
-I'm kind of pissed off because James did not do his part of the assignment.,1
-Im in such a good mood. I feel so lucky today,2
-Something good has happened,2
-Not at all well!,1
-I'm disgusted with the world,1
-I feel stressy and anxious,3
-"i am distressed, i have been sick for many years and i cannot find a cure",0
-Very upset. I lost a loved one earlier this week.,0
-I am afraid that I will not pass my exams,3
-I feel afraid that I'm going to fail,3
-"Could be better, I'd rather the day was over already.",0
-"Good, life is going well lately and I'm feeling quiet content",2
-I'm feeling scared because I have to give a presentation today,3
-Today I just happen to be the happiest person alive. You know why? Simply because I have made it to see yet another day.,2
-Today I'm feeling pretty down. I just didn't have a good morning.,0
-My heart is heavy today.,0
-"I'm actually not feeling to good, my mind is fuzzy, I feel anxious and my gut tells me something is wrong.",3
-Life is great!,2
-"Kind of blue, really. I can't seem to enjoy anything.",0
-I am having a worst day,0
-"Excellent, it's my birthday",2
-"I am scared of death, sometimes I just lie awake at night thinking of the absurdity of life",3
-I'm feeling on top of the world.,2
-"I am feeling really sad, to a point where I feel like crying all day",0
-I feel a bit on edge today.,3
-I'm angry and feel like nobody respects me.,1
-"I am feeling stressed today. I have too much too do, with too little time in which to do it.",3
-"Been better mate, stressing over this important job interview, I really need this job and I know it's perfect for me.",3
-I'm feeling very stressed and anxious today,3
-i am very angry with my boss because he is pushy,1
-"I continue to struggle with my anxiety, it is a continuous fear within my being",3
-That is not your business,1
-"I don't like being in crowds, it makes me really anxious and kind of scared",3
-I am feeling afraid I won't pass my driver's test.,3
-I am mad because I broke a plate and the pieces went all over the floor.,1
-I'm not feeling good. I'm stressing out about my upcoming exams.,3
-I am mad that my boss passed me up for a raise.,1
-Today i feel like crap!,1
-I feel satisfied with my life,2
-I'm doing well,2
-I am really happy because it is not raining today.,2
-I'm feeling nervous about my job interview,3
-"I feel great, i'm in my happy place.",2
-"I am so mad right now, I can't believe I was taken for a fool.",1
-I am not good because I am so angry that my husband purchased an expensive vehicle and never talked to me about it first. He has made me so upset.,1
-"Actually, I am mad about having to work overtime all this week.",1
-I have a bad feeling about today.,3
-I am fine.,2
-Not good. I found out my husband is cheating on me.,1
-"Not so great, down, bummed out.",0
-My roommate is driving me mad with her sloppiness!,1
-A classmate took my project suggestion as her own.,1
-I am mad.,1
-Couldn't be happier.,2
-"I feel really low, my boyfriend broke up with me",0
-"Frustrated, IÃm angry and I donÃt know why.",1
-"I'm okay, I just have some anxiety about the future.",3
-I'm so pissed off at my co-worker for taking credit for my work.,1
-"Not good, my dog died.",0
-I don't feel that great today. My dog is unwell.,0
-Like I need to chill,1
-I am feeling really low and quite frightened actually.,3
-"I 've lost motivation, it just seems like I'll never be able to bring my grades up, I'm so sad.",0
-I feel sad and depressed,0
-I'm not fleeling so great.,0
-Great I've just won the lotto,2
-I am feeling in control and at peace today,2
-Not so good. My sisters have places to go and things to do. I feel left behind.,0
-"Fantastic, really fantastic",2
-"I am worried, my phone is not working.",3
-"i am not feeling good, i broke up",0
-I'm doing really well actually. Thanks.,2
-I'm feeling great. I have just returned from a mini break.,2
-I am feeling blue today as I have had an unpleasant review from one of my customers today,0
-I feel terrible.,0
-"I am good thank you, feeling quite happy with my life at the moment - I just met someone remarkable. How are you feeling today?",2
-I can't handle daily tasks and I feel very overwhelmed,0
-"I feel terrible, angry, hateful.",1
+,text,labels
+13,I am positive and grateful.,2
+31,I have been beeling so much anger and hate lately towards the political situations going on.,1
+35,I'm feeling very bad,1
+58,I'm feeling on top of the world.,2
+58,I am overwhelmed by grief,0
+19,"Not so good, because the bank messed up my checking account.",1
+102,I am feeling in control and at peace today,2
+77,I'm feeling nervous about my job interview,3
+48,"I'm worried about so many different things, I feel like I can't do anything.",3
+95,I am not feeling too well. There is just too much happening in my life.,3
+98,"I 've lost motivation, it just seems like I'll never be able to bring my grades up, I'm so sad.",0
+49,Today I just happen to be the happiest person alive. You know why? Simply because I have made it to see yet another day.,2
+98,My friend's behaviour makes me angry.,1
+89,"Awful, I lost someone close to me yesterday.",0
+26,I am feeling anxious as I am in isolation.,3
+102,I'm mad because I can't find my debit card.,1
+68,"I don't like being in crowds, it makes me really anxious and kind of scared",3
+4,"Tremendous, I've just been promoted at work",2
+69,I am feeling afraid I won't pass my driver's test.,3
+88,"I'm pretty stressed out today, I'm waiting for some test results",3
+100,I'm not fleeling so great.,0
+4,I have been better.,0
+73,I'm really on edge today.,3
+11,It's not a good time for me.,0
+96,Like I need to chill,1
+48,I'm feeling scared because I have to give a presentation today,3
+6,optimistic,2
+61,I'm angry and feel like nobody respects me.,1
+70,I am mad because I broke a plate and the pieces went all over the floor.,1
+100,I am feeling down. I think I am sick.,0
+101,"i feel very irritated, i got in a bar fight and got banned from there",1
+69,"I'm pretty ok, just a bit anxious.",3
+43,I'm not feeling like my usual happy self.,0
+42,"i am distressed, i have been sick for many years and i cannot find a cure",0
+2,"I'm very mad. My boss chewed me out, and my friend keeps asking me for favors I can't help him with.",1
+59,"I am feeling really sad, to a point where I feel like crying all day",0
+64,I'm feeling very stressed and anxious today,3
+82,I have a bad feeling about today.,3
+61,Today is waning my patience.,1
+103,Not so good. My sisters have places to go and things to do. I feel left behind.,0
+104,"Fantastic, really fantastic",2
+89,Couldn't be happier.,2
+26,I'm so pissed off right now and I don't know why.,1
+90,Not great. I am worried for my safety.,3
+50,Today I'm feeling pretty down. I just didn't have a good morning.,0
+22,"Ummm not great, ummm I am really worried about what is hapening, I haven't slept all week.",3
+15,I couldn't be happier,2
+28,I'm stressed out and anxious about the political situation here.,3
+62,I have no money,3
+60,I feel afraid.,3
+20,"not great today, anxious",3
+79,"I am so mad right now, I can't believe I was taken for a fool.",1
+33,I just don't see the point in getting out of bed. Nothing feels good.,0
+18,I am feeling worried because I didn't do my homework,3
+77,Everything sucks today.,1
+85,"Not so great, down, bummed out.",0
+60,I feel a bit on edge today.,3
+7,I'm looking forward to going out for a meal with my friends.,2
+67,That is not your business,1
+56,"Excellent, it's my birthday",2
+59,I'm not great.,0
+74,Great. How about you?,2
+78,"I feel great, i'm in my happy place.",2
+53,I am livid at what is going on with my roommate,1
+80,Doing great thanks,2
+3,Excellent thanks for asking,2
+70,I'm doing well today.,2
+14,"I am feeling really unwell today, like I am being followed the whole time.",3
+49,I'm very mad,1
+21,So awful. I had a really scary dream and it's made me feel so anxious.,3
+83,"Brilliant mate, all going well.",2
+87,"I am so mad, I have just discovered that my husband is cheating on me with a coworker.",1
+44,I am afraid that I will not pass my exams,3
+81,I feel resentful and spiteful.,1
+27,"Okay, I guess.",0
+73,Today i feel like crap!,1
+24,I'm pretty pissed right now.,1
+93,I feel very angry because a stranger attacked me.,1
+34,"Well, I'm doing really well right now, thank you!",2
+16,Not so well. My dog died last night.,0
+1,"I am angry at my boss, she's always so demanding and does not think about people's mental health at all",1
+40,I'm disgusted with the world,1
+95,I don't feel that great today. My dog is unwell.,0
+71,I feel disappointed. I got betrayed by a friend.,0
+50,"I work, I cook and I clean, what else do they want me to do ffs!",1
+6,"Today, I'm anxious and afraid.",3
+47,"Good, life is going well lately and I'm feeling quiet content",2
+106,"i am not feeling good, i broke up",0
+22,"I am so sad today, nothing seems to be going right.",0
+96,since he left me I don't really want to live anymore,0
+52,"I'm actually not feeling to good, my mind is fuzzy, I feel anxious and my gut tells me something is wrong.",3
+37,Im in such a good mood. I feel so lucky today,2
+9,"Today, I'm really content.",2
+51,My heart is heavy today.,0
+51,I am particular pleased today with my stock market portfolio performance.,2
+94,"Not good, my dog died.",0
+76,I am really happy because it is not raining today.,2
+101,Great I've just won the lotto,2
+37,I feel terrible. I lost my dog.,0
+104,"Not great at all, I just lost my job.",0
+12,"I am really anxious about my physical appearance, some days I'd rather not go out at all",3
+13,I'm not feeling so great. I lost my favorite toy and I can't find it,0
+82,"Horrible, my deadbeat dad beat me as usual",1
+81,"Actually, I am mad about having to work overtime all this week.",1
+106,I feel like a wet rag,0
+0,"i am not ok, i got really angry when a stranger hit my car",1
+23,I feel afraid for my safety,3
+29,"Pretty good, actually!",2
+111,I'm definitely content because I slept really well last night.,2
+29,i am not good because my friends are bullying me,1
+38,Something good has happened,2
+83,I am fine.,2
+40,I had a bad day,0
+105,I'm actually quite anxious today,3

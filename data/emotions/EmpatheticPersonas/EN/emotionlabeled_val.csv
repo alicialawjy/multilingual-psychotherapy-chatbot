@@ -1,115 +1,115 @@
-text,labels
-I don't even want to talk about it,1
-I'm irate at my ex-girlfriend and I can't believe I screwed up our relationship.,1
-"I'm very mad. My boss chewed me out, and my friend keeps asking me for favors I can't help him with.",1
-I can't say I feel great.  I'm as irritable as I've ever been and I'm afraid of doing or saying something I might regret.,1
-"Tremendous, I've just been promoted at work",2
-I have had a few crying spells today.,0
-"Today, I'm anxious and afraid.",3
-I'm furious.,1
-I am happy today because am on holiday tomorrow.,2
-I am much happier today than last week,2
-I got into a fight with my boyfriend today.,0
-It's not a good time for me.,0
-"I am really anxious about my physical appearance, some days I'd rather not go out at all",3
-I am positive and grateful.,2
-I am angry and I don't know how to change it.,1
-I couldn't be happier,2
-I'm not doing that great today. They are taking off my favorite childhood television show.,0
-"The day has a been a good one, my son got got a championship",2
-I am feeling worried because I didn't do my homework,3
-"Not so good, because the bank messed up my checking account.",1
-I am so sad today.,0
-So awful. I had a really scary dream and it's made me feel so anxious.,3
-"Ummm not great, ummm I am really worried about what is hapening, I haven't slept all week.",3
-I'm feeling so happy today.,2
-I am having a bad day today.,0
-"I really don't feel great, I have a feeling of dread in the pit of my stomach.",3
-I'm so pissed off right now and I don't know why.,1
-I'm feeling nervous today because I have a big exam.,3
-I'm stressed out and anxious about the political situation here.,3
-"Pretty good, actually!",2
-I am worried about my job,3
-Not too good. I feel like quitting my job.,1
-"Not great, I'm afraid I have a lot on my mind that is really weighing me down.",3
-I'm feeling nervous about starting my new job. I'm not sure if I will fit in,3
-"Well, I'm doing really well right now, thank you!",2
-I'm feeling very bad,1
-"I just don't want to go on anymore, everything seems so hopeless.",0
-I feel terrible. I lost my dog.,0
-I am feeeling very anxious today.,3
-Not good really. I think my marriage is over.,0
-I had a bad day,0
-"I'm feeling great, things are going really well at the moment",2
-Wonderful ! I have a new job.,2
-I'm not feeling like my usual happy self.,0
-"Honestly, not great.  My cat just passed away.",0
-I'm feeling good thanks!,2
-"Honestly, I feel quite anxious today.",3
-So sad today because of lockdown,0
-"I'm worried about so many different things, I feel like I can't do anything.",3
-I'm very mad,1
-"I work, I cook and I clean, what else do they want me to do ffs!",1
-I am particular pleased today with my stock market portfolio performance.,2
-Could be better. My wife and family seem distant lately,0
-I am livid at what is going on with my roommate,1
-"Great, I have just gotten a pay-rise at my job",2
-I'm just feeling really down.,0
-"I am feeling rubbish today, my anxiety is trough the roof.",3
-"Feeling great today, slept well!",2
-I am overwhelmed by grief,0
-I'm not great.,0
-I feel afraid.,3
-Today is waning my patience.,1
-I have no money,3
-Really fed up a lot with this.,1
-Not feeling great at the moment as I have anxiety,3
-"I'm down, feeling there's no future for me",0
-I am angry at myself because I can't lose weight and have no self control,1
-"Fantastic thank you, I'm currently preparing for a date with my crush",2
-I am angry with my neigbor as he is making a ruckus,1
-"I'm pretty ok, just a bit anxious.",3
-I'm doing well today.,2
-I feel disappointed. I got betrayed by a friend.,0
-"I am feeling very content today, thank you!",2
-I'm really on edge today.,3
-Great. How about you?,2
-joyful,2
-I don't have much energy to do anything.,0
-Everything sucks today.,1
-My car needs serious repairs and I'm broke.,0
-My ex ruined my life and I am MAD.,1
-Doing great thanks,2
-I feel resentful and spiteful.,1
-"Horrible, my deadbeat dad beat me as usual",1
-"Brilliant mate, all going well.",2
-I am great.,2
-I'm really anxious about my job interview,3
-All good with me,2
-"I am so mad, I have just discovered that my husband is cheating on me with a coworker.",1
-"I'm pretty stressed out today, I'm waiting for some test results",3
-"Awful, I lost someone close to me yesterday.",0
-Not great. I am worried for my safety.,3
-My emotions are boiling over and I'm about to explode.,1
-I am feeling on edge today and not comfortable in my skin.,3
-I feel very angry because a stranger attacked me.,1
-"Anxiety and fear is heightened at the moment, thank you for thinking of me.",3
-I am not feeling too well. There is just too much happening in my life.,3
-since he left me I don't really want to live anymore,0
-I am concerned about the direction of covid-19 in our country and recent decisions made by the government and afraid that I could catch the virus.,3
-My friend's behaviour makes me angry.,1
-I feel contented I have finished work for this week and can now relax,2
-I am feeling down. I think I am sick.,0
-"i feel very irritated, i got in a bar fight and got banned from there",1
-I'm mad because I can't find my debit card.,1
-"I am good, i cannot complain",2
-"Not great at all, I just lost my job.",0
-I'm actually quite anxious today,3
-I feel like a wet rag,0
-I am angry at someone.,1
-I'm pissed off because my brother stole fifty dollars from me.,1
-I am enraged.,1
-I feel really lost and sad. My partner and broke up.,0
-I'm definitely content because I slept really well last night.,2
-"I'm feeling good, only 30 minutes left and then I log off work for two whole weeks.",2
-Terrible. Car wouldnt start and it is really putting me down.,0
+,text,labels
+68,I am angry with my neigbor as he is making a ruckus,1
+74,I feel satisfied with my life,2
+41,"I'm feeling great, things are going really well at the moment",2
+45,I'm feeling good thanks!,2
+9,I am much happier today than last week,2
+42,Wonderful ! I have a new job.,2
+46,"Honestly, I feel quite anxious today.",3
+52,Could be better. My wife and family seem distant lately,0
+56,"I am feeling rubbish today, my anxiety is trough the roof.",3
+47,So sad today because of lockdown,0
+92,"I'm okay, I just have some anxiety about the future.",3
+72,"I am feeling very content today, thank you!",2
+110,I feel terrible.,0
+54,"Great, I have just gotten a pay-rise at my job",2
+46,"Could be better, I'd rather the day was over already.",0
+33,I'm feeling nervous about starting my new job. I'm not sure if I will fit in,3
+76,I don't have much energy to do anything.,0
+57,"I am scared of death, sometimes I just lie awake at night thinking of the absurdity of life",3
+86,All good with me,2
+11,Just worried about the next few days,3
+17,"The day has a been a good one, my son got got a championship",2
+90,"I feel really low, my boyfriend broke up with me",0
+21,I feel uneasy today,3
+108,I'm pissed off because my brother stole fifty dollars from me.,1
+107,I am angry at someone.,1
+32,"Not great, I'm afraid I have a lot on my mind that is really weighing me down.",3
+20,I am so sad today.,0
+97,I am feeling really low and quite frightened actually.,3
+79,My ex ruined my life and I am MAD.,1
+16,I'm not doing that great today. They are taking off my favorite childhood television show.,0
+84,Not good. I found out my husband is cheating on me.,1
+63,"Been better mate, stressing over this important job interview, I really need this job and I know it's perfect for me.",3
+45,I feel afraid that I'm going to fail,3
+65,"I'm down, feeling there's no future for me",0
+24,I am having a bad day today.,0
+91,My emotions are boiling over and I'm about to explode.,1
+7,I'm furious.,1
+39,Not good really. I think my marriage is over.,0
+43,Very upset. I lost a loved one earlier this week.,0
+53,Life is great!,2
+10,"very content within myself, i feel in high spirits.",2
+5,I have had a few crying spells today.,0
+75,I'm doing well,2
+93,I'm so pissed off at my co-worker for taking credit for my work.,1
+10,I got into a fight with my boyfriend today.,0
+30,"To be honest, I'm feeling really worried about things.",3
+112,"I'm feeling good, only 30 minutes left and then I log off work for two whole weeks.",2
+85,I'm really anxious about my job interview,3
+66,"I continue to struggle with my anxiety, it is a continuous fear within my being",3
+18,I am so mad at my boss for writing me up.,1
+32, Feeling kind of blah today as I got some bad news about some financial issues.,0
+54,"Kind of blue, really. I can't seem to enjoy anything.",0
+67,"Fantastic thank you, I'm currently preparing for a date with my crush",2
+109,I am enraged.,1
+41,I feel stressy and anxious,3
+39,Not at all well!,1
+27,I'm feeling nervous today because I have a big exam.,3
+25,Great. Thank you.,2
+108,I'm feeling great. I have just returned from a mini break.,2
+94,"Anxiety and fear is heightened at the moment, thank you for thinking of me.",3
+110,I feel really lost and sad. My partner and broke up.,0
+113,"I feel terrible, angry, hateful.",1
+8,I am happy today because am on holiday tomorrow.,2
+0,I don't even want to talk about it,1
+80,I am not good because I am so angry that my husband purchased an expensive vehicle and never talked to me about it first. He has made me so upset.,1
+25,"I really don't feel great, I have a feeling of dread in the pit of my stomach.",3
+36,"I just don't want to go on anymore, everything seems so hopeless.",0
+19,"I'm having an awesome day, everything's going well.",2
+44,"Honestly, not great.  My cat just passed away.",0
+12,positive,2
+62,"I am feeling stressed today. I have too much too do, with too little time in which to do it.",3
+75,joyful,2
+23,I'm feeling so happy today.,2
+109,I am feeling blue today as I have had an unpleasant review from one of my customers today,0
+66,I am angry at myself because I can't lose weight and have no self control,1
+15,"i am not good, i feel really sad",0
+34,I don't f* know,1
+103,"I am good, i cannot complain",2
+88,I am mad.,1
+72,I am mad that my boss passed me up for a raise.,1
+107,I'm doing really well actually. Thanks.,2
+38,I am feeeling very anxious today.,3
+111,"I am good thank you, feeling quite happy with my life at the moment - I just met someone remarkable. How are you feeling today?",2
+65,i am very angry with my boss because he is pushy,1
+105,"I am worried, my phone is not working.",3
+17,"I'm depressed, I've never been able to get a girlfriend",0
+30,I am worried about my job,3
+86,My roommate is driving me mad with her sloppiness!,1
+2,I feel quite uneasy,3
+35,I am pissed off.,1
+92,I am feeling on edge today and not comfortable in my skin.,3
+112,I can't handle daily tasks and I feel very overwhelmed,0
+71,I'm not feeling good. I'm stressing out about my upcoming exams.,3
+36,I'm kind of pissed off because James did not do his part of the assignment.,1
+57,"Feeling great today, slept well!",2
+99,I feel sad and depressed,0
+31,Not too good. I feel like quitting my job.,1
+8,I'm pissed.,1
+99,I feel contented I have finished work for this week and can now relax,2
+1,I'm irate at my ex-girlfriend and I can't believe I screwed up our relationship.,1
+28,"I'm feeling awful, my best friend has been given some worrying health news!",3
+78,My car needs serious repairs and I'm broke.,0
+87,A classmate took my project suggestion as her own.,1
+63,Really fed up a lot with this.,1
+14,I am angry and I don't know how to change it.,1
+113,Terrible. Car wouldnt start and it is really putting me down.,0
+97,I am concerned about the direction of covid-19 in our country and recent decisions made by the government and afraid that I could catch the virus.,3
+84,I am great.,2
+55,I am having a worst day,0
+55,I'm just feeling really down.,0
+5,I am under a lot of pressure at the moment. I am dealing with a lot happening at home right now.,3
+91,"Frustrated, IÃm angry and I donÃt know why.",1
+3,I can't say I feel great.  I'm as irritable as I've ever been and I'm afraid of doing or saying something I might regret.,1
+64,Not feeling great at the moment as I have anxiety,3
