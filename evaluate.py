@@ -14,16 +14,16 @@ def evaluate(model, df_dataset):
 
 # test data
 # df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-# df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
-# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # fill in with the best params 
-models = {'twitter': 'emotion_classifier/outputs/second-tune-EP/3/4e-05'} # sentiment-40k best
-# 'single': 'emotion_classifier/outputs/single-tune/5/3e-05', # single tune best
+models = {'single': 'emotion_classifier/outputs/single-tune/5/3e-05'} # sentiment-40k best
+# 'single': 'emotion_classifier/outputs/single-tune/5/3e-05',
 # 'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/2/3e-05'
-# } # twitter best
+# 'twitter': 'emotion_classifier/outputs/second-tune-EP/3/4e-05' 
 
 for (ft, model_name) in models.items():
     cuda_available = torch.cuda.is_available()
@@ -40,9 +40,9 @@ for (ft, model_name) in models.items():
     # print('Sanity Check on Validation Set')
     # evaluate(model_best, df_EP_ZH_val)
 
-    # # 2: Test (ZH) Performance
-    # print('ZH Test Set')
-    # evaluate(model_best, df_EP_ZH)
+    # 2: Test (ZH) Performance
+    print('ZH Test Set')
+    evaluate(model_best, df_EP_ZH)
 
     # 3: Test (EN) Performance
     print('EN Test Set')
@@ -52,9 +52,9 @@ for (ft, model_name) in models.items():
     print('ZH Native Set')
     evaluate(model_best, df_ZH_native)
 
-    # # 5: Code Switch Performance
-    # print('CodeSwitch Set')
-    # evaluate(model_best, df_codeswitch)
+    # 5: Code Switch Performance
+    print('CodeSwitch Set')
+    evaluate(model_best, df_codeswitch)
 
 # ran on job 52784
 # 52789 for cleaned en test dataset
@@ -62,3 +62,4 @@ for (ft, model_name) in models.items():
 # sentiment-40k
 #   2, 3e-05: 52828
 #   5, 3e-05: 52826
+# 
