@@ -58,5 +58,5 @@ print('Validation and Test Scores')
 print(test)
 print(val)
 
-# Slurm 52717: test-val
+# Slurm 52726: test-val
 # 52725: train-val
