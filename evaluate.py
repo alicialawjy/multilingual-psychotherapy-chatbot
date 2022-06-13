@@ -63,3 +63,4 @@ for (ft, model_name) in models.items():
 #   2, 3e-05: 52828
 #   5, 3e-05: 52826
 # 53012: single best (5 3e-05) results
+# 53074: ECM best (5 3e-05)
