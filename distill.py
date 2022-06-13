@@ -135,7 +135,7 @@ def run_training(epoch,
 
     # Student: Distilroberta model
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
-                                                    model_type="xlmroberta",
+                                                    model_type="distilbert",
                                                     model_name='distilroberta-base', # student model is also roberta
                                                     args = model_args, 
                                                     num_labels=4,  
@@ -195,4 +195,4 @@ if __name__ == "__main__":
     evaluate(student_model, df_test)
     
 # LOGS:
-# 53414
+# 53416
