@@ -63,7 +63,7 @@ class Distillation_ClassificationModel(ClassificationModel):
         super().__init__(*args, **kwargs)
         self.teacher = teacher_model
         # place teacher on same device as student
-        self.teacher._move_model_to_device(self.model.device)
+        self.teacher._move_model_to_device()
         self.teacher.eval()
 
     def _calculate_loss(self, model, inputs, loss_fct, num_labels, args, return_outputs=False): #return_outputs is extra
@@ -195,4 +195,4 @@ if __name__ == "__main__":
     evaluate(student_model, df_test)
     
 # LOGS:
-# 53427
+# 53436
