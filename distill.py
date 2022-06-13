@@ -174,7 +174,7 @@ if __name__ == "__main__":
     cuda_available = torch.cuda.is_available()
 
     student_model = run_training(epoch = 5, #epoch,
-                                learning_rate = 3e-05, #lr,
+                                learning_rate = 5e-06, #lr,
                                 output_dir = 'distillation/outputs/testing', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
                                 best_model_dir = 'distillation/best_model', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
                                 use_early_stopping = False,
@@ -196,4 +196,4 @@ if __name__ == "__main__":
     
 # LOGS:
 # 53440
-# 53447 - removed self.teacher.eval()
+# 53456 
