@@ -1,5 +1,5 @@
 ## Code extracted from: https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
-from transformers import Trainer, TrainingArguments
+from torch.utils.data import Dataset 
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -51,6 +51,7 @@ class OlidDataset(Dataset):
 
     return item
 
+# Overwrite classification arguments and classification model
 class Distillation_ClassificationArgs(ClassificationArgs):
     def __init__(self, *args, alpha=0.5, temperature=2.0, **kwargs):
         super().__init__(*args, **kwargs)
@@ -193,3 +194,5 @@ if __name__ == "__main__":
     print('Student Model Test Performance')
     evaluate(student_model, df_test)
     
+# LOGS:
+# 53414
