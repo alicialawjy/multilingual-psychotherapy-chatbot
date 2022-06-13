@@ -64,16 +64,16 @@ class Distillation_ClassificationModel(ClassificationModel):
         self.teacher = teacher_model
         # place teacher on same device as student
         self.teacher._move_model_to_device()
-        self.teacher.eval()
+        self.teacher.model.eval()
 
-    def _calculate_loss(self, model, inputs, loss_fct, num_labels, args, return_outputs=False): #return_outputs is extra
+    def _calculate_loss(self, model, inputs, loss_fct, num_labels, args): #return_outputs is extra
         # compute student output
         outputs_student = model(**inputs)
         student_loss = outputs_student.loss
 
         # compute teacher output
         with torch.no_grad():
-            outputs_teacher = self.teacher(**inputs)
+            outputs_teacher = self.teacher.model(**inputs)
 
         # assert size
         assert outputs_student.logits.size() == outputs_teacher.logits.size()
@@ -90,7 +90,7 @@ class Distillation_ClassificationModel(ClassificationModel):
 
         # Return weighted student loss
         loss = self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
-        return (loss, outputs_student) if return_outputs else loss
+        return (loss, *outputs_student[1:])
 
 def run_training(epoch, 
                 output_dir,
@@ -128,7 +128,7 @@ def run_training(epoch,
 
     # Teacher: finetuned XLM-R model
     teacher_model = ClassificationModel(model_type="xlmroberta",
-                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', # teacher model is the finetuned model
+                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
                                     args = model_args, 
                                     num_labels=4,  
                                     use_cuda=cuda_available)
@@ -195,4 +195,5 @@ if __name__ == "__main__":
     evaluate(student_model, df_test)
     
 # LOGS:
-# 53436
+# 53440
+# 53447 - removed self.teacher.eval()
