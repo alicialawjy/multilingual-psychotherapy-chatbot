@@ -152,7 +152,7 @@ if __name__ == "__main__":
       # load the best model
       model_best = ClassificationModel(model_type="xlmroberta", 
                                       model_name=f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}',
-                                      num_labels=4, 
+                                      num_labels=3, 
                                       use_cuda=cuda_available)
 
       # evaluate the best model
