@@ -136,8 +136,8 @@ def run_training(epoch,
 
     # Student: Distilroberta model
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
-                                                    model_type="roberta",
-                                                    model_name='distilroberta-base', # student model is also roberta
+                                                    model_type="xlmroberta",
+                                                    model_name='nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large', # student model is also roberta
                                                     args = model_args, 
                                                     num_labels=4,  
                                                     use_cuda=cuda_available)
@@ -198,3 +198,5 @@ if __name__ == "__main__":
 # LOGS:
 # 53456: 3e-06 lr
 # 53459: 5e-06 lr
+# 53571: 20, 5e-05, 32 batch size
+# 53573: smaller lr 1e-05
