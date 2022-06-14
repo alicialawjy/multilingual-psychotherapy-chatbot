@@ -128,13 +128,11 @@ def run_training(epoch,
                                                 optimizer='AdamW')            
 
     # Teacher: finetuned XLM-R model
-    # teacher_model = ClassificationModel(model_type="xlmroberta",
-    #                                 model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
-    #                                 args = model_args, 
-    #                                 num_labels=4,  
-    #                                 use_cuda=cuda_available)
-
-    teacher_model = pickle.load(open('saved_models/RoyBot/data.pkl','rb'))
+    teacher_model = ClassificationModel(model_type="xlmroberta",
+                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
+                                    args = model_args, 
+                                    num_labels=4,  
+                                    use_cuda=cuda_available)
 
     # Student: Distilroberta model
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
@@ -209,4 +207,5 @@ if __name__ == "__main__":
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
 #           loss: KLDiv(log_softmax(student),softmax(teacher)) + student_loss
-#      : new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
+# 53603: new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
+# 
