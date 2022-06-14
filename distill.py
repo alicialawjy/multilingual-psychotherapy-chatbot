@@ -90,7 +90,7 @@ class Distillation_ClassificationModel(ClassificationModel):
 
         # (iii) Cosine Loss
         loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
-        loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, torch.ones(teacher_softmax.size()[0]))
+        loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, (torch.ones(teacher_softmax.size()[0])).to(device))
 
         # Return Average Loss
         loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
