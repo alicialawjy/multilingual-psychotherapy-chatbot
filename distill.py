@@ -86,8 +86,8 @@ class Distillation_ClassificationModel(ClassificationModel):
         student_loss = outputs_student.loss
 
         # (ii) Teacher-Student Loss
-        loss_function = nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // 
-        loss_logits = (loss_function(student_logsoftmax, teacher_softmax)*self.args.temperature**2) # multiply temp**2 to scale it back.
+        loss_function = nn.CrossEntropyLoss().to(device) # nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // 
+        loss_logits = (loss_function(student_softmax, teacher_softmax)*self.args.temperature**2) # multiply temp**2 to scale it back.
 
         # (iii) Cosine Loss (based on DistilBERT)
         loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
@@ -215,4 +215,5 @@ if __name__ == "__main__":
 # 53604: new loss = cross_entropy instead of KLDiv and no * (self.args.temperature ** 2)
 # 53619: new loss = include cosineembeddingloss
 # 53624: KLDiv (remember to use log softmax!) + cosineembeddingloss
-# : Using values from DistilBERT - alpha_distil = 5.0; alpha_cos = 1.0; alpha_student = 2.0; temp = 4.0
+# 53632: Using values from DistilBERT - alpha_distil = 5.0; alpha_cos = 1.0; alpha_student = 2.0; temp = 4.0
+# 5363 : + change to CE
