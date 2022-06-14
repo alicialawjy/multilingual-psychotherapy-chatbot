@@ -86,8 +86,8 @@ class Distillation_ClassificationModel(ClassificationModel):
         student_loss = outputs_student.loss
 
         # (ii) Teacher-Student Loss
-        loss_function = nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // nn.CrossEntropyLoss().to(device) # 
-        loss_logits = loss_function(student_logsoftmax, teacher_softmax)
+        loss_function = nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // 
+        loss_logits = (loss_function(student_logsoftmax, teacher_softmax)*self.args.temperature**2)
 
         # (iii) Cosine Loss (based on DistilBERT)
         loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
@@ -134,7 +134,7 @@ def run_training(epoch,
 
     # Teacher: finetuned XLM-R model
     teacher_model = ClassificationModel(model_type="xlmroberta",
-                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
+                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr',
                                     args = model_args, 
                                     num_labels=4,  
                                     use_cuda=cuda_available)
@@ -214,5 +214,5 @@ if __name__ == "__main__":
 #           loss: KLDiv(log_softmax(student),softmax(teacher)) + student_loss
 # 53604: new loss = cross_entropy instead of KLDiv and no * (self.args.temperature ** 2)
 # 53619: new loss = include cosineembeddingloss
-# 53621: KLDiv + cosineembeddingloss
+# 53624: KLDiv (remember to use log softmax!) + cosineembeddingloss
 # 
