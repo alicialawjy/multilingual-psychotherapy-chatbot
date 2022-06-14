@@ -85,11 +85,11 @@ class Distillation_ClassificationModel(ClassificationModel):
         student_loss = outputs_student.loss
 
         # (ii) Teacher-Student Loss
-        loss_function = nn.CrossEntropyLoss() # KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
+        loss_function = nn.CrossEntropyLoss().to(device) # KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
         loss_logits = loss_function(student_softmax, teacher_softmax)
 
         # (iii) Cosine Loss
-        loss_cosine_function = nn.CosineEmbeddingLoss()
+        loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
         loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, torch.ones(teacher_softmax.size()[0]))
 
         # Return Average Loss
@@ -211,5 +211,5 @@ if __name__ == "__main__":
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
 #           loss: KLDiv(log_softmax(student),softmax(teacher)) + student_loss
-# 53604: new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
-#       : new loss = include cosineembeddingloss
+# 53604: new loss = cross_entropy instead of KLDiv and no * (self.args.temperature ** 2)
+# 53614: new loss = include cosineembeddingloss
