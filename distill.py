@@ -2,6 +2,7 @@
 from torch.utils.data import Dataset 
 import pandas as pd
 import torch
+import pickle
 import torch.nn as nn
 import torch.nn.functional as F
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
@@ -79,13 +80,12 @@ class Distillation_ClassificationModel(ClassificationModel):
         assert outputs_student.logits.size() == outputs_teacher.logits.size()
 
         # Soften probabilities and compute distillation loss
-        loss_function = nn.KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
+        loss_function = nn.CrossEntropyLoss() # KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
         loss_logits = (
             loss_function(
-                F.log_softmax(outputs_student.logits / self.args.temperature, dim=-1), # input
+                F.softmax(outputs_student.logits / self.args.temperature, dim=-1), # input - distribution in log space (KLDivLoss rules)
                 F.softmax(outputs_teacher.logits / self.args.temperature, dim=-1), # target
-            )
-            * (self.args.temperature ** 2)
+            ) #* (self.args.temperature ** 2)
         )
 
         # Return weighted student loss
@@ -109,7 +109,7 @@ def run_training(epoch,
 
     model_args = Distillation_ClassificationArgs(alpha=0.5,
                                                 temperature=4.0,
-                                                train_batch_size=32, # batch size 32
+                                                train_batch_size=8, # batch size 32
                                                 num_train_epochs=epoch,           
                                                 best_model_dir=best_model_dir,  
                                                 use_early_stopping = use_early_stopping,
@@ -128,11 +128,13 @@ def run_training(epoch,
                                                 optimizer='AdamW')            
 
     # Teacher: finetuned XLM-R model
-    teacher_model = ClassificationModel(model_type="xlmroberta",
-                                    model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
-                                    args = model_args, 
-                                    num_labels=4,  
-                                    use_cuda=cuda_available)
+    # teacher_model = ClassificationModel(model_type="xlmroberta",
+    #                                 model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr', 
+    #                                 args = model_args, 
+    #                                 num_labels=4,  
+    #                                 use_cuda=cuda_available)
+
+    teacher_model = pickle.load(open('saved_models/RoyBot/data.pkl','rb'))
 
     # Student: Distilroberta model
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
@@ -205,8 +207,6 @@ if __name__ == "__main__":
 
     
 # LOGS:
-# 53456: 3e-06 lr
-# 53459: 5e-06 lr
-# 53571: 20, 5e-05, 32 batch size
-# 53573: smaller lr 1e-05
-# 53577: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model
+# 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
+#           loss: KLDiv(log_softmax(student),softmax(teacher)) + student_loss
+#      : new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
