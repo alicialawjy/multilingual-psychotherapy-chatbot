@@ -87,14 +87,14 @@ class Distillation_ClassificationModel(ClassificationModel):
 
         # (ii) Teacher-Student Loss
         loss_function = nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // 
-        loss_logits = (loss_function(student_logsoftmax, teacher_softmax)*self.args.temperature**2)
+        loss_logits = (loss_function(student_logsoftmax, teacher_softmax)*self.args.temperature**2) # multiply temp**2 to scale it back.
 
         # (iii) Cosine Loss (based on DistilBERT)
         loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
         loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, (torch.ones(teacher_softmax.size()[0])).to(device))
 
-        # Return Average Loss
-        loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
+        # Return Loss
+        loss = 2*student_loss + 5*loss_logits + loss_cosine # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
         return (loss, *outputs_student[1:])
 
 def run_training(epoch, 
@@ -113,7 +113,7 @@ def run_training(epoch,
                 ):
 
     model_args = Distillation_ClassificationArgs(alpha=0.5,
-                                                temperature=4.0,
+                                                temperature=2.0,
                                                 train_batch_size=8, # batch size 32
                                                 num_train_epochs=epoch,           
                                                 best_model_dir=best_model_dir,  
@@ -215,4 +215,4 @@ if __name__ == "__main__":
 # 53604: new loss = cross_entropy instead of KLDiv and no * (self.args.temperature ** 2)
 # 53619: new loss = include cosineembeddingloss
 # 53624: KLDiv (remember to use log softmax!) + cosineembeddingloss
-# 
+# : Using values from DistilBERT - alpha_distil = 5.0; alpha_cos = 1.0; alpha_student = 2.0; temp = 4.0
