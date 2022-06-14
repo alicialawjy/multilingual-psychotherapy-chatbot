@@ -68,28 +68,32 @@ class Distillation_ClassificationModel(ClassificationModel):
         self.teacher.model.eval()
 
     def _calculate_loss(self, model, inputs, loss_fct, num_labels, args): 
-        # compute student output
-        outputs_student = model(**inputs)
-        student_loss = outputs_student.loss
+        # Compute outputs
+        outputs_student = model(**inputs) # student
 
-        # compute teacher output
         with torch.no_grad():
-            outputs_teacher = self.teacher.model(**inputs)
+            outputs_teacher = self.teacher.model(**inputs) # teacher
 
-        # assert size
+        # Assert size
         assert outputs_student.logits.size() == outputs_teacher.logits.size()
 
-        # Soften probabilities and compute distillation loss
-        loss_function = nn.CrossEntropyLoss() # KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
-        loss_logits = (
-            loss_function(
-                F.softmax(outputs_student.logits / self.args.temperature, dim=-1), # input - distribution in log space (KLDivLoss rules)
-                F.softmax(outputs_teacher.logits / self.args.temperature, dim=-1), # target
-            ) #* (self.args.temperature ** 2)
-        )
+        # Softmax 
+        teacher_softmax = F.softmax(outputs_teacher.logits / self.args.temperature, dim=-1) # teacher
+        student_softmax = F.softmax(outputs_student.logits / self.args.temperature, dim=-1) # student
 
-        # Return weighted student loss
-        loss = self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
+        # (i) Student Loss (Typical Classification Loss)
+        student_loss = outputs_student.loss
+
+        # (ii) Teacher-Student Loss
+        loss_function = nn.CrossEntropyLoss() # KLDivLoss(reduction="batchmean") # KLDivLoss: Kullback-Leibler divergence loss
+        loss_logits = loss_function(student_softmax, teacher_softmax)
+
+        # (iii) Cosine Loss
+        loss_cosine_function = nn.CosineEmbeddingLoss()
+        loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, torch.ones(teacher_softmax.size()[0]))
+
+        # Return Average Loss
+        loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
         return (loss, *outputs_student[1:])
 
 def run_training(epoch, 
@@ -207,5 +211,5 @@ if __name__ == "__main__":
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
 #           loss: KLDiv(log_softmax(student),softmax(teacher)) + student_loss
-# 53603: new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
-# 
+# 53604: new loss = cross_entopy instead of KLDiv and no * (self.args.temperature ** 2)
+#       : new loss = include cosineembeddingloss
