@@ -87,7 +87,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",  # tried xlmroberta, bert
                             model_name=model_name,      # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                             args = model_args,          # see above
-                            num_labels=3,               # 4 labels - sad, happy, fear, anger
+                            num_labels=3,               # 3 labels - no empathy, neutral, empathetic
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
