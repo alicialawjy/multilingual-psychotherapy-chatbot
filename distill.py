@@ -160,9 +160,11 @@ def evaluate(model, df_dataset):
 # Run distillation
 if __name__ == "__main__":
     ## Datasets
-    df_train = pd.read_csv('data/empathy/empatheticpersonas/balanced/EN_ZH_train.csv')
-    df_val = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_val.csv')
-    df_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+    df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+    df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+    df_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv')
 
     # Use GPU
     GPU = True
@@ -178,12 +180,12 @@ if __name__ == "__main__":
                                 learning_rate = 5e-05, #lr,
                                 output_dir = 'distillation/outputs/testing', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
                                 best_model_dir = 'distillation/best_model', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
-                                use_early_stopping = False,
+                                use_early_stopping = True,
                                 early_stopping_delta = 0.01,
                                 early_stopping_metric_minimize = False,
                                 early_stopping_patience = 5,
                                 evaluate_during_training_steps = 500, 
-                                evaluate_during_training=False,
+                                evaluate_during_training=True,
                                 train_df = df_train[['text','labels']],
                                 eval_df = df_val[['text','labels']]
                                 )
@@ -194,9 +196,17 @@ if __name__ == "__main__":
 
     print('Student Model Test Performance')
     evaluate(student_model, df_test)
+
+    print('Student Model Native Performance')
+    evaluate(student_model, df_native)
+
+    print('Student Model EN Performance')
+    evaluate(student_model, df_EN)
+
     
 # LOGS:
 # 53456: 3e-06 lr
 # 53459: 5e-06 lr
 # 53571: 20, 5e-05, 32 batch size
 # 53573: smaller lr 1e-05
+# 53577: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model
