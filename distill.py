@@ -66,7 +66,7 @@ class Distillation_ClassificationModel(ClassificationModel):
         self.teacher._move_model_to_device()
         self.teacher.model.eval()
 
-    def _calculate_loss(self, model, inputs, loss_fct, num_labels, args): #return_outputs is extra
+    def _calculate_loss(self, model, inputs, loss_fct, num_labels, args): 
         # compute student output
         outputs_student = model(**inputs)
         student_loss = outputs_student.loss
@@ -109,6 +109,7 @@ def run_training(epoch,
 
     model_args = Distillation_ClassificationArgs(alpha=0.5,
                                                 temperature=4.0,
+                                                train_batch_size=32, # batch size 32
                                                 num_train_epochs=epoch,           
                                                 best_model_dir=best_model_dir,  
                                                 use_early_stopping = use_early_stopping,
@@ -173,8 +174,8 @@ if __name__ == "__main__":
 
     cuda_available = torch.cuda.is_available()
 
-    student_model = run_training(epoch = 5, #epoch,
-                                learning_rate = 5e-06, #lr,
+    student_model = run_training(epoch = 20, #epoch,
+                                learning_rate = 5e-05, #lr,
                                 output_dir = 'distillation/outputs/testing', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
                                 best_model_dir = 'distillation/best_model', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
                                 use_early_stopping = False,
@@ -195,5 +196,5 @@ if __name__ == "__main__":
     evaluate(student_model, df_test)
     
 # LOGS:
-# 53440
-# 53456 
+# 53456: 3e-06 lr
+# 53459: 5e-06 lr
