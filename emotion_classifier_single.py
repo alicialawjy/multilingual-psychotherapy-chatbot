@@ -131,7 +131,7 @@ if __name__ == "__main__":
                           early_stopping_patience = 5,
                           evaluate_during_training_steps = 500, 
                           evaluate_during_training=True,  
-                          model_name = "nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model", 
+                          model_name='nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
                           train_df = df_train[['text','labels']],
                           eval_df = df_val[['text','labels']])
 
@@ -153,3 +153,8 @@ if __name__ == "__main__":
 
     print('No KD - EN Performance')
     evaluate(model_best, df_EN)
+
+# LOGS:
+# 53586: Emotion classification with no KD, 5e-05, 20 epoch, early stopping + eval during training
+# 
+
