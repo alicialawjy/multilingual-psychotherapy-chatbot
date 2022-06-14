@@ -87,7 +87,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",  # tried xlmroberta, bert
                             model_name=model_name,      # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
                             args = model_args,          # see above
-                            num_labels=4,               # 4 labels - sad, happy, fear, anger
+                            num_labels=3,               # 4 labels - sad, happy, fear, anger
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
@@ -177,4 +177,4 @@ if __name__ == "__main__":
   print(f'Complete test performance: {test_performance}')
 
 # LOGS:
-# Hyperparam Tune - 52987 (10 June Fri 2pm)
+# 
