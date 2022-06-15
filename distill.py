@@ -166,6 +166,7 @@ def evaluate(model, df_dataset):
 if __name__ == "__main__":
     ## Datasets
     df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/train_augmented.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
     df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
@@ -217,4 +218,4 @@ if __name__ == "__main__":
 # 53624: KLDiv (remember to use log softmax!) + cosineembeddingloss
 # 53632: Using values from DistilBERT - alpha_distil = 5.0; alpha_cos = 1.0; alpha_student = 2.0; temp = 4.0
 # 53634: + change to CE
-#     : Train with augmented data
+# 53803: Train with augmented data
