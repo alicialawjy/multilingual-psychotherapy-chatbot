@@ -165,7 +165,7 @@ def evaluate(model, df_dataset):
 # Run distillation
 if __name__ == "__main__":
     ## Datasets
-    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_withenpara_concatenating-method.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
     # df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
@@ -220,3 +220,4 @@ if __name__ == "__main__":
 # 53634: + change to CE
 # 53803: Train with augmented data
 # 53822: Train with shuffled aug data
+# 53834: Augmented data with roy's concatenating method
