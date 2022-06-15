@@ -41,7 +41,7 @@ def get_response(input_text, num_return_sequences):
 # Generate paraphrased sentences
 def main_para(train_df):
     train = train_df
-    train['text'] = train['text'].apply(get_response, num_return_sequences=3)
+    train['text'] = train['text'].apply(get_response, num_return_sequences=1)
     generated = train.explode('text')
     generated = generated.dropna()
     generated = generated.drop_duplicates()
@@ -102,6 +102,7 @@ if __name__ == "__main__":
     syn_and_para.to_csv('data/emotions/EmpatheticPersonas/Augmented/syn_and_para.csv')
 
 
-    
 
+# LOGS:
+# 53770: EN augmentation
 
