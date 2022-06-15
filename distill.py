@@ -94,7 +94,7 @@ class Distillation_ClassificationModel(ClassificationModel):
         loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, (torch.ones(teacher_softmax.size()[0])).to(device))
 
         # Return Loss
-        loss = 2*student_loss + 5*loss_logits + loss_cosine # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
+        loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
         return (loss, *outputs_student[1:])
 
 def run_training(epoch, 
@@ -165,7 +165,7 @@ def evaluate(model, df_dataset):
 # Run distillation
 if __name__ == "__main__":
     ## Datasets
-    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/train_augmented.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
     df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
@@ -216,4 +216,5 @@ if __name__ == "__main__":
 # 53619: new loss = include cosineembeddingloss
 # 53624: KLDiv (remember to use log softmax!) + cosineembeddingloss
 # 53632: Using values from DistilBERT - alpha_distil = 5.0; alpha_cos = 1.0; alpha_student = 2.0; temp = 4.0
-# 5363 : + change to CE
+# 53634: + change to CE
+#     : Train with augmented data
