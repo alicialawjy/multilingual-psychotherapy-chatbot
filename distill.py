@@ -165,8 +165,8 @@ def evaluate(model, df_dataset):
 # Run distillation
 if __name__ == "__main__":
     ## Datasets
-    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_withenpara_concatenating-method.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
-    # df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/full_zh_aug_only_by_concat&synreplace.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
     df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
@@ -220,4 +220,6 @@ if __name__ == "__main__":
 # 53634: + change to CE
 # 53803: Train with augmented data
 # 53822: Train with shuffled aug data
-# 53834: Augmented data with roy's concatenating method
+# 53834: Augmented data with roy's concatenating method (promising for ZH, bad for EN)
+# 53850: Add EN_para data (x good)
+#     : with syn replace (zh-aug only, no en)
