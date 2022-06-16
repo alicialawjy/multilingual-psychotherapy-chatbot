@@ -133,18 +133,18 @@ if __name__ == "__main__":
 
     # First Finetune (Twitter/ ECM)
     model = train_model(epoch = 10,
-                      best_model_dir= 'emotion_classifier/2-tuned-twitter/1st-tuning/best-twitter',
+                      best_model_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM',
                       use_early_stopping = True,
                       early_stopping_delta = 0.01,
                       early_stopping_metric_minimize = False,
                       early_stopping_patience = 20,
                       evaluate_during_training_steps = 1000, 
-                      evaluate_during_training= True,  # best model determined by validation set performance
-                      output_dir= 'emotion_classifier/2-tuned-twitter/1st-tuning/outputs',
+                      evaluate_during_training= True,  
+                      output_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/outputs',
                       learning_rate=3e-05,
                       model_name = "xlm-roberta-base",
-                      train_df = df_train_twitter[['text','labels']],
-                      eval_df = df_test_twitter[['text','labels']])
+                      train_df = df_train_ECM[['text','labels']],
+                      eval_df = df_test_ECM[['text','labels']])
 
     # Second Finetune (EP - Hyperparam Tune)
     best_F1 = 0
@@ -152,26 +152,26 @@ if __name__ == "__main__":
     for lr in learning_rate:
       model = train_model(epoch = 20,
                           learning_rate = lr,
-                          best_model_dir= 'emotion_classifier/2-tuned-twitter/2nd-tuning/best-final',
-                          output_dir = f'emotion_classifier/2-tuned-twitter/2nd-tuning/{str(lr)}', 
+                          best_model_dir= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final',
+                          output_dir = f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}', 
                           use_early_stopping = True,
                           early_stopping_delta = 0.01,
                           early_stopping_metric_minimize = False,
                           early_stopping_patience = 20,
                           evaluate_during_training_steps = 1000, 
                           evaluate_during_training= True, 
-                          model_name = 'emotion_classifier/2-tuned-twitter/1st-tuning/best-twitter', 
+                          model_name = 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM', 
                           train_df = df_train_EP[['text','labels']],
                           eval_df = df_val_EP[['text','labels']])
       
       # load the best model for this epoch
       best_model = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= 'emotion_classifier/2-tuned-twitter/2nd-tuning/best-final', 
+                                      model_name= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final', 
                                       num_labels=4, 
                                       use_cuda=cuda_available)
 
       # evaluate its performance
-      print(f'Twitter + EP (2-tuned) with learning rate {lr}')
+      print(f'ECM + EP (2-tuned) with learning rate {lr}')
       
       # Test Result
       print('Held-Out Test Set')
@@ -185,9 +185,9 @@ if __name__ == "__main__":
       print('EN Test Set')
       evaluate(best_model, df_EN)
 
-
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
 # 52660 for hyperparm tuning of twitter model on EP
 # 52666 for sentiment40k finetuning + hyperparam tune on EP
 # 52676 for single hyperparm tune on EP
+# 53981: twitter hypertune
