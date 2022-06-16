@@ -30,8 +30,6 @@ class OlidDataset(Dataset):
       texts.append(str(b['text']))
       labels.append(b['label'])
 
-    print(texts)
-    print(labels)
     encodings = self.tokenizer(
       texts,                        # what to encode
       return_tensors = 'pt',        # return pytorch tensors
@@ -108,18 +106,20 @@ def evaluate(model, df_dataset):
 # Run finetuning
 if __name__ == "__main__":
     ## Datasets
-    # # Emotion (Twitter) Dataset (First Tune)
-    # df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
-    # df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+    # Emotion (Twitter) Dataset (First Tune)
+    df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
+    df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
 
-    # # sentiment-40k Dataset (First Tune)
-    # df_train_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-    # df_test_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+    # ECM Dataset (First Tune)
+    df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
+    df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
     # EmpatheticPersonas (EP) Dataset (Second Tune)
     df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
     df_val_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+    df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+    df_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv')
 
     # Use GPU
     GPU = True
@@ -131,73 +131,60 @@ if __name__ == "__main__":
 
     cuda_available = torch.cuda.is_available()
 
-    #   # Begin First Finetune (Twitter)
-    #   model = train_model(epoch = 5,
-    #                     best_model_dir= 'emotion_classifier/best_model_twitter',
-    #                     use_early_stopping = True,
-    #                     early_stopping_delta = 0.01,
-    #                     early_stopping_metric_minimize = False,
-    #                     early_stopping_patience = 5,
-    #                     evaluate_during_training_steps = 1000, 
-    #                     evaluate_during_training=True,  # best model determined by validation set performance
-    #                     output_dir='emotion_classifier/outputs/first-tune-twitter',
-    #                     learning_rate=3e-05,
-    #                     model_name = "xlm-roberta-base",
-    #                     train_df = df_train_twitter[['text','labels']],
-    #                     eval_df = df_test_twitter[['text','labels']])
+    # First Finetune (Twitter/ ECM)
+    model = train_model(epoch = 10,
+                      best_model_dir= 'emotion_classifier/2-tuned-twitter/1st-tuning/best-twitter',
+                      use_early_stopping = True,
+                      early_stopping_delta = 0.01,
+                      early_stopping_metric_minimize = False,
+                      early_stopping_patience = 20,
+                      evaluate_during_training_steps = 1000, 
+                      evaluate_during_training= True,  # best model determined by validation set performance
+                      output_dir= 'emotion_classifier/2-tuned-twitter/1st-tuning/outputs',
+                      learning_rate=3e-05,
+                      model_name = "xlm-roberta-base",
+                      train_df = df_train_twitter[['text','labels']],
+                      eval_df = df_test_twitter[['text','labels']])
 
-    # # Begin First Finetune (Sentiment-40k)
-    # model = train_model(epoch = 5,
-    #                 best_model_dir= 'emotion_classifier/best_model_sentiment40k',
-    #                 use_early_stopping = True,
-    #                 early_stopping_delta = 0.01,
-    #                 early_stopping_metric_minimize = False,
-    #                 early_stopping_patience = 5,
-    #                 evaluate_during_training_steps = 1000, 
-    #                 evaluate_during_training=True,  
-    #                 output_dir='emotion_classifier/outputs/first-tune-sentiment40k',
-    #                 learning_rate=3e-05,
-    #                 model_name = "xlm-roberta-base",
-    #                 train_df = df_train_sentiment40k[['text','labels']],
-    #                 eval_df = df_test_sentiment40k[['text','labels']])
-
-    # Second Finetune (Hyperparam Tune)
+    # Second Finetune (EP - Hyperparam Tune)
     best_F1 = 0
-    best_epoch = 1
-    best_lr = 1e-05
+    learning_rate = [2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
+    for lr in learning_rate:
+      model = train_model(epoch = 20,
+                          learning_rate = lr,
+                          best_model_dir= 'emotion_classifier/2-tuned-twitter/2nd-tuning/best-final',
+                          output_dir = f'emotion_classifier/2-tuned-twitter/2nd-tuning/{str(lr)}', 
+                          use_early_stopping = True,
+                          early_stopping_delta = 0.01,
+                          early_stopping_metric_minimize = False,
+                          early_stopping_patience = 20,
+                          evaluate_during_training_steps = 1000, 
+                          evaluate_during_training= True, 
+                          model_name = 'emotion_classifier/2-tuned-twitter/1st-tuning/best-twitter', 
+                          train_df = df_train_EP[['text','labels']],
+                          eval_df = df_val_EP[['text','labels']])
+      
+      # load the best model for this epoch
+      best_model = ClassificationModel(model_type="xlmroberta", 
+                                      model_name= 'emotion_classifier/2-tuned-twitter/2nd-tuning/best-final', 
+                                      num_labels=4, 
+                                      use_cuda=cuda_available)
 
-    learning_rate = [1e-05, 2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
-    for epoch in range(1,11):
-        for lr in learning_rate:
-            model = train_model(epoch = epoch,
-                                output_dir = f'emotion_classifier/outputs/single-tune/{str(epoch)}/{str(lr)}', # f'emotion_classifier/outputs/second-tune-EP40k/{str(epoch)}/{str(lr)}',
-                                learning_rate = lr,
-                                model_name = "xlm-roberta-base", # 'emotion_classifier/best_model_sentiment40k',
-                                train_df = df_train_EP[['text','labels']],
-                                eval_df = df_val_EP[['text','labels']])
+      # evaluate its performance
+      print(f'Twitter + EP (2-tuned) with learning rate {lr}')
+      
+      # Test Result
+      print('Held-Out Test Set')
+      evaluate(best_model, df_test_EP)
 
-            # evaluate each epoch's performance
-            print(f'epoch {epoch}, learning rate {lr}')
-            F1 = evaluate(model, df_val_EP)
-            if F1 > best_F1:
-                best_F1 = F1
-                best_epoch = epoch
-                best_lr = lr
-                print(f'best model updated! lr:{best_lr} epoch: {best_epoch}')
+      # Native Result
+      print('Native Test Set')
+      evaluate(best_model, df_native)
 
-    # Load the best model
-    model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name=f'emotion_classifier/outputs/single-tune/{str(best_epoch)}/{str(best_lr)}', 
-                                    num_labels=4, 
-                                    use_cuda=cuda_available)
+      # EN Result
+      print('EN Test Set')
+      evaluate(best_model, df_EN)
 
-    # Check if same results obtained
-    print('Evaluating best model')
-    evaluate(model_best, df_val_EP)
-
-    # Evaluate saved model on test results
-    print('Best Model on Held-Out Test Set')
-    evaluate(model_best, df_test_EP)
 
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
