@@ -6,15 +6,15 @@ from sklearn.metrics import classification_report, confusion_matrix, f1_score
 
 # Convert dataframe into dictionary of text and labels
 def reader(df):
-    texts = df['text'].values.tolist()
-    labels = df['label'].values.tolist()
+  texts = df['text'].values.tolist()
+  labels = df['label'].values.tolist()
 
-    return {'texts':texts, 'labels':labels}
+  return {'texts':texts, 'labels':labels}
 
 # DataLoader
 class OlidDataset(Dataset):
   def __init__(self, tokenizer, input_set):
-    # input_set: dictionary version of the df
+    # input_set: dictionary version of the df from reader
     self.texts = input_set['texts']
     self.labels = input_set['labels']
     self.tokenizer = tokenizer
@@ -26,9 +26,7 @@ class OlidDataset(Dataset):
     for b in batch:
       texts.append(str(b['text']))
       labels.append(b['labels'])
-
-    print(texts)
-    print(labels)
+    
     encodings = self.tokenizer(
       texts,                        # what to encode
       return_tensors = 'pt',        # return pytorch tensors
@@ -114,47 +112,47 @@ if __name__ == "__main__":
     cuda_available = torch.cuda.is_available()
 
     # Datasets
-    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') # replaced with augmented data
     df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
     df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
     df_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv')
 
-    # # Train Model
-    # model = train_model(epoch = 20,
-    #                       learning_rate = 5e-05,
-    #                       output_dir = f'distillation/outputs/no-KD', 
-    #                       best_model_dir = f'distillation/best_model/no-KD', 
-    #                       use_early_stopping = True,
-    #                       early_stopping_delta = 0.01,
-    #                       early_stopping_metric_minimize = False,
-    #                       early_stopping_patience = 5,
-    #                       evaluate_during_training_steps = 500, 
-    #                       evaluate_during_training=True,  
-    #                       model_name='nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-    #                       train_df = df_train[['text','labels']],
-    #                       eval_df = df_val[['text','labels']])
+    # Train Model
+    model = train_model(epoch = 5, #20
+                          learning_rate = 3e-05, # 5e-05
+                          output_dir = 'emotion_classifier/outputs/augmented-data' , # f'distillation/outputs/no-KD'
+                          best_model_dir = 'emotion_classifier/outputs/augmented-data-best' , # f'distillation/best_model/no-KD'
+                          use_early_stopping = True,
+                          early_stopping_delta = 0.01,
+                          early_stopping_metric_minimize = False,
+                          early_stopping_patience = 5,
+                          evaluate_during_training_steps = 500, 
+                          evaluate_during_training=True,  
+                          model_name='emotion_classifier/best_model_sentiment40k', # 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large'
+                          train_df = df_train[['text','labels']],
+                          eval_df = df_val[['text','labels']])
 
     # load the best model
     model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name=f'distillation/best_model/no-KD',
+                                    model_name= 'emotion_classifier/outputs/augmented-data-best', #f'distillation/best_model/no-KD',
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
     # evaluate the best model
-    print('No KD - Validation')
+    print('Base Model w/ Augmented Data - Validation')
     evaluate(model_best, df_val)
 
-    print('No KD - Test')
+    print('Base Model w/ Augmented Data - Test')
     evaluate(model_best, df_test)
 
-    print('No KD - Native')
+    print('Base Model w/ Augmented Data - Native')
     evaluate(model_best, df_native)
 
-    print('No KD - EN Performance')
+    print('Base Model w/ Augmented Data - EN Performance')
     evaluate(model_best, df_EN)
 
 # LOGS:
-# 53587: Emotion classification with no KD, 5e-05, 20 epoch, early stopping + eval during training, batch size = 8
+# 53587 (training)/ 53589 (results): Emotion classification with no KD, 5e-05, 20 epoch, early stopping + eval during training, batch size = 8
 # 
 
