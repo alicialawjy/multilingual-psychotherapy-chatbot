@@ -212,19 +212,19 @@ if __name__ == "__main__":
 
     cuda_available = torch.cuda.is_available()
 
-    # Begin First Finetune (Sentiment-40k) w/ teacher
-    first_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                              model_name='emotion_classifier/best_model_sentiment40k', #'saved_models/2-tuned 5epoch 3e-05lr',
-                                              num_labels=4,  
-                                              use_cuda=cuda_available)
+    # # Begin First Finetune (Sentiment-40k) w/ teacher
+    # first_teacher_model = ClassificationModel(model_type="xlmroberta",
+    #                                           model_name='emotion_classifier/best_model_sentiment40k', #'saved_models/2-tuned 5epoch 3e-05lr',
+    #                                           num_labels=4,  
+    #                                           use_cuda=cuda_available)
 
     # Begin First Finetune (Sentiment-40k) 
-    student_model = run_training(teacher_model = first_teacher_model,
+    student_model = run_training(# teacher_model = first_teacher_model,
                                 student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
                                 epoch = 20, #epoch,
                                 learning_rate = 5e-05, #lr,
-                                output_dir = 'distillation/2-tune-2-teachers/1st-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
-                                best_model_dir = 'distillation/2-tune-2-teachers/1st-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
+                                output_dir = 'distillation/2-tune-1-teacher/1st-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
+                                best_model_dir = 'distillation/2-tune-1-teacher/1st-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
                                 use_early_stopping = True,
                                 early_stopping_delta = 0.01,
                                 early_stopping_metric_minimize = False,
@@ -242,11 +242,11 @@ if __name__ == "__main__":
                                               use_cuda=cuda_available)
 
     student_model = run_training(teacher_model = second_teacher_model,
-                                student_model_name = 'distillation/2-tune-2-teachers/1st-tune-best',
+                                student_model_name = 'distillation/2-tune-1-teacher/1st-tune-best',
                                 epoch = 20, #epoch,
                                 learning_rate = 5e-05, #lr,
-                                output_dir = 'distillation/2-tune-2-teachers/2nd-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
-                                best_model_dir = 'distillation/2-tune-2-teachers/2nd-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
+                                output_dir = 'distillation/2-tune-1-teacher/2nd-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
+                                best_model_dir = 'distillation/2-tune-1-teacher/2nd-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
                                 use_early_stopping = True,
                                 early_stopping_delta = 0.01,
                                 early_stopping_metric_minimize = False,
@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
     # load the best model
     model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'distillation/2-tune-2-teachers/2nd-tune-best', 
+                                    model_name= 'distillation/2-tune-1-teacher/2nd-tune-best', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
@@ -289,6 +289,6 @@ if __name__ == "__main__":
 # 53834: Augmented data with roy's concatenating method (promising for ZH, bad for EN)
 # 53850: Add EN_para data (x good)
 # 53902: with syn replace (zh-aug only, no en)
-# 53907: 2 teacher 2-tune KD w/ best aug dataset (terminated at 2 and 6 epochs) very undertuned
+# 53907/ 53918 (larger patience = 20): 2 teacher 2-tune KD w/ best aug dataset (terminated at 8 and 6 epochs) very undertuned
 # 53908/ 53917 (larger patience = 20): 1 teacher 2-tune KD w/ best aug dataset (terminated at 2 and 6 epochs)
 # 53913: 0 teacher 2-tune (no KD) w/ best aug dataset (terminated at 2 and x epochs)
