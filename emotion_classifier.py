@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # First Finetune (Twitter/ ECM)
     # For large datasets, recommended to use epoch 4 and batch size = 64
     model = train_model(epoch = 5, 
-                      best_model_dir= 'emotion_classifier/2-tuned-ECM-5e06/1st-tuning/best-ECM',
+                      best_model_dir= 'emotion_classifier/2-tuned-ECM-2e05/1st-tuning/best-ECM',
                       use_early_stopping = True,
                       early_stopping_delta = 0.0001,
                       early_stopping_metric = "eval_loss",
@@ -144,8 +144,8 @@ if __name__ == "__main__":
                       early_stopping_patience = 10,
                       evaluate_during_training_steps = 250, 
                       evaluate_during_training= True,  
-                      output_dir= 'emotion_classifier/2-tuned-ECM-5e06/1st-tuning/outputs',
-                      learning_rate= 5e-06,
+                      output_dir= 'emotion_classifier/2-tuned-ECM-2e05/1st-tuning/outputs',
+                      learning_rate= 2e-05,
                       model_name = "xlm-roberta-base",
                       train_df = df_train_ECM[['text','labels']],
                       eval_df = df_test_ECM[['text','labels']])
@@ -200,4 +200,5 @@ if __name__ == "__main__":
 # 54034: Tune with eval_loss instead of mcc. 
 #       ECM (lr=5e-05 STOPPED, TOO LARGE, epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
 # 54035: 34 with ECM(lr=3e-05, promising)
-# 54036: 34 with ECM(lr=1e-05, )
+# 54036: 34 with ECM(lr=1e-05, smaller better!)
+# 54048: 34 with ECM(lr=5e-06, )
