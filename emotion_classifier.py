@@ -163,7 +163,7 @@ if __name__ == "__main__":
                         early_stopping_metric_minimize = True, 
                         early_stopping_patience = 20, 
                         evaluate_during_training= True, 
-                        evaluate_during_training_steps = 60, 
+                        evaluate_during_training_steps = 115, 
                         train_batch_size = 8, 
                         train_df = df_train_EP[['text','labels']], 
                         eval_df = df_test_EP[['text','labels']])
@@ -210,4 +210,4 @@ if __name__ == "__main__":
 # 54082: 62 with batch size = 128, eval_steps = 20: too big cannot run
 # 54118: 2nd-finetuning with 5e-05
 # 54119: 2nd-finetuning with 3e-05
-# 541: 2nd-finetuning with 5e-05 with 20 patience
+# 54122: 2nd-finetuning with 5e-05 with 20 patience
