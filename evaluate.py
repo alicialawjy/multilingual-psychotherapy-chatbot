@@ -16,7 +16,7 @@ def evaluate(model, df_dataset):
 df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
 # models we want to test
-models = {'2e-05': 'emotion_classifier/2-tuned-ECM-2e05/1st-tuning/best-ECM'}
+models = {'9e-06': 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM'}
 #,
 #          '1e-05': 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM'}
 
