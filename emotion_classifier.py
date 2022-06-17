@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     # Second Finetune (EP - Hyperparam Tune)
     model = train_model(epoch = 20, 
-                        learning_rate = 3e-05, 
+                        learning_rate = 5e-05, 
                         model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
                         best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-3e05/best-final', 
                         output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-3e05/outputs', 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
                         early_stopping_delta = 0.0001, 
                         early_stopping_metric = "eval_loss", 
                         early_stopping_metric_minimize = True, 
-                        early_stopping_patience = 10, 
+                        early_stopping_patience = 20, 
                         evaluate_during_training= True, 
                         evaluate_during_training_steps = 60, 
                         train_batch_size = 8, 
@@ -175,7 +175,7 @@ if __name__ == "__main__":
                                     use_cuda=cuda_available)
 
     # evaluate its performance
-    print('2nd-tuning with learning rate 3e-05')
+    print('2nd-tuning with learning rate 5e-05')
     
     # Test Result
     print('Held-Out Test Set')
@@ -209,4 +209,5 @@ if __name__ == "__main__":
 # 54077: 62 with batch size = 64, eval_steps = 40: too big cannot run
 # 54082: 62 with batch size = 128, eval_steps = 20: too big cannot run
 # 54118: 2nd-finetuning with 5e-05
-# 
+# 54119: 2nd-finetuning with 3e-05
+# 541: 2nd-finetuning with 5e-05 with 20 patience
