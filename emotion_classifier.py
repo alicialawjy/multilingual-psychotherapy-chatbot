@@ -133,63 +133,61 @@ if __name__ == "__main__":
 
     cuda_available = torch.cuda.is_available()
 
-    # First Finetune (Twitter/ ECM)
-    # For large datasets, recommended to use epoch 4 and batch size = 64
-    model = train_model(epoch = 5, 
-                      best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/best-ECM',
-                      train_batch_size = 64,
-                      use_early_stopping = True,
-                      early_stopping_delta = 0.0001,
-                      early_stopping_metric = "eval_loss",
-                      early_stopping_metric_minimize = True,
-                      early_stopping_patience = 5,
-                      evaluate_during_training_steps = 40, 
-                      evaluate_during_training= True,  
-                      output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/outputs',
-                      learning_rate= 9e-06,
-                      model_name = "xlm-roberta-base",
-                      train_df = df_train_ECM[['text','labels']],
-                      eval_df = df_test_ECM[['text','labels']])
+    # First Finetune (ECM)
+    # Hyperparameter: train_batch_size = 8; 
+    # model = train_model(epoch = 5, 
+    #                   best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/best-ECM',
+    #                   train_batch_size = 64,
+    #                   use_early_stopping = True,
+    #                   early_stopping_delta = 0.0001,
+    #                   early_stopping_metric = "eval_loss",
+    #                   early_stopping_metric_minimize = True,
+    #                   early_stopping_patience = 5,
+    #                   evaluate_during_training_steps = 40, 
+    #                   evaluate_during_training= True,  
+    #                   output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/outputs',
+    #                   learning_rate= 9e-06,
+    #                   model_name = "xlm-roberta-base",
+    #                   train_df = df_train_ECM[['text','labels']],
+    #                   eval_df = df_test_ECM[['text','labels']])
 
-    # # Second Finetune (EP - Hyperparam Tune)
-    # best_F1 = 0
-    # learning_rate = [2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
-    # for lr in learning_rate:
-    #   model = train_model(epoch = 20,
-    #                       learning_rate = lr,
-    #                       best_model_dir= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final',
-    #                       output_dir = f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/outputs', 
-    #                       use_early_stopping = True,
-    #                       early_stopping_delta = 0.0001,
-    #                       early_stopping_metric = "eval_loss",
-    #                       early_stopping_metric_minimize = True,
-    #                       early_stopping_patience = 10,
-    #                       evaluate_during_training_steps = 50, 
-    #                       evaluate_during_training= True, 
-    #                       model_name = 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM', 
-    #                       train_df = df_train_EP[['text','labels']],
-    #                       eval_df = df_test_EP[['text','labels']])
-      
-    #   # load the best model for this epoch
-    #   best_model = ClassificationModel(model_type="xlmroberta", 
-    #                                   model_name= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final', 
-    #                                   num_labels=4, 
-    #                                   use_cuda=cuda_available)
+    # Second Finetune (EP - Hyperparam Tune)
+    model = train_model(epoch = 20, 
+                        learning_rate = 5e-05, 
+                        model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
+                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/best-final', 
+                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/outputs', 
+                        use_early_stopping = True, 
+                        early_stopping_delta = 0.0001, 
+                        early_stopping_metric = "eval_loss", 
+                        early_stopping_metric_minimize = True, 
+                        early_stopping_patience = 10, 
+                        evaluate_during_training= True, 
+                        evaluate_during_training_steps = 60, 
+                        train_batch_size = 8, 
+                        train_df = df_train_EP[['text','labels']], 
+                        eval_df = df_test_EP[['text','labels']])
 
-    #   # evaluate its performance
-    #   print(f'ECM + EP (2-tuned) with learning rate {lr}')
-      
-    #   # Test Result
-    #   print('Held-Out Test Set')
-    #   evaluate(best_model, df_test_EP)
+    # load the best model for this epoch
+    best_model = ClassificationModel(model_type="xlmroberta", 
+                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/best-final', 
+                                    num_labels=4, 
+                                    use_cuda=cuda_available)
 
-    #   # Native Result
-    #   print('Native Test Set')
-    #   evaluate(best_model, df_native)
+    # evaluate its performance
+    print('2nd-tuning with learning rate 5e-05')
+    
+    # Test Result
+    print('Held-Out Test Set')
+    evaluate(best_model, df_test_EP)
 
-    #   # EN Result
-    #   print('EN Test Set')
-    #   evaluate(best_model, df_EN)
+    # Native Result
+    print('Native Test Set')
+    evaluate(best_model, df_native)
+
+    # EN Result
+    print('EN Test Set')
+    evaluate(best_model, df_EN)
 
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
@@ -208,5 +206,5 @@ if __name__ == "__main__":
 # 54062: 34 with ECM(lr=9e-06, batch size = 8, BEST)
 # 54074: 62 with batch size = 16, eval_steps = 150
 # 54076: 62 with batch size = 32, eval_steps = 80
-# 54077: 62 with batch size = 64, eval_steps = 40
-# 54082: 62 with batch size = 128, eval_steps = 20
+# 54077: 62 with batch size = 64, eval_steps = 40: too big cannot run
+# 54082: 62 with batch size = 128, eval_steps = 20: too big cannot run
