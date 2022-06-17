@@ -56,6 +56,7 @@ def train_model(epoch,
                 train_df,
                 eval_df,
                 best_model_dir = 'outputs/best_model', 
+                train_batch_size = 8,
                 use_early_stopping=False, 
                 early_stopping_delta=0,
                 early_stopping_metric = "eval_loss",
@@ -65,7 +66,8 @@ def train_model(epoch,
                 evaluate_during_training=False  # best model determined by validation set performance
                 ):
 
-  model_args = ClassificationArgs(num_train_epochs=epoch,           
+  model_args = ClassificationArgs(num_train_epochs=epoch,  
+                                  train_batch_size=train_batch_size,         
                                   best_model_dir=best_model_dir,  
                                   use_early_stopping = use_early_stopping,
                                   early_stopping_delta = early_stopping_delta,
@@ -132,16 +134,18 @@ if __name__ == "__main__":
     cuda_available = torch.cuda.is_available()
 
     # First Finetune (Twitter/ ECM)
-    model = train_model(epoch = 10,
+    # For large datasets, recommended to use epoch 4 and batch size = 64
+    model = train_model(epoch = 5, 
                       best_model_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM',
                       use_early_stopping = True,
-                      early_stopping_delta = 0.005,
-                      early_stopping_metric_minimize = False,
-                      early_stopping_patience = 10,
-                      evaluate_during_training_steps = 1000, 
+                      early_stopping_delta = 0.0001,
+                      early_stopping_metric = "eval_loss",
+                      early_stopping_metric_minimize = True,
+                      early_stopping_patience = 5,
+                      evaluate_during_training_steps = 500, 
                       evaluate_during_training= True,  
                       output_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/outputs',
-                      learning_rate=3e-05,
+                      learning_rate=5e-05,
                       model_name = "xlm-roberta-base",
                       train_df = df_train_ECM[['text','labels']],
                       eval_df = df_test_ECM[['text','labels']])
@@ -155,14 +159,15 @@ if __name__ == "__main__":
                           best_model_dir= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final',
                           output_dir = f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}', 
                           use_early_stopping = True,
-                          early_stopping_delta = 0.005,
-                          early_stopping_metric_minimize = False,
+                          early_stopping_delta = 0.0001,
+                          early_stopping_metric = "eval_loss",
+                          early_stopping_metric_minimize = True,
                           early_stopping_patience = 10,
-                          evaluate_during_training_steps = 1000, 
+                          evaluate_during_training_steps = 500, 
                           evaluate_during_training= True, 
                           model_name = 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM', 
                           train_df = df_train_EP[['text','labels']],
-                          eval_df = df_val_EP[['text','labels']])
+                          eval_df = df_test_EP[['text','labels']])
       
       # load the best model for this epoch
       best_model = ClassificationModel(model_type="xlmroberta", 
@@ -190,5 +195,5 @@ if __name__ == "__main__":
 # 52660 for hyperparm tuning of twitter model on EP
 # 52666 for sentiment40k finetuning + hyperparam tune on EP
 # 52676 for single hyperparm tune on EP
-# 53981: twitter hypertune
-# 53982 (too high patience + delta): ECM hypertune
+# 53981: twitter hypertune (done with twitter)
+# 53982 (too high patience + delta)/ 54012: ECM hypertune
