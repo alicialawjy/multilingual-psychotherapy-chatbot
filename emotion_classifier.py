@@ -153,10 +153,10 @@ if __name__ == "__main__":
 
     # Second Finetune (EP - Hyperparam Tune)
     model = train_model(epoch = 20, 
-                        learning_rate = 5e-05, 
+                        learning_rate = 3e-05, 
                         model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/best-final', 
-                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/outputs', 
+                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-3e05/best-final', 
+                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-3e05/outputs', 
                         use_early_stopping = True, 
                         early_stopping_delta = 0.0001, 
                         early_stopping_metric = "eval_loss", 
@@ -170,12 +170,12 @@ if __name__ == "__main__":
 
     # load the best model for this epoch
     best_model = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-5e05/best-final', 
+                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-3e05/best-final', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
     # evaluate its performance
-    print('2nd-tuning with learning rate 5e-05')
+    print('2nd-tuning with learning rate 3e-05')
     
     # Test Result
     print('Held-Out Test Set')
@@ -208,3 +208,5 @@ if __name__ == "__main__":
 # 54076: 62 with batch size = 32, eval_steps = 80
 # 54077: 62 with batch size = 64, eval_steps = 40: too big cannot run
 # 54082: 62 with batch size = 128, eval_steps = 20: too big cannot run
+# 54118: 2nd-finetuning with 5e-05
+# 
