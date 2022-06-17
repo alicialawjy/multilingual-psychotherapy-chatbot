@@ -135,9 +135,9 @@ if __name__ == "__main__":
     model = train_model(epoch = 10,
                       best_model_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM',
                       use_early_stopping = True,
-                      early_stopping_delta = 0.01,
+                      early_stopping_delta = 0.005,
                       early_stopping_metric_minimize = False,
-                      early_stopping_patience = 20,
+                      early_stopping_patience = 10,
                       evaluate_during_training_steps = 1000, 
                       evaluate_during_training= True,  
                       output_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/outputs',
@@ -155,9 +155,9 @@ if __name__ == "__main__":
                           best_model_dir= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final',
                           output_dir = f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}', 
                           use_early_stopping = True,
-                          early_stopping_delta = 0.01,
+                          early_stopping_delta = 0.005,
                           early_stopping_metric_minimize = False,
-                          early_stopping_patience = 20,
+                          early_stopping_patience = 10,
                           evaluate_during_training_steps = 1000, 
                           evaluate_during_training= True, 
                           model_name = 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM', 
@@ -191,3 +191,4 @@ if __name__ == "__main__":
 # 52666 for sentiment40k finetuning + hyperparam tune on EP
 # 52676 for single hyperparm tune on EP
 # 53981: twitter hypertune
+# 53982 (too high patience + delta): ECM hypertune
