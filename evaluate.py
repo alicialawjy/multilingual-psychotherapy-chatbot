@@ -16,8 +16,9 @@ def evaluate(model, df_dataset):
 df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
 # models we want to test
-models = {'3e-05': 'emotion_classifier/2nd-run/2-tuned-ECM/1st-tuning/best-ECM',
-          '1e-05': 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM'}
+models = {'2e-05': 'emotion_classifier/2-tuned-ECM-2e05/1st-tuning/best-ECM'}
+#,
+#          '1e-05': 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM'}
 
 for lr,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -83,3 +84,4 @@ for lr,model_name in models.items():
 #   5, 3e-05: 52826
 # 53012: single best (5 3e-05) results
 # 53074: ECM best (5 3e-05)
+# 54045: ECM (3e-05 and 1e-05)
