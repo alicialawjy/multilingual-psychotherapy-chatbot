@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # First Finetune (Twitter/ ECM)
     # For large datasets, recommended to use epoch 4 and batch size = 64
     model = train_model(epoch = 5, 
-                      best_model_dir= 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM',
+                      best_model_dir= 'emotion_classifier/2-tuned-ECM-5e06/1st-tuning/best-ECM',
                       use_early_stopping = True,
                       early_stopping_delta = 0.0001,
                       early_stopping_metric = "eval_loss",
@@ -144,51 +144,51 @@ if __name__ == "__main__":
                       early_stopping_patience = 10,
                       evaluate_during_training_steps = 250, 
                       evaluate_during_training= True,  
-                      output_dir= 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/outputs',
-                      learning_rate= 1e-05,
+                      output_dir= 'emotion_classifier/2-tuned-ECM-5e06/1st-tuning/outputs',
+                      learning_rate= 5e-06,
                       model_name = "xlm-roberta-base",
                       train_df = df_train_ECM[['text','labels']],
                       eval_df = df_test_ECM[['text','labels']])
 
-    # Second Finetune (EP - Hyperparam Tune)
-    best_F1 = 0
-    learning_rate = [2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
-    for lr in learning_rate:
-      model = train_model(epoch = 20,
-                          learning_rate = lr,
-                          best_model_dir= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final',
-                          output_dir = f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/outputs', 
-                          use_early_stopping = True,
-                          early_stopping_delta = 0.0001,
-                          early_stopping_metric = "eval_loss",
-                          early_stopping_metric_minimize = True,
-                          early_stopping_patience = 10,
-                          evaluate_during_training_steps = 50, 
-                          evaluate_during_training= True, 
-                          model_name = 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM', 
-                          train_df = df_train_EP[['text','labels']],
-                          eval_df = df_test_EP[['text','labels']])
+    # # Second Finetune (EP - Hyperparam Tune)
+    # best_F1 = 0
+    # learning_rate = [2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
+    # for lr in learning_rate:
+    #   model = train_model(epoch = 20,
+    #                       learning_rate = lr,
+    #                       best_model_dir= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final',
+    #                       output_dir = f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/outputs', 
+    #                       use_early_stopping = True,
+    #                       early_stopping_delta = 0.0001,
+    #                       early_stopping_metric = "eval_loss",
+    #                       early_stopping_metric_minimize = True,
+    #                       early_stopping_patience = 10,
+    #                       evaluate_during_training_steps = 50, 
+    #                       evaluate_during_training= True, 
+    #                       model_name = 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM', 
+    #                       train_df = df_train_EP[['text','labels']],
+    #                       eval_df = df_test_EP[['text','labels']])
       
-      # load the best model for this epoch
-      best_model = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final', 
-                                      num_labels=4, 
-                                      use_cuda=cuda_available)
+    #   # load the best model for this epoch
+    #   best_model = ClassificationModel(model_type="xlmroberta", 
+    #                                   model_name= f'emotion_classifier/2-tuned-ECM-1e05/2nd-tuning/{str(lr)}/best-final', 
+    #                                   num_labels=4, 
+    #                                   use_cuda=cuda_available)
 
-      # evaluate its performance
-      print(f'ECM + EP (2-tuned) with learning rate {lr}')
+    #   # evaluate its performance
+    #   print(f'ECM + EP (2-tuned) with learning rate {lr}')
       
-      # Test Result
-      print('Held-Out Test Set')
-      evaluate(best_model, df_test_EP)
+    #   # Test Result
+    #   print('Held-Out Test Set')
+    #   evaluate(best_model, df_test_EP)
 
-      # Native Result
-      print('Native Test Set')
-      evaluate(best_model, df_native)
+    #   # Native Result
+    #   print('Native Test Set')
+    #   evaluate(best_model, df_native)
 
-      # EN Result
-      print('EN Test Set')
-      evaluate(best_model, df_EN)
+    #   # EN Result
+    #   print('EN Test Set')
+    #   evaluate(best_model, df_EN)
 
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
@@ -200,4 +200,4 @@ if __name__ == "__main__":
 # 54034: Tune with eval_loss instead of mcc. 
 #       ECM (lr=5e-05 STOPPED, TOO LARGE, epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
 # 54035: 34 with ECM(lr=3e-05, promising)
-# 540
+# 54036: 34 with ECM(lr=1e-05, )
