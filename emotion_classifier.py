@@ -108,9 +108,9 @@ def evaluate(model, df_dataset):
 # Run finetuning
 if __name__ == "__main__":
     ## Datasets
-    # Emotion (Twitter) Dataset (First Tune)
-    df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
-    df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+    # # Emotion (Twitter) Dataset (First Tune)
+    # df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
+    # df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
 
     # ECM Dataset (First Tune)
     df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
@@ -197,3 +197,5 @@ if __name__ == "__main__":
 # 52676 for single hyperparm tune on EP
 # 53981: twitter hypertune (done with twitter)
 # 53982 (too high patience + delta)/ 54012: ECM hypertune
+# 54022: Tune with eval_loss instead of mcc. 
+#       ECM (epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
