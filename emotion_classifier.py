@@ -136,16 +136,16 @@ if __name__ == "__main__":
     # First Finetune (Twitter/ ECM)
     # For large datasets, recommended to use epoch 4 and batch size = 64
     model = train_model(epoch = 5, 
-                      best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-128/best-ECM',
-                      train_batch_size = 128,
+                      best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/best-ECM',
+                      train_batch_size = 64,
                       use_early_stopping = True,
                       early_stopping_delta = 0.0001,
                       early_stopping_metric = "eval_loss",
                       early_stopping_metric_minimize = True,
                       early_stopping_patience = 5,
-                      evaluate_during_training_steps = 20, 
+                      evaluate_during_training_steps = 40, 
                       evaluate_during_training= True,  
-                      output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-128/outputs',
+                      output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/outputs',
                       learning_rate= 9e-06,
                       model_name = "xlm-roberta-base",
                       train_df = df_train_ECM[['text','labels']],
@@ -209,4 +209,4 @@ if __name__ == "__main__":
 # 54074: 62 with batch size = 16, eval_steps = 150
 # 54076: 62 with batch size = 32, eval_steps = 80
 # 54077: 62 with batch size = 64, eval_steps = 40
-# 540: 62 with batch size = 128, eval_steps = 20
+# 54082: 62 with batch size = 128, eval_steps = 20
