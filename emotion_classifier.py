@@ -117,11 +117,11 @@ if __name__ == "__main__":
     df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
     # EmpatheticPersonas (EP) Dataset (Second Tune)
-    df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
+    df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv')
     df_val_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
     df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
     df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-    df_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv')
+    df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
     # Use GPU
     GPU = True
@@ -141,11 +141,11 @@ if __name__ == "__main__":
                       early_stopping_delta = 0.0001,
                       early_stopping_metric = "eval_loss",
                       early_stopping_metric_minimize = True,
-                      early_stopping_patience = 5,
+                      early_stopping_patience = 10,
                       evaluate_during_training_steps = 250, 
                       evaluate_during_training= True,  
                       output_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/outputs',
-                      learning_rate=5e-05,
+                      learning_rate= 5e-05,
                       model_name = "xlm-roberta-base",
                       train_df = df_train_ECM[['text','labels']],
                       eval_df = df_test_ECM[['text','labels']])
@@ -156,8 +156,8 @@ if __name__ == "__main__":
     for lr in learning_rate:
       model = train_model(epoch = 20,
                           learning_rate = lr,
-                          best_model_dir= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final',
-                          output_dir = f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}', 
+                          best_model_dir= f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}/best-final',
+                          output_dir = f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}/outputs', 
                           use_early_stopping = True,
                           early_stopping_delta = 0.0001,
                           early_stopping_metric = "eval_loss",
@@ -171,7 +171,7 @@ if __name__ == "__main__":
       
       # load the best model for this epoch
       best_model = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= 'emotion_classifier/2-tuned-ECM/2nd-tuning/best-final', 
+                                      model_name= f'emotion_classifier/2-tuned-ECM/2nd-tuning/{str(lr)}/best-final', 
                                       num_labels=4, 
                                       use_cuda=cuda_available)
 
@@ -196,6 +196,6 @@ if __name__ == "__main__":
 # 52666 for sentiment40k finetuning + hyperparam tune on EP
 # 52676 for single hyperparm tune on EP
 # 53981: twitter hypertune (done with twitter)
-# 53982 (too high patience + delta)/ 54012: ECM hypertune
-# 54023: Tune with eval_loss instead of mcc. 
+# 53982 (too high patience + delta): ECM hypertune
+# 54025: Tune with eval_loss instead of mcc. 
 #       ECM (epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
