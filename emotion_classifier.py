@@ -142,7 +142,7 @@ if __name__ == "__main__":
                       early_stopping_metric = "eval_loss",
                       early_stopping_metric_minimize = True,
                       early_stopping_patience = 5,
-                      evaluate_during_training_steps = 500, 
+                      evaluate_during_training_steps = 250, 
                       evaluate_during_training= True,  
                       output_dir= 'emotion_classifier/2-tuned-ECM/1st-tuning/outputs',
                       learning_rate=5e-05,
@@ -163,7 +163,7 @@ if __name__ == "__main__":
                           early_stopping_metric = "eval_loss",
                           early_stopping_metric_minimize = True,
                           early_stopping_patience = 10,
-                          evaluate_during_training_steps = 500, 
+                          evaluate_during_training_steps = 50, 
                           evaluate_during_training= True, 
                           model_name = 'emotion_classifier/2-tuned-ECM/1st-tuning/best-ECM', 
                           train_df = df_train_EP[['text','labels']],
@@ -197,5 +197,5 @@ if __name__ == "__main__":
 # 52676 for single hyperparm tune on EP
 # 53981: twitter hypertune (done with twitter)
 # 53982 (too high patience + delta)/ 54012: ECM hypertune
-# 54022: Tune with eval_loss instead of mcc. 
+# 54023: Tune with eval_loss instead of mcc. 
 #       ECM (epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
