@@ -153,10 +153,10 @@ if __name__ == "__main__":
 
     # Second Finetune (EP - Hyperparam Tune)
     model = train_model(epoch = 20, 
-                        learning_rate = 1e-06, 
+                        learning_rate = 9e-06, 
                         model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e06/best-final', 
-                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e06/outputs', 
+                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-9e06/best-final', 
+                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-9e06/outputs', 
                         use_early_stopping = True, 
                         early_stopping_delta = 0.0001, 
                         early_stopping_metric = "eval_loss", 
@@ -170,12 +170,12 @@ if __name__ == "__main__":
 
     # load the best model for this epoch
     best_model = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e06/best-final', 
+                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-9e06/best-final', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
     # evaluate its performance
-    print('2nd-tuning with learning rate 1e-06')
+    print('2nd-tuning with learning rate 9e-06')
     
     # Test Result
     print('Held-Out Test Set')
@@ -217,3 +217,4 @@ if __name__ == "__main__":
 # 54151: 28 with 5e-05
 # 54153: 28 with 7e-05
 # 54159: 28 with 5e-06
+# 54160: 28 with 1e-06
