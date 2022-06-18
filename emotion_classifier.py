@@ -155,22 +155,22 @@ if __name__ == "__main__":
     model = train_model(epoch = 20, 
                         learning_rate = 2e-05, 
                         model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/best-final', 
-                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/outputs', 
+                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
+                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/outputs', 
                         use_early_stopping = True, 
                         early_stopping_delta = 0.0001, 
                         early_stopping_metric = "eval_loss", 
                         early_stopping_metric_minimize = True, 
                         early_stopping_patience = 10, 
                         evaluate_during_training= True, 
-                        evaluate_during_training_steps = 30, 
-                        train_batch_size = 32, 
+                        evaluate_during_training_steps = 60, 
+                        train_batch_size = 16, 
                         train_df = df_train_EP[['text','labels']], 
                         eval_df = df_test_EP[['text','labels']])
 
     # load the best model for this epoch
     best_model = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/best-final', 
+                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
@@ -221,4 +221,4 @@ if __name__ == "__main__":
 # 54165: 28 with 9e-06
 # 54170: 28 with 2e-05
 # 54244: 170 with batch size = 16
-# 54245: 170 with batch size = 32
+# 54247: 170 with batch size = 32
