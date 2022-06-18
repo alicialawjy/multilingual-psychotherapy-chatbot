@@ -97,55 +97,58 @@ class Distillation_ClassificationModel(ClassificationModel):
         loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
         return (loss, *outputs_student[1:])
 
-def run_training(student_model_name,
-                epoch, 
-                output_dir,
+def run_training(epoch, 
                 learning_rate,
+                alpha,
+                temperature,
+                output_dir,
+                best_model_dir, 
                 train_df,
                 eval_df,
+                student_model_name,
                 teacher_model = None,
-                best_model_dir = 'outputs/best_model', 
                 use_early_stopping=False, 
                 early_stopping_delta=0,
                 early_stopping_metric = "eval_loss",
                 early_stopping_metric_minimize = True,
-                early_stopping_patience = 3,
-                evaluate_during_training_steps = 2000, 
-                evaluate_during_training=False  
+                early_stopping_patience = 10,
+                evaluate_during_training=False,
+                evaluate_during_training_steps = 100, 
+                train_batch_size = 8
                 ):
 
-  # if there's a teacher model (ie. Knowledge Distillation), use Distillation Class
+  # If there's a teacher model (ie. Knowledge Distillation), use Distillation Class
   if teacher_model:
     print('Teacher Found, running training with Knowledge Distillation.')
-    model_args = Distillation_ClassificationArgs(alpha=0.5,
-                                                temperature=2.0,
-                                                train_batch_size=8, # batch size 32
-                                                num_train_epochs=epoch,           
-                                                best_model_dir=best_model_dir,  
+    model_args = Distillation_ClassificationArgs(num_train_epochs=epoch,
+                                                learning_rate=learning_rate,  
+                                                alpha=alpha,
+                                                temperature=temperature,
+                                                output_dir = output_dir,           
+                                                best_model_dir=best_model_dir, 
+                                                train_batch_size=train_batch_size,
+                                                evaluate_during_training_steps = evaluate_during_training_steps, 
                                                 use_early_stopping = use_early_stopping,
                                                 early_stopping_delta = early_stopping_delta,
                                                 early_stopping_metric = early_stopping_metric,
                                                 early_stopping_metric_minimize = early_stopping_metric_minimize,
                                                 early_stopping_patience = early_stopping_patience,
-                                                evaluate_during_training_steps = evaluate_during_training_steps, 
                                                 evaluate_during_training=evaluate_during_training,
                                                 no_cache=True,                  
                                                 save_steps=-1,                  
-                                                save_model_every_epoch=False,
-                                                output_dir = output_dir,
-                                                overwrite_output_dir = True,
-                                                learning_rate=learning_rate,    
+                                                save_model_every_epoch=True,
+                                                overwrite_output_dir = True,  
                                                 optimizer='AdamW')            
 
     # Student:
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
                                                     model_type="xlmroberta",
-                                                    model_name= student_model_name, # 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large'
+                                                    model_name= student_model_name, 
                                                     args = model_args, 
                                                     num_labels=4,  
                                                     use_cuda=cuda_available)
 
-  # if no teacher (i.e: no KD), use normal Classification Model class
+  # If no teacher (i.e: no KD), use normal Classification Model class
   else:
     print('No Teacher Found, running training without Knowledge Distillation.')
     model_args = Distillation_ClassificationArgs(num_train_epochs=epoch,           
@@ -189,92 +192,103 @@ def evaluate(model, df_dataset):
 
 # Run distillation
 if __name__ == "__main__":
-    ## Datasets
-    # sentiment-40k Dataset (First Tune)
-    df_train_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-    df_test_sentiment40k = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+  ## Datasets
+  # sentiment-40k Dataset (First Tune)
+  df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
+  df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
-    # EmpatheticPersonas (EP) Dataset (Second Tune)
-    df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') #'data/emotions/EmpatheticPersonas/EN-ZH/emotionlabeled_train.csv')
-    df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
-    df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-    df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-    df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-    df_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv')
+  # EmpatheticPersonas (EP) Dataset (Second Tune)
+  df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') 
+  df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
+  df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+  df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+  df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+  df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
-    # Use GPU
-    GPU = True
-    if GPU:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device("cpu")
-    print(f"Using {device}")
+  # Use GPU
+  GPU = True
+  if GPU:
+      device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+  else:
+      device = torch.device("cpu")
+  print(f"Using {device}")
 
-    cuda_available = torch.cuda.is_available()
+  cuda_available = torch.cuda.is_available()
 
-    # # Begin First Finetune (Sentiment-40k) w/ teacher
-    # first_teacher_model = ClassificationModel(model_type="xlmroberta",
-    #                                           model_name='emotion_classifier/best_model_sentiment40k', #'saved_models/2-tuned 5epoch 3e-05lr',
-    #                                           num_labels=4,  
-    #                                           use_cuda=cuda_available)
+  # Begin First Finetune (ECM)
+  # Teacher Models
+  first_teacher_model = ClassificationModel(model_type="xlmroberta",
+                                            model_name='emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', # First Model - ECM 1st-tune
+                                            num_labels=4,  
+                                            use_cuda=cuda_available)
 
-    # # Begin First Finetune (Sentiment-40k) 
-    # student_model = run_training(# teacher_model = first_teacher_model,
-    #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-    #                             epoch = 20, #epoch,
-    #                             learning_rate = 5e-05, #lr,
-    #                             output_dir = 'distillation/2-tune-1-teacher/1st-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
-    #                             best_model_dir = 'distillation/2-tune-1-teacher/1st-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
-    #                             use_early_stopping = True,
-    #                             early_stopping_delta = 0.01,
-    #                             early_stopping_metric_minimize = False,
-    #                             early_stopping_patience = 20,
-    #                             evaluate_during_training_steps = 500, 
-    #                             evaluate_during_training=True,
-    #                             train_df = df_train_sentiment40k[['text','labels']],
-    #                             eval_df = df_test_sentiment40k[['text','labels']]
-    #                              )
+  second_teacher_model = ClassificationModel(model_type="xlmroberta",
+                                            model_name='emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/best-final', # Second Model - EP 2nd-tune
+                                            num_labels=4,  
+                                            use_cuda=cuda_available)
 
-    # Second Finetune (EP) 
-    # second_teacher_model = ClassificationModel(model_type="xlmroberta",
-    #                                           model_name='emotion_classifier/outputs/second-tune-EP40k/5/3e-05', #'saved_models/2-tuned 5epoch 3e-05lr',
-    #                                           num_labels=4,  
-    #                                           use_cuda=cuda_available)
+  # Student Models
+  # First Finetuning (ECM)
+  student_model = run_training(epoch = 20, 
+                              learning_rate = 9e-06,
+                              alpha = 0.5,
+                              temperature = 4,
+                              output_dir = 'distill/2-tune-0-teacher/1st-tune/outputs', 
+                              best_model_dir = 'distill/2-tune-0-teacher/1st-tune/best-model', 
+                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+                              teacher_model = None, # first_teacher_model
+                              use_early_stopping = True,
+                              early_stopping_delta = 0.0001,
+                              early_stopping_metric = "eval_loss",
+                              early_stopping_metric_minimize = True,
+                              early_stopping_patience = 10,
+                              evaluate_during_training=True,
+                              evaluate_during_training_steps = 250, 
+                              train_batch_size = 8, 
+                              train_df = df_train_ECM[['text','labels']],
+                              eval_df = df_test_ECM[['text','labels']]
+                              )
 
-    student_model = run_training(# teacher_model = second_teacher_model,
-                                student_model_name = 'distillation/2-tune-1-teacher/1st-tune-best',
-                                epoch = 20, #epoch,
-                                learning_rate = 5e-05, #lr,
-                                output_dir = 'distillation/2-tune-baseline/2nd-tune/outputs', #f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
-                                best_model_dir = 'distillation/2-tune-baseline/2nd-tune-best', #f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
-                                use_early_stopping = True,
-                                early_stopping_delta = 0.01,
-                                early_stopping_metric_minimize = False,
-                                early_stopping_patience = 20,
-                                evaluate_during_training_steps = 500, 
-                                evaluate_during_training=True,
-                                train_df = df_train[['text','labels']],
-                                eval_df = df_val[['text','labels']]
-                                )
+  # Second Finetuning (EP) 
+  student_model = run_training(epoch = 20, 
+                              learning_rate = 2e-05,
+                              alpha = 0.5,
+                              temperature = 4,
+                              output_dir = 'distill/2-tune-0-teacher/2nd-tune/outputs', 
+                              best_model_dir = 'distill/2-tune-0-teacher/2nd-tune/best-model', 
+                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/best-model',
+                              teacher_model = None, # second_teacher_model
+                              use_early_stopping = True,
+                              early_stopping_delta = 0.0001,
+                              early_stopping_metric = "eval_loss",
+                              early_stopping_metric_minimize = True,
+                              early_stopping_patience = 10,
+                              evaluate_during_training=True,
+                              evaluate_during_training_steps = 115, 
+                              train_batch_size = 8, 
+                              train_df = df_train[['text','labels']],
+                              eval_df = df_val[['text','labels']]
+                              )
 
-    # load the best model
-    model_best = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'distillation/2-tune-baseline/2nd-tune-best', 
-                                    num_labels=4, 
-                                    use_cuda=cuda_available)
+  # load the best model
+  model_best = ClassificationModel(model_type="xlmroberta", 
+                                  model_name= 'distill/2-tune-0-teacher/2nd-tune/best-model', 
+                                  num_labels=4, 
+                                  use_cuda=cuda_available)
 
-    # evaluate
-    print('KD w/ 2Tuned 2 Teacher - Validation Performance')
-    evaluate(model_best, df_val)
+  # evaluate
+  print('No Knowledge Distillation: 2 Tune 0 Teacher')
+  print('Validation Performance')
+  evaluate(model_best, df_val)
 
-    print('KD w/ 2Tuned 2 Teacher -  Test Performance')
-    evaluate(model_best, df_test)
+  print('Test Performance')
+  evaluate(model_best, df_test)
 
-    print('KD w/ 2Tuned 2 Teacher -  Native Performance')
-    evaluate(model_best, df_native)
+  print('Native Performance')
+  evaluate(model_best, df_native)
 
-    print('KD w/ 2Tuned 2 Teacher -  EN Performance')
-    evaluate(model_best, df_EN)
+  print('EN Performance')
+  evaluate(model_best, df_EN)
 
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
@@ -289,6 +303,7 @@ if __name__ == "__main__":
 # 53834: Augmented data with roy's concatenating method (promising for ZH, bad for EN)
 # 53850: Add EN_para data (x good)
 # 53902: with syn replace (zh-aug only, no en)
-# 53907/ 53918 (larger patience = 20): 2 teacher 2-tune KD w/ best aug dataset (terminated at 8 and 6 epochs) very undertuned
+# 53907/ 53918 (larger patience = 20): 2 teacher 2-tune KD w/ best aug dataset (terminated at 2/8 and 6 epochs) very undertuned
 # 53908/ 53922 (larger patience = 20): 1 teacher 2-tune KD w/ best aug dataset (terminated at 2 and 6 epochs)
-# 53913: 0 teacher 2-tune (no KD) w/ best aug dataset (terminated at 2 and x epochs)
+# 53913/ 53924 (using 53922's longer tuned ECM model): 0 teacher 2-tune (no KD) w/ best aug dataset (terminated at 2 and x epochs)
+##### RESTARTING WITH NEW MODEL #####
