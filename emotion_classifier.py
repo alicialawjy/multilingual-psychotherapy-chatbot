@@ -155,8 +155,8 @@ if __name__ == "__main__":
     model = train_model(epoch = 20, 
                         learning_rate = 2e-05, 
                         model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
-                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/outputs', 
+                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/best-final', 
+                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/outputs', 
                         use_early_stopping = True, 
                         early_stopping_delta = 0.0001, 
                         early_stopping_metric = "eval_loss", 
@@ -164,13 +164,13 @@ if __name__ == "__main__":
                         early_stopping_patience = 10, 
                         evaluate_during_training= True, 
                         evaluate_during_training_steps = 115, 
-                        train_batch_size = 8, 
+                        train_batch_size = 32, 
                         train_df = df_train_EP[['text','labels']], 
                         eval_df = df_test_EP[['text','labels']])
 
     # load the best model for this epoch
     best_model = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
+                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-32/best-final', 
                                     num_labels=4, 
                                     use_cuda=cuda_available)
 
@@ -220,3 +220,5 @@ if __name__ == "__main__":
 # 54160: 28 with 1e-06
 # 54165: 28 with 9e-06
 # 54170: 28 with 2e-05
+# 54244: 170 with batch size = 16
+# 54243: 170 with batch size = 32
