@@ -19,7 +19,7 @@ df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv
 df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'1e-05': 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e05/outputs/checkpoint-1265'}
+models = {'1e-06': 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e06/outputs/checkpoint-2415'}
 #,
 #          '1e-05': 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM'}
 
@@ -96,4 +96,4 @@ for lr,model_name in models.items():
 # 54045: ECM (3e-05 and 1e-05)
 # 54066: ECM 9e-06 Batch Size 8
 # 54115: ECM 9e-06 Batch Size 32
-# 54144: 2nd tune 1e-06 
+# 54146: 2nd tune 1e-06 
