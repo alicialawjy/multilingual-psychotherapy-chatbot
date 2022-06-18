@@ -13,7 +13,10 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+# df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
 models = {'1e-05': 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e05/outputs/checkpoint-1265'}
@@ -30,7 +33,13 @@ for lr,model_name in models.items():
                                   use_cuda=cuda_available)
 
   print(f'ECM finetuning results for learning rate = {lr}')
-  evaluate(model_best, df_ECM_test)
+  print('ZH Test Set')
+  evaluate(model_best, df_test_EP)
+  print('Native Test Set')
+  evaluate(model_best, df_native)
+  print('EN Test Set')
+  evaluate(model_best, df_EN)
+  
 
 
 # # df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
@@ -87,3 +96,4 @@ for lr,model_name in models.items():
 # 54045: ECM (3e-05 and 1e-05)
 # 54066: ECM 9e-06 Batch Size 8
 # 54115: ECM 9e-06 Batch Size 32
+# 54144: 2nd tune 1e-06 
