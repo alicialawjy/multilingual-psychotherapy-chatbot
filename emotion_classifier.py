@@ -163,7 +163,7 @@ if __name__ == "__main__":
                         early_stopping_metric_minimize = True, 
                         early_stopping_patience = 10, 
                         evaluate_during_training= True, 
-                        evaluate_during_training_steps = 115, 
+                        evaluate_during_training_steps = 30, 
                         train_batch_size = 32, 
                         train_df = df_train_EP[['text','labels']], 
                         eval_df = df_test_EP[['text','labels']])
@@ -221,4 +221,4 @@ if __name__ == "__main__":
 # 54165: 28 with 9e-06
 # 54170: 28 with 2e-05
 # 54244: 170 with batch size = 16
-# 54243: 170 with batch size = 32
+# 54245: 170 with batch size = 32
