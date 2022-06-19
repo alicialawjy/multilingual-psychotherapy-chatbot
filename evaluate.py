@@ -13,17 +13,16 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-# df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
-df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+# df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+# df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+# df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'1e-06': 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-1e06/outputs/checkpoint-2415'}
-#,
-#          '1e-05': 'emotion_classifier/2-tuned-ECM-1e05/1st-tuning/best-ECM'}
+models = {'checkpoint 11000': 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-11000',
+          'checkpoint 12670': 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-13250'}
 
-for lr,model_name in models.items():
+for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
 
   # Load the best model
@@ -32,13 +31,14 @@ for lr,model_name in models.items():
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
-  print(f'ECM finetuning results for learning rate = {lr}')
-  print('ZH Test Set')
-  evaluate(model_best, df_test_EP)
-  print('Native Test Set')
-  evaluate(model_best, df_native)
-  print('EN Test Set')
-  evaluate(model_best, df_EN)
+  print(f'ECM finetuning results for = {checkkpt}')
+  evaluate(model_best, df_ECM_test)
+  # print('ZH Test Set')
+  # evaluate(model_best, df_test_EP)
+  # print('Native Test Set')
+  # evaluate(model_best, df_native)
+  # print('EN Test Set')
+  # evaluate(model_best, df_EN)
   
 
 
@@ -96,4 +96,5 @@ for lr,model_name in models.items():
 # 54045: ECM (3e-05 and 1e-05)
 # 54066: ECM 9e-06 Batch Size 8
 # 54115: ECM 9e-06 Batch Size 32
-# 54146: 2nd tune 1e-06 
+# 54146: 2nd tune 1e-05
+# 54164: 2nd tune 1e-06
