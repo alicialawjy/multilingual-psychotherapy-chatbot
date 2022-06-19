@@ -220,5 +220,5 @@ if __name__ == "__main__":
 # 54160: 28 with 1e-06
 # 54165: 28 with 9e-06
 # 54170: 28 with 2e-05
-# 54244: 170 with batch size = 16
+# 54248: 170 with batch size = 16
 # 54247: 170 with batch size = 32
