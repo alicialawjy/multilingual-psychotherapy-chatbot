@@ -272,7 +272,7 @@ if __name__ == "__main__":
                               early_stopping_delta = 0.0001,
                               early_stopping_metric = "mcc",
                               early_stopping_metric_minimize = False,
-                              early_stopping_patience = 10,
+                              early_stopping_patience = 20,
                               evaluate_during_training=True,
                               evaluate_during_training_steps = 115, 
                               train_batch_size = 8, 
@@ -318,4 +318,5 @@ if __name__ == "__main__":
 # 53913/ 53924 (using 53922's longer tuned ECM model): 0 teacher 2-tune (no KD) w/ best aug dataset (terminated at 2 and x epochs)
 
 ##### RESTARTING WITH NEW MODEL #####
-# 54254: 2-tune 0 teachers
+# 54254: 2-tune 0 teachers (1st-tuning)
+# 54264: 2-tune 0 teachers (2nd-tuning)
