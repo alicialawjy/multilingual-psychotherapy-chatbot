@@ -228,40 +228,50 @@ if __name__ == "__main__":
                                             use_cuda=cuda_available)
 
   # Student Models
-  # First Finetuning (ECM)
-  student_model = run_training(epoch = 20, 
-                              learning_rate = 9e-06,
-                              alpha = 0.5,
-                              temperature = 4,
-                              output_dir = 'distill/2-tune-0-teacher/1st-tune/outputs', 
-                              best_model_dir = 'distill/2-tune-0-teacher/1st-tune/best-model', 
-                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-                              teacher_model = None, # first_teacher_model
-                              use_early_stopping = True,
-                              early_stopping_delta = 0.0001,
-                              early_stopping_metric = "eval_loss",
-                              early_stopping_metric_minimize = True,
-                              early_stopping_patience = 10,
-                              evaluate_during_training=True,
-                              evaluate_during_training_steps = 250, 
-                              train_batch_size = 8, 
-                              train_df = df_train_ECM[['text','labels']],
-                              eval_df = df_test_ECM[['text','labels']]
-                              )
+  # # First Finetuning (ECM)
+  # student_model = run_training(epoch = 20, 
+  #                             learning_rate = 9e-06,
+  #                             alpha = 0.5,
+  #                             temperature = 4,
+  #                             output_dir = 'distill/2-tune-0-teacher/1st-tune/outputs', 
+  #                             best_model_dir = 'distill/2-tune-0-teacher/1st-tune/best-model', 
+  #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+  #                             teacher_model = None, # first_teacher_model
+  #                             use_early_stopping = True,
+  #                             early_stopping_delta = 0.0001,
+  #                             early_stopping_metric = "mcc",
+  #                             early_stopping_metric_minimize = False,
+  #                             early_stopping_patience = 10,
+  #                             evaluate_during_training=True,
+  #                             evaluate_during_training_steps = 250, 
+  #                             train_batch_size = 8, 
+  #                             train_df = df_train_ECM[['text','labels']],
+  #                             eval_df = df_test_ECM[['text','labels']]
+  #                             )
+  
+  # # load the best model from the first finetuning
+  # model_best_1st = ClassificationModel(model_type="xlmroberta", 
+  #                                     model_name= 'distill/2-tune-0-teacher/1st-tune/best-model', 
+  #                                     num_labels=4, 
+  #                                     use_cuda=cuda_available)
+  
+  # print('No Knowledge Distillation: 2 Tune 0 Teacher')
+  # print('First Tuning Validation Results')
+  # evaluate(model_best_1st, df_test_ECM)
 
   # Second Finetuning (EP) 
-  student_model = run_training(epoch = 20, 
+  student_model = run_training(epoch = 30, 
                               learning_rate = 2e-05,
                               alpha = 0.5,
                               temperature = 4,
                               output_dir = 'distill/2-tune-0-teacher/2nd-tune/outputs', 
                               best_model_dir = 'distill/2-tune-0-teacher/2nd-tune/best-model', 
-                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/best-model',
+                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-13250',
                               teacher_model = None, # second_teacher_model
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
-                              early_stopping_metric = "eval_loss",
-                              early_stopping_metric_minimize = True,
+                              early_stopping_metric = "mcc",
+                              early_stopping_metric_minimize = False,
                               early_stopping_patience = 10,
                               evaluate_during_training=True,
                               evaluate_during_training_steps = 115, 
@@ -306,4 +316,6 @@ if __name__ == "__main__":
 # 53907/ 53918 (larger patience = 20): 2 teacher 2-tune KD w/ best aug dataset (terminated at 2/8 and 6 epochs) very undertuned
 # 53908/ 53922 (larger patience = 20): 1 teacher 2-tune KD w/ best aug dataset (terminated at 2 and 6 epochs)
 # 53913/ 53924 (using 53922's longer tuned ECM model): 0 teacher 2-tune (no KD) w/ best aug dataset (terminated at 2 and x epochs)
+
 ##### RESTARTING WITH NEW MODEL #####
+# 54254: 2-tune 0 teachers
