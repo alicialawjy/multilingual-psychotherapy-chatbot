@@ -113,6 +113,7 @@ def run_training(epoch,
                 early_stopping_metric_minimize = True,
                 early_stopping_patience = 10,
                 evaluate_during_training=False,
+                evaluate_during_training_verbose=False,
                 evaluate_during_training_steps = 100, 
                 train_batch_size = 8
                 ):
@@ -133,6 +134,7 @@ def run_training(epoch,
                                                 early_stopping_metric = early_stopping_metric,
                                                 early_stopping_metric_minimize = early_stopping_metric_minimize,
                                                 early_stopping_patience = early_stopping_patience,
+                                                evaluate_during_training_verbose = evaluate_during_training_verbose,
                                                 evaluate_during_training=evaluate_during_training,
                                                 no_cache=True,                  
                                                 save_steps=-1,                  
@@ -159,6 +161,7 @@ def run_training(epoch,
                                                 early_stopping_metric_minimize = early_stopping_metric_minimize,
                                                 early_stopping_patience = early_stopping_patience,
                                                 evaluate_during_training_steps = evaluate_during_training_steps, 
+                                                evaluate_during_training_verbose = evaluate_during_training_verbose,
                                                 evaluate_during_training=evaluate_during_training,
                                                 no_cache=True,                  
                                                 save_steps=-1,                  
@@ -274,6 +277,7 @@ if __name__ == "__main__":
                               early_stopping_metric_minimize = False,
                               early_stopping_patience = 20,
                               evaluate_during_training=True,
+                              evaluate_during_training_verbose = True,
                               evaluate_during_training_steps = 115, 
                               train_batch_size = 8, 
                               train_df = df_train[['text','labels']],
@@ -319,4 +323,4 @@ if __name__ == "__main__":
 
 ##### RESTARTING WITH NEW MODEL #####
 # 54254: 2-tune 0 teachers (1st-tuning)
-# 54264: 2-tune 0 teachers (2nd-tuning)
+# 54264/5: 2-tune 0 teachers (2nd-tuning)
