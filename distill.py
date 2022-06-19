@@ -274,7 +274,6 @@ if __name__ == "__main__":
                               early_stopping_metric_minimize = True,
                               early_stopping_patience = 20,
                               evaluate_during_training=True,
-                              evaluate_during_training_verbose = True,
                               evaluate_during_training_steps = 115, 
                               train_batch_size = 8, 
                               train_df = df_train[['text','labels']],
@@ -321,3 +320,4 @@ if __name__ == "__main__":
 ##### RESTARTING WITH NEW MODEL #####
 # 54254: 2-tune 0 teachers (1st-tuning)
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
+# 54356: disable early stop, manual stop
