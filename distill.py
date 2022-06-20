@@ -271,7 +271,7 @@ if __name__ == "__main__":
                               temperature = 4,
                               output_dir = 'distill/2-tune-0-teacher/2nd-tune/outputs', 
                               best_model_dir = 'distill/2-tune-0-teacher/2nd-tune/best-model', 
-                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-13250',
+                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/best-1st-tune',
                               teacher_model = None, # second_teacher_model
                               use_early_stopping = False,
                               early_stopping_delta = 0.0001,
@@ -326,3 +326,4 @@ if __name__ == "__main__":
 # 54254: 2-tune 0 teachers (1st-tuning)
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
 # 54358: disable early stop (stop manually) + hide the model_args.json
+# 54360: os tokenizer parallelism = false
