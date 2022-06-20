@@ -13,10 +13,10 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
-# df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-# df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-# df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+# df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
 models = {'no teacher': 'distill/2-tune-0-teacher/2nd-tune/best-model'}
@@ -30,14 +30,14 @@ for checkkpt,model_name in models.items():
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
-  print(f'ECM finetuning results for {checkkpt}')
-  evaluate(model_best, df_ECM_test)
-  # print('ZH Test Set')
-  # evaluate(model_best, df_test_EP)
-  # print('Native Test Set')
-  # evaluate(model_best, df_native)
-  # print('EN Test Set')
-  # evaluate(model_best, df_EN)
+  # print(f'ECM finetuning results for {checkkpt}')
+  # evaluate(model_best, df_ECM_test)
+  print('ZH Test Set')
+  evaluate(model_best, df_test_EP)
+  print('Native Test Set')
+  evaluate(model_best, df_native)
+  print('EN Test Set')
+  evaluate(model_best, df_EN)
   
 
 
@@ -98,3 +98,4 @@ for checkkpt,model_name in models.items():
 # 54146: 2nd tune 1e-05
 # 54164: 2nd tune 1e-06
 # 54262: KD no teacher ECM 1st tuning
+# 54363: KD no teacher EP 2nd tuning
