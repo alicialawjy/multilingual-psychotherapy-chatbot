@@ -223,12 +223,12 @@ if __name__ == "__main__":
   # Begin First Finetune (ECM)
   # Teacher Models
   first_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                            model_name='emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', # First Model - ECM 1st-tune
+                                            model_name='emotion_classifier/2-tune-ECMxEP/1st-ECM-tune-9e06', # First Model - ECM 1st-tune
                                             num_labels=4,  
                                             use_cuda=cuda_available)
 
   second_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                            model_name='emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/best-final', # Second Model - EP 2nd-tune
+                                            model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
                                             num_labels=4,  
                                             use_cuda=cuda_available)
 
@@ -327,3 +327,5 @@ if __name__ == "__main__":
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
 # 54358: disable early stop (stop manually) + hide the model_args.json
 # 54362: change folder name so it will not take it as a checkpoint!!!
+# 54383: 2-tune 1 teacher, using 54254 as the starting model.
+# 
