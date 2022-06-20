@@ -13,16 +13,15 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-# df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
-df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+# df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+# df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+# df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'1-tune 0 teacher checkpoint 1725': 'distill/1-tune-0-teacher/outputs/checkpoint-1725',
-          '1-tune 0 teacher checkpoint 1868': 'distill/1-tune-0-teacher/outputs/checkpoint-1868-epoch-4',
-          '1-tune 0 teacher checkpoint 2335': 'distill/1-tune-0-teacher/outputs/checkpoint-2335-epoch-5',
-          '1-tune 0 teacher checkpoint 2415': 'distill/1-tune-0-teacher/outputs/checkpoint-2415'}
+models = {'5e-05 checkpoint 3750': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-3750',
+          '5e-05 checkpoint 4500': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-4500',
+          '5e-05 checkpoint 5750': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-5750'}
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -34,13 +33,13 @@ for checkkpt,model_name in models.items():
                                   use_cuda=cuda_available)
 
   print(f'ECM finetuning results for {checkkpt}')
-  # evaluate(model_best, df_ECM_test)
-  print('ZH Test Set')
-  evaluate(model_best, df_test_EP)
-  print('Native Test Set')
-  evaluate(model_best, df_native)
-  print('EN Test Set')
-  evaluate(model_best, df_EN)
+  evaluate(model_best, df_ECM_test)
+  # print('ZH Test Set')
+  # evaluate(model_best, df_test_EP)
+  # print('Native Test Set')
+  # evaluate(model_best, df_native)
+  # print('EN Test Set')
+  # evaluate(model_best, df_EN)
   
 
 
@@ -108,4 +107,8 @@ for checkkpt,model_name in models.items():
 # 54405: KD 2 teacher 2nd-tuning model 1265, 1380, 1840
 # 54410: 1-tune 1-teacher
 # 54411: 1-tune 1-teacher 2nd attempt 2990, 3335
-# 54428: 1-tune 0-teacher 1725, 1868, 2335, 2415
+# 54431: 1-tune 0-teacher 1725, 2415
+
+##### HYPERPARAMETER TUNING 2-tune 2-teacher (1st tuning) #####
+# 54436: 5e-05 3750 4500 5750
+# 54437: 5e-06
