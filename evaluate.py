@@ -19,8 +19,7 @@ df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'checkpoint 11000': 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-11000',
-          'checkpoint 12670': 'distill/2-tune-0-teacher/1st-tune/outputs/checkpoint-13250'}
+models = {'no teacher': 'distill/2-tune-0-teacher/2nd-tune/best-model'}
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -31,7 +30,7 @@ for checkkpt,model_name in models.items():
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
-  print(f'ECM finetuning results for = {checkkpt}')
+  print(f'ECM finetuning results for {checkkpt}')
   evaluate(model_best, df_ECM_test)
   # print('ZH Test Set')
   # evaluate(model_best, df_test_EP)
@@ -98,3 +97,4 @@ for checkkpt,model_name in models.items():
 # 54115: ECM 9e-06 Batch Size 32
 # 54146: 2nd tune 1e-05
 # 54164: 2nd tune 1e-06
+# 54262: KD no teacher ECM 1st tuning
