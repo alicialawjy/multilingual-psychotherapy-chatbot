@@ -269,14 +269,14 @@ if __name__ == "__main__":
                               learning_rate = 2e-05,
                               alpha = 0.5,
                               temperature = 4,
-                              output_dir = 'distill/2-tune-0-teacher/2nd-tune/outputs', 
-                              best_model_dir = 'distill/2-tune-0-teacher/2nd-tune/best-model', 
-                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/best-1st-tune',
-                              teacher_model = None, # second_teacher_model
+                              output_dir = 'distill/2-tune-1-teacher/2nd-tune/outputs', 
+                              best_model_dir = 'distill/2-tune-1-teacher/2nd-tune/best-model', 
+                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/1st-tune-ECM',
+                              teacher_model = second_teacher_model,
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
-                              early_stopping_metric = "eval_loss",
-                              early_stopping_metric_minimize = True,
+                              early_stopping_metric = "mcc",
+                              early_stopping_metric_minimize = False,
                               early_stopping_patience = 20,
                               evaluate_during_training=True,
                               evaluate_during_training_steps = 115, 
@@ -287,12 +287,12 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/2-tune-0-teacher/2nd-tune/best-model', 
+                                  model_name= 'distill/2-tune-1-teacher/2nd-tune/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
   # evaluate
-  print('No Knowledge Distillation: 2 Tune 0 Teacher')
+  print('Knowledge Distillation: 2 Tune 1 Teacher')
   print('Validation Performance')
   evaluate(model_best, df_val)
 
@@ -326,4 +326,4 @@ if __name__ == "__main__":
 # 54254: 2-tune 0 teachers (1st-tuning)
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
 # 54358: disable early stop (stop manually) + hide the model_args.json
-# 54362: change folder name so it will not take it as a checkpoint
+# 54362: change folder name so it will not take it as a checkpoint!!!
