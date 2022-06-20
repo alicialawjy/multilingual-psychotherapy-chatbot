@@ -265,7 +265,7 @@ if __name__ == "__main__":
   # evaluate(model_best_1st, df_test_ECM)
 
   # Second Finetuning (EP) 
-  student_model = run_training(epoch = 30, 
+  student_model = run_training(epoch = 20, 
                               learning_rate = 2e-05,
                               alpha = 0.5,
                               temperature = 4,
@@ -273,7 +273,7 @@ if __name__ == "__main__":
                               best_model_dir = 'distill/2-tune-0-teacher/2nd-tune/best-model', 
                               student_model_name = 'distill/2-tune-0-teacher/1st-tune/best-1st-tune',
                               teacher_model = None, # second_teacher_model
-                              use_early_stopping = False,
+                              use_early_stopping = True,
                               early_stopping_delta = 0.0001,
                               early_stopping_metric = "eval_loss",
                               early_stopping_metric_minimize = True,
@@ -326,4 +326,4 @@ if __name__ == "__main__":
 # 54254: 2-tune 0 teachers (1st-tuning)
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
 # 54358: disable early stop (stop manually) + hide the model_args.json
-# 54360: os tokenizer parallelism = false
+# 54362: change folder name so it will not take it as a checkpoint
