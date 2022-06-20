@@ -19,11 +19,9 @@ df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'2-tune 2-teachers 1st-tune': 'distill/2-tune-2-teacher/1st-tune/best-model'}
-  
-          # '1 teacher checkpoint 1401': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-1401-epoch-3',
-          # '1 teacher checkpoint 1725': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-1725',
-          # '1 teacher checkpoint 2415': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-2415',
+models = {'2 teacher checkpoint 10000': 'distill/2-tune-2-teacher/1st-tune/outputs/checkpoint-10000',
+          '2 teacher checkpoint 11750': 'distill/2-tune-2-teacher/1st-tune/outputs/checkpoint-11750',
+          '2 teacher checkpoint 12500': 'distill/2-tune-2-teacher/1st-tune/outputs/checkpoint-12500'}
           # '1 teacher checkpoint 3680': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-3680',
           # '1 teacher checkpoint 4945': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-4945',
           # '1 teacher checkpoint 6325': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-6325'} # max mcc by value
@@ -108,3 +106,4 @@ for checkkpt,model_name in models.items():
 # 54363: KD no teacher EP 2nd tuning
 # 54388: KD no teacher 805,920,1380,1955 checkpoint models
 # 54389: KD 1 teacher 1401, 1725, 2415, 3680, 4945, 6325
+# 54400: KD 2 teacher 1st-tuning model
