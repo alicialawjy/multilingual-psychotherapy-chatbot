@@ -19,7 +19,10 @@ df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv
 df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'no teacher': 'distill/2-tune-0-teacher/2nd-tune/best-model'}
+models = {'no teacher checkpoint 805': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-805', # min eval_loss by trendline
+          'no teacher checkpoint 920': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-920', # min overall by value
+          'no teacher checkpoint 1380': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-1380', # max mcc by trendline
+          'no teacher checkpoint 1955': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-1955'} # max mcc by value
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
