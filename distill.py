@@ -100,13 +100,13 @@ class Distillation_ClassificationModel(ClassificationModel):
 
 def run_training(epoch, 
                 learning_rate,
-                alpha,
-                temperature,
                 output_dir,
                 best_model_dir, 
                 train_df,
                 eval_df,
                 student_model_name,
+                alpha=0.5,
+                temperature=4,
                 teacher_model = None,
                 use_early_stopping=False, 
                 early_stopping_delta=0,
@@ -235,12 +235,11 @@ if __name__ == "__main__":
   # Student Models
   # First Finetuning (ECM)
   student_model = run_training(epoch = 20, 
-                              learning_rate = 1e-05,
-                              alpha = 0.5,
-                              temperature = 4,
-                              output_dir = 'distill/2-tune-2-teacher/1st-tune/1e-05/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/1e-05/best-model', 
-                              student_model_name = 'distill/2-tune-2-teacher/1st-tune/1e-05/outputs/checkpoint-3250', # 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+                              learning_rate = 3e-05,
+                              temperature = 10,
+                              output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-10/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-10/best-model', 
+                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
                               teacher_model = first_teacher_model, 
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
@@ -256,11 +255,11 @@ if __name__ == "__main__":
   
   # load the best model from the first finetuning
   model_best_1st = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= 'distill/2-tune-2-teacher/1st-tune/1e-05/best-model', 
+                                      model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-10/best-model', 
                                       num_labels=4, 
                                       use_cuda=cuda_available)
   
-  print('First Tuning (lr = 1e-05) Validation Results')
+  print('First Tuning (lr = 3e-05, temp=10) Validation Results')
   evaluate(model_best_1st, df_test_ECM)
 
   # # # Second Finetuning (EP) 
@@ -336,5 +335,5 @@ if __name__ == "__main__":
 ##### HYPERPARAMETER TUNING 2-tune 2-teacher (1st tuning) #####
 # 54436: 5e-05
 # 54437: 5e-06 (cancelled, too slow)
-# 54441: 1e-05
+# 54444: 1e-05
 # 54442: 3e-05
