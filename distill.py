@@ -269,9 +269,9 @@ if __name__ == "__main__":
                               learning_rate = 2e-05,
                               alpha = 0.5,
                               temperature = 4,
-                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/best-model', 
-                              student_model_name = 'distill/2-tune-2-teacher/1st-tune/1st-tune-ECM',
+                              output_dir = 'distill/1-tune/outputs', 
+                              best_model_dir = 'distill/1-tune/best-model', 
+                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large', #'distill/2-tune-2-teacher/1st-tune/1st-tune-ECM',
                               teacher_model = second_teacher_model, # None
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
@@ -287,12 +287,12 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/best-model', 
+                                  model_name= 'distill/1-tune/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
   # evaluate
-  print('Knowledge Distillation: 2 Tune 2 Teacher')
+  print('Knowledge Distillation: 1 Tune 1 Teacher')
   print('Validation Performance')
   evaluate(model_best, df_val)
 
@@ -329,3 +329,4 @@ if __name__ == "__main__":
 # 54362: change folder name so it will not take it as a checkpoint!!!
 # 54384: 2-tune 1 teacher, using 54254 as the starting model.
 # 54395: 2-tune 2 teacher (1st-tuning)
+# 54402: 2-tune 2 teacher (2nd-tuning)
