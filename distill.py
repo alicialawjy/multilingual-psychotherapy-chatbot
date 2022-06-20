@@ -227,83 +227,83 @@ if __name__ == "__main__":
                                             num_labels=4,  
                                             use_cuda=cuda_available)
 
-  second_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                            model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
-                                            num_labels=4,  
-                                            use_cuda=cuda_available)
+  # second_teacher_model = ClassificationModel(model_type="xlmroberta",
+  #                                           model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
+  #                                           num_labels=4,  
+  #                                           use_cuda=cuda_available)
 
   # Student Models
-  # # First Finetuning (ECM)
-  # student_model = run_training(epoch = 20, 
-  #                             learning_rate = 9e-06,
-  #                             alpha = 0.5,
-  #                             temperature = 4,
-  #                             output_dir = 'distill/2-tune-0-teacher/1st-tune/outputs', 
-  #                             best_model_dir = 'distill/2-tune-0-teacher/1st-tune/best-model', 
-  #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-  #                             teacher_model = None, # first_teacher_model
-  #                             use_early_stopping = True,
-  #                             early_stopping_delta = 0.0001,
-  #                             early_stopping_metric = "mcc",
-  #                             early_stopping_metric_minimize = False,
-  #                             early_stopping_patience = 10,
-  #                             evaluate_during_training=True,
-  #                             evaluate_during_training_steps = 250, 
-  #                             train_batch_size = 8, 
-  #                             train_df = df_train_ECM[['text','labels']],
-  #                             eval_df = df_test_ECM[['text','labels']]
-  #                             )
-  
-  # # load the best model from the first finetuning
-  # model_best_1st = ClassificationModel(model_type="xlmroberta", 
-  #                                     model_name= 'distill/2-tune-0-teacher/1st-tune/best-model', 
-  #                                     num_labels=4, 
-  #                                     use_cuda=cuda_available)
-  
-  # print('No Knowledge Distillation: 2 Tune 0 Teacher')
-  # print('First Tuning Validation Results')
-  # evaluate(model_best_1st, df_test_ECM)
-
-  # Second Finetuning (EP) 
+  # First Finetuning (ECM)
   student_model = run_training(epoch = 20, 
-                              learning_rate = 2e-05,
+                              learning_rate = 9e-06,
                               alpha = 0.5,
                               temperature = 4,
-                              output_dir = 'distill/2-tune-1-teacher/2nd-tune/outputs', 
-                              best_model_dir = 'distill/2-tune-1-teacher/2nd-tune/best-model', 
-                              student_model_name = 'distill/2-tune-0-teacher/1st-tune/1st-tune-ECM',
-                              teacher_model = second_teacher_model,
+                              output_dir = 'distill/2-tune-2-teacher/1st-tune/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/best-model', 
+                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+                              teacher_model = first_teacher_model, # None
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
                               early_stopping_metric = "mcc",
                               early_stopping_metric_minimize = False,
-                              early_stopping_patience = 20,
+                              early_stopping_patience = 10,
                               evaluate_during_training=True,
-                              evaluate_during_training_steps = 115, 
+                              evaluate_during_training_steps = 250, 
                               train_batch_size = 8, 
-                              train_df = df_train[['text','labels']],
-                              eval_df = df_val[['text','labels']]
+                              train_df = df_train_ECM[['text','labels']],
+                              eval_df = df_test_ECM[['text','labels']]
                               )
+  
+  # load the best model from the first finetuning
+  model_best_1st = ClassificationModel(model_type="xlmroberta", 
+                                      model_name= 'distill/2-tune-0-teacher/1st-tune/best-model', 
+                                      num_labels=4, 
+                                      use_cuda=cuda_available)
+  
+  print('No Knowledge Distillation: 2 Tune 0 Teacher')
+  print('First Tuning Validation Results')
+  evaluate(model_best_1st, df_test_ECM)
 
-  # load the best model
-  model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/2-tune-1-teacher/2nd-tune/best-model', 
-                                  num_labels=4, 
-                                  use_cuda=cuda_available)
+  # # Second Finetuning (EP) 
+  # student_model = run_training(epoch = 20, 
+  #                             learning_rate = 2e-05,
+  #                             alpha = 0.5,
+  #                             temperature = 4,
+  #                             output_dir = 'distill/2-tune-1-teacher/2nd-tune/outputs', 
+  #                             best_model_dir = 'distill/2-tune-1-teacher/2nd-tune/best-model', 
+  #                             student_model_name = 'distill/2-tune-0-teacher/1st-tune/1st-tune-ECM',
+  #                             teacher_model = second_teacher_model, # None
+  #                             use_early_stopping = True,
+  #                             early_stopping_delta = 0.0001,
+  #                             early_stopping_metric = "mcc",
+  #                             early_stopping_metric_minimize = False,
+  #                             early_stopping_patience = 15,
+  #                             evaluate_during_training=True,
+  #                             evaluate_during_training_steps = 115, 
+  #                             train_batch_size = 8, 
+  #                             train_df = df_train[['text','labels']],
+  #                             eval_df = df_val[['text','labels']]
+  #                             )
 
-  # evaluate
-  print('Knowledge Distillation: 2 Tune 1 Teacher')
-  print('Validation Performance')
-  evaluate(model_best, df_val)
+  # # load the best model
+  # model_best = ClassificationModel(model_type="xlmroberta", 
+  #                                 model_name= 'distill/2-tune-1-teacher/2nd-tune/best-model', 
+  #                                 num_labels=4, 
+  #                                 use_cuda=cuda_available)
 
-  print('Test Performance')
-  evaluate(model_best, df_test)
+  # # evaluate
+  # print('Knowledge Distillation: 2 Tune 1 Teacher')
+  # print('Validation Performance')
+  # evaluate(model_best, df_val)
 
-  print('Native Performance')
-  evaluate(model_best, df_native)
+  # print('Test Performance')
+  # evaluate(model_best, df_test)
 
-  print('EN Performance')
-  evaluate(model_best, df_EN)
+  # print('Native Performance')
+  # evaluate(model_best, df_native)
+
+  # print('EN Performance')
+  # evaluate(model_best, df_EN)
 
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
@@ -327,5 +327,5 @@ if __name__ == "__main__":
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
 # 54358: disable early stop (stop manually) + hide the model_args.json
 # 54362: change folder name so it will not take it as a checkpoint!!!
-# 54383: 2-tune 1 teacher, using 54254 as the starting model.
+# 54384: 2-tune 1 teacher, using 54254 as the starting model.
 # 
