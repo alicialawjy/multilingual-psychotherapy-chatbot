@@ -19,13 +19,10 @@ df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv
 df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'1-tune 1 teacher checkpoint 2990': 'distill/1-tune/outputs/checkpoint-2990',
-          '1-tune 1 teacher checkpoint 3335': 'distill/1-tune/outputs/checkpoint-3335'}
-          # '2 teacher checkpoint 1380': 'distill/2-tune-2-teacher/2nd-tune/outputs/checkpoint-1380',
-          # '2 teacher checkpoint 1840': 'distill/2-tune-2-teacher/2nd-tune/outputs/checkpoint-1840'}
-          # '1 teacher checkpoint 3680': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-3680',
-          # '1 teacher checkpoint 4945': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-4945',
-          # '1 teacher checkpoint 6325': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-6325'} # max mcc by value
+models = {'1-tune 0 teacher checkpoint 1725': 'distill/1-tune-0-teacher/outputs/checkpoint-1725',
+          '1-tune 0 teacher checkpoint 1868': 'distill/1-tune-0-teacher/outputs/checkpoint-1868',
+          '1-tune 0 teacher checkpoint 2335': 'distill/1-tune-0-teacher/outputs/checkpoint-2335',
+          '1-tune 0 teacher checkpoint 2415': 'distill/1-tune-0-teacher/outputs/checkpoint-2415'}
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -110,3 +107,4 @@ for checkkpt,model_name in models.items():
 # 54401: KD 2 teacher 1st-tuning model 10000, 11750, 12500
 # 54405: KD 2 teacher 2nd-tuning model 1265, 1380, 1840
 # 54410: 1-tune 1-teacher
+# 54411: 1-tune 1-teacher 2nd attempt 2990, 3335
