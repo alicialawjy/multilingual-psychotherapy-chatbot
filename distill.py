@@ -227,10 +227,10 @@ if __name__ == "__main__":
   #                                           num_labels=4,  
   #                                           use_cuda=cuda_available)
 
-  second_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                            model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
-                                            num_labels=4,  
-                                            use_cuda=cuda_available)
+  # second_teacher_model = ClassificationModel(model_type="xlmroberta",
+  #                                           model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
+  #                                           num_labels=4,  
+  #                                           use_cuda=cuda_available)
 
   # # Student Models
   # # First Finetuning (ECM)
@@ -269,10 +269,10 @@ if __name__ == "__main__":
                               learning_rate = 2e-05,
                               alpha = 0.5,
                               temperature = 4,
-                              output_dir = 'distill/1-tune/outputs', 
-                              best_model_dir = 'distill/1-tune/best-model', 
+                              output_dir = 'distill/1-tune-0-teacher/outputs', 
+                              best_model_dir = 'distill/1-tune-0-teacher/best-model', 
                               student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large', #'distill/2-tune-2-teacher/1st-tune/1st-tune-ECM',
-                              teacher_model = second_teacher_model, # None
+                              teacher_model = None, # second_teacher_model, # None
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
                               early_stopping_metric = "eval_loss",
@@ -287,12 +287,12 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/1-tune/best-model', 
+                                  model_name= 'distill/1-tune-0-teacher/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
   # evaluate
-  print('Knowledge Distillation: 1 Tune 1 Teacher')
+  print('Knowledge Distillation: 1 Tune 0 Teacher')
   print('Validation Performance')
   evaluate(model_best, df_val)
 
@@ -331,3 +331,4 @@ if __name__ == "__main__":
 # 54395: 2-tune 2 teacher (1st-tuning)
 # 54402: 2-tune 2 teacher (2nd-tuning)
 # 54408: 1-tune 1 teacher 
+# 54409: 08 with eval_loss as early stopping metric
