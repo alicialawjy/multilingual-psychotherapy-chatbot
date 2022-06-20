@@ -1,6 +1,7 @@
 ## Code extracted from: https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
 from torch.utils.data import Dataset 
 import pandas as pd
+import os
 import torch
 import pickle
 import torch.nn as nn
@@ -138,7 +139,9 @@ def run_training(epoch,
                                                 save_steps=-1,                  
                                                 save_model_every_epoch=True,
                                                 overwrite_output_dir = True,  
-                                                optimizer='AdamW')            
+                                                optimizer='AdamW')       
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"     
 
     # Student:
     student_model = Distillation_ClassificationModel(teacher_model = teacher_model,
@@ -151,22 +154,24 @@ def run_training(epoch,
   # If no teacher (i.e: no KD), use normal Classification Model class
   else:
     print('No Teacher Found, running training without Knowledge Distillation.')
-    model_args = Distillation_ClassificationArgs(num_train_epochs=epoch,           
-                                                best_model_dir=best_model_dir,  
-                                                use_early_stopping = use_early_stopping,
-                                                early_stopping_delta = early_stopping_delta,
-                                                early_stopping_metric = early_stopping_metric,
-                                                early_stopping_metric_minimize = early_stopping_metric_minimize,
-                                                early_stopping_patience = early_stopping_patience,
-                                                evaluate_during_training_steps = evaluate_during_training_steps, 
-                                                evaluate_during_training=evaluate_during_training,
-                                                no_cache=True,                  
-                                                save_steps=-1,                  
-                                                save_model_every_epoch=False,
-                                                output_dir = output_dir,
-                                                overwrite_output_dir = True,
-                                                learning_rate=learning_rate,    
-                                                optimizer='AdamW')  
+    model_args = ClassificationArgs(num_train_epochs=epoch,           
+                                    best_model_dir=best_model_dir,  
+                                    use_early_stopping = use_early_stopping,
+                                    early_stopping_delta = early_stopping_delta,
+                                    early_stopping_metric = early_stopping_metric,
+                                    early_stopping_metric_minimize = early_stopping_metric_minimize,
+                                    early_stopping_patience = early_stopping_patience,
+                                    evaluate_during_training_steps = evaluate_during_training_steps, 
+                                    evaluate_during_training=evaluate_during_training,
+                                    no_cache=True,                  
+                                    save_steps=-1,                  
+                                    save_model_every_epoch=False,
+                                    output_dir = output_dir,
+                                    overwrite_output_dir = True,
+                                    learning_rate=learning_rate,    
+                                    optimizer='AdamW')  
+    
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     # Student
     student_model = ClassificationModel(model_type="xlmroberta",
@@ -320,4 +325,4 @@ if __name__ == "__main__":
 ##### RESTARTING WITH NEW MODEL #####
 # 54254: 2-tune 0 teachers (1st-tuning)
 # 54264/5: 2-tune 0 teachers (2nd-tuning)
-# 54356: disable early stop, manual stop
+# 54358: disable early stop (stop manually) + hide the model_args.json
