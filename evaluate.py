@@ -20,8 +20,8 @@ df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
 models = {'1-tune 0 teacher checkpoint 1725': 'distill/1-tune-0-teacher/outputs/checkpoint-1725',
-          '1-tune 0 teacher checkpoint 1868': 'distill/1-tune-0-teacher/outputs/checkpoint-1868',
-          '1-tune 0 teacher checkpoint 2335': 'distill/1-tune-0-teacher/outputs/checkpoint-2335',
+          '1-tune 0 teacher checkpoint 1868': 'distill/1-tune-0-teacher/outputs/checkpoint-1868-epoch-4',
+          '1-tune 0 teacher checkpoint 2335': 'distill/1-tune-0-teacher/outputs/checkpoint-2335-epoch-5',
           '1-tune 0 teacher checkpoint 2415': 'distill/1-tune-0-teacher/outputs/checkpoint-2415'}
 
 for checkkpt,model_name in models.items():
@@ -108,3 +108,4 @@ for checkkpt,model_name in models.items():
 # 54405: KD 2 teacher 2nd-tuning model 1265, 1380, 1840
 # 54410: 1-tune 1-teacher
 # 54411: 1-tune 1-teacher 2nd attempt 2990, 3335
+# 54428: 1-tune 0-teacher 1725, 1868, 2335, 2415
