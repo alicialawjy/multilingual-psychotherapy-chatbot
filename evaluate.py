@@ -17,11 +17,12 @@ df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 # df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 # df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'5e-05 checkpoint 3750': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-3750',
-          '5e-05 checkpoint 4500': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-4500',
-          '5e-05 checkpoint 5750': 'distill/2-tune-2-teacher/1st-tune/5e-05/outputs/checkpoint-5750'}
+models = {'3e-05 checkpoint 5068': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-5068-epoch-4',
+          '3e-05 checkpoint 7500': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-7500',
+          '3e-05 checkpoint 8750': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-8750'}
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -40,52 +41,11 @@ for checkkpt,model_name in models.items():
   # evaluate(model_best, df_native)
   # print('EN Test Set')
   # evaluate(model_best, df_EN)
-  
+  # print('CodeSwitch Set')
+  # evaluate(model_best, df_codeswitch)
 
 
-# # df_EP_ZH_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-# df_EP_ZH = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-# df_EP_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-# df_ZH_native = pd.read_csv('data/emotions/Native Dataset/roy_native.csv') # ('data/emotions/NLPCC2014/NLPCC2014(ZH-Native).csv')
-# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
-
-# fill in with the best params 
-# models = {'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/5/3e-05'} # sentiment-40k best
-# 'single': 'emotion_classifier/outputs/single-tune/5/3e-05',
-# 'sentiment40k': 'emotion_classifier/outputs/second-tune-EP40k/2/3e-05'
-# 'twitter': 'emotion_classifier/outputs/second-tune-EP/3/4e-05' 
-
-# for (ft, model_name) in models.items():
-#     cuda_available = torch.cuda.is_available()
-
-#     # Load the best model
-#     model_best = ClassificationModel(model_type="xlmroberta", 
-#                                     model_name=model_name, 
-#                                     num_labels=4, 
-#                                     use_cuda=cuda_available)
-    
-#     print(f'Results for {ft} finetuning')
-
-#     # # 1: Sanity Check
-#     # print('Sanity Check on Validation Set')
-#     # evaluate(model_best, df_EP_ZH_val)
-
-#     # 2: Test (ZH) Performance
-#     print('ZH Test Set')
-#     evaluate(model_best, df_EP_ZH)
-
-#     # 3: Test (EN) Performance
-#     print('EN Test Set')
-#     evaluate(model_best, df_EP_EN)
-
-#     # 4: Native ZH Performance
-#     print('ZH Native Set')
-#     evaluate(model_best, df_ZH_native)
-
-#     # 5: Code Switch Performance
-#     print('CodeSwitch Set')
-#     evaluate(model_best, df_codeswitch)
-
+####### LOGS #########
 # ran on job 52784
 # 52789 for cleaned en test dataset
 # 52812 for native roy 
@@ -110,5 +70,5 @@ for checkkpt,model_name in models.items():
 # 54431: 1-tune 0-teacher 1725, 2415
 
 ##### HYPERPARAMETER TUNING 2-tune 2-teacher (1st tuning) #####
-# 54436: 5e-05 3750 4500 5750
-# 54437: 5e-06
+# 54438: 5e-05 3750 4500 5750
+# 54439: 5e-06
