@@ -19,11 +19,7 @@ df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv
 df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
 # models we want to test
-models = {'no teacher checkpoint 805': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-805', # min eval_loss by trendline
-          'no teacher checkpoint 920': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-920', # min overall by value
-          'no teacher checkpoint 1380': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-1380', # max mcc by trendline
-          'no teacher checkpoint 1955': 'distill/2-tune-0-teacher/2nd-tune/outputs/checkpoint-1955',
-          '1 teacher checkpoint 1401': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-1401-epoch-3',
+models = {'1 teacher checkpoint 1401': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-1401-epoch-3',
           '1 teacher checkpoint 1725': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-1725',
           '1 teacher checkpoint 2415': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-2415',
           '1 teacher checkpoint 3680': 'distill/2-tune-1-teacher/2nd-tune/outputs/checkpoint-3680',
