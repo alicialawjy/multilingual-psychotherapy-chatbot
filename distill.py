@@ -275,8 +275,8 @@ if __name__ == "__main__":
                               teacher_model = second_teacher_model, # None
                               use_early_stopping = True,
                               early_stopping_delta = 0.0001,
-                              early_stopping_metric = "mcc",
-                              early_stopping_metric_minimize = False,
+                              early_stopping_metric = "eval_loss",
+                              early_stopping_metric_minimize = True,
                               early_stopping_patience = 15,
                               evaluate_during_training=True,
                               evaluate_during_training_steps = 115, 
@@ -330,3 +330,4 @@ if __name__ == "__main__":
 # 54384: 2-tune 1 teacher, using 54254 as the starting model.
 # 54395: 2-tune 2 teacher (1st-tuning)
 # 54402: 2-tune 2 teacher (2nd-tuning)
+# 54408: 1-tune 1 teacher 
