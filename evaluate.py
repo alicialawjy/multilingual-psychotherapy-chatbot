@@ -13,16 +13,14 @@ def evaluate(model, df_dataset):
   return f1_score(y_true, y_pred,average='weighted')
 
 # test data
-df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
-# df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-# df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-# df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
-# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+# df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'3e-05 checkpoint 5068': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-5068-epoch-4',
-          '3e-05 checkpoint 7500': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-7500',
-          '3e-05 checkpoint 8750': 'distill/2-tune-2-teacher/1st-tune/3e-05/outputs/checkpoint-8750'}
+models = {'1e-05 checkpoint 1495': 'distill/2-tune-2-teacher/2nd-tune/1e-05/outputs/checkpoint-1495'}
 
 for checkkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -33,16 +31,16 @@ for checkkpt,model_name in models.items():
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
-  print(f'ECM finetuning results for {checkkpt}')
-  evaluate(model_best, df_ECM_test)
-  # print('ZH Test Set')
-  # evaluate(model_best, df_test_EP)
-  # print('Native Test Set')
-  # evaluate(model_best, df_native)
-  # print('EN Test Set')
-  # evaluate(model_best, df_EN)
-  # print('CodeSwitch Set')
-  # evaluate(model_best, df_codeswitch)
+  # print(f'ECM finetuning results for {checkkpt}')
+  # evaluate(model_best, df_ECM_test)
+  print('ZH Test Set')
+  evaluate(model_best, df_test_EP)
+  print('Native Test Set')
+  evaluate(model_best, df_native)
+  print('EN Test Set')
+  evaluate(model_best, df_EN)
+  print('CodeSwitch Set')
+  evaluate(model_best, df_codeswitch)
 
 
 ####### LOGS #########
@@ -72,3 +70,5 @@ for checkkpt,model_name in models.items():
 ##### HYPERPARAMETER TUNING 2-tune 2-teacher (1st tuning) #####
 # 54438: 5e-05 3750 4500 5750
 # 54439: 5e-06
+# 54445: 3e-05
+# 
