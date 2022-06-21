@@ -14,17 +14,14 @@ def evaluate(model, df_dataset):
 
 # test data
 # df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
-df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
-df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+# df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+# df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+# df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
 
 # models we want to test
-models = {'temp=6 checkpoint 2070': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/outputs/checkpoint-2070',
-          'temp=6 checkpoint 3450': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/outputs/checkpoint-3450',
-          'temp=7 checkpoint 1840': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-1840',
-          'temp=7 checkpoint 2070': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-2070',
-          'temp=7 checkpoint 2185': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-2185'}
+models = {'2e-05 checkpoint 350': 'empathy_classifier/2e05/outputs/checkpoint-350'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -32,20 +29,22 @@ for checkpt,model_name in models.items():
   # Load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name=model_name, 
-                                  num_labels=4, 
+                                  num_labels=3, 
                                   use_cuda=cuda_available)
 
   # print(f'ECM finetuning results for {checkkpt}')
   # evaluate(model_best, df_ECM_test)
-  print(f'{checkpt}')
-  print('ZH Test Set')
-  evaluate(model_best, df_test_EP)
-  print('Native Test Set')
-  evaluate(model_best, df_native)
-  print('EN Test Set')
-  evaluate(model_best, df_EN)
-  print('CodeSwitch Set')
-  evaluate(model_best, df_codeswitch)
+  # print(f'{checkpt}')
+  # print('ZH Test Set')
+  # evaluate(model_best, df_test_EP)
+  # print('Native Test Set')
+  # evaluate(model_best, df_native)
+  # print('EN Test Set')
+  # evaluate(model_best, df_EN)
+  # print('CodeSwitch Set')
+  # evaluate(model_best, df_codeswitch)
+  print('Empathy Test Set')
+  evaluate(model_best, df_empathy_test)
 
 
 ####### LOGS #########
@@ -82,3 +81,4 @@ for checkpt,model_name in models.items():
 # 54482: 2e-05
 # 54500: 9e-06 and 3e-05
 # 54507+12: 1e-05 temp=3 and 5 evaluate
+# 54522: temp=6,7
