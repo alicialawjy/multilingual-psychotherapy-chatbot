@@ -124,16 +124,16 @@ if __name__ == "__main__":
   cuda_available = torch.cuda.is_available()
 
   model = train_model(epoch = 20,
-                      learning_rate = 2e-05,
+                      learning_rate = 4e-05,
                       model_name = "xlm-roberta-base", 
-                      output_dir = 'empathy_classifier/2e05/outputs', 
-                      best_model_dir = 'empathy_classifier/2e05/best-model', 
+                      output_dir = 'empathy_classifier/4e05/outputs', 
+                      best_model_dir = 'empathy_classifier/4e05/best-model', 
                       use_early_stopping = True,
                       early_stopping_delta = 0.0001,
-                      early_stopping_metric = 'mcc',
-                      early_stopping_metric_minimize = False,
+                      early_stopping_metric = 'eval_loss',
+                      early_stopping_metric_minimize = True,
                       early_stopping_patience = 10,
-                      evaluate_during_training_steps = 115, 
+                      evaluate_during_training_steps = 50, 
                       evaluate_during_training = True,  
                       train_df = df_train[['text','labels']],
                       eval_df = df_val[['text','labels']]
@@ -141,13 +141,16 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'empathy_classifier/2e05/best-model',
+                                  model_name= 'empathy_classifier/4e05/best-model',
                                   num_labels=3, 
                                   use_cuda=cuda_available)
 
   # evaluate the best model
-  print('Best model with learning rate = 2e-05')
+  print('Best model with learning rate = 4e-05')
   evaluate(model_best, df_test)
 
 # LOGS:
-# 54540: 1e-05
+# 54545: 1e-05
+# 54544: 2e-05
+# 54550: 3e-05
+# 54551: 9e-06
