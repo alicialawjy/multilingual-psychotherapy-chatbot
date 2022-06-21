@@ -198,17 +198,17 @@ def evaluate(model, df_dataset):
 # Run distillation
 if __name__ == "__main__":
   ## Datasets
-  # sentiment-40k Dataset (First Tune)
-  df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-  df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+  # # sentiment-40k Dataset (First Tune)
+  # df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
+  # df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 
   # EmpatheticPersonas (EP) Dataset (Second Tune)
-  # df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') 
-  # df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
-  # df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-  # df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-  # df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-  # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+  df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') 
+  df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
+  df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+  df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+  df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+  df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 
   # Use GPU
   GPU = True
@@ -221,87 +221,84 @@ if __name__ == "__main__":
   cuda_available = torch.cuda.is_available()
 
   # Begin First Finetune (ECM)
-  # Teacher Models
-  first_teacher_model = ClassificationModel(model_type="xlmroberta",
-                                            model_name='emotion_classifier/2-tune-ECMxEP/1st-ECM-tune-9e06', # First Model - ECM 1st-tune
-                                            num_labels=4,  
-                                            use_cuda=cuda_available)
-
-  # second_teacher_model = ClassificationModel(model_type="xlmroberta",
-  #                                           model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
+  # # Teacher Models
+  # first_teacher_model = ClassificationModel(model_type="xlmroberta",
+  #                                           model_name='emotion_classifier/2-tune-ECMxEP/1st-ECM-tune-9e06', # First Model - ECM 1st-tune
   #                                           num_labels=4,  
   #                                           use_cuda=cuda_available)
 
-  # Student Models
-  # First Finetuning (ECM)
-  student_model = run_training(epoch = 20, 
-                              learning_rate = 3e-05,
-                              temperature = 6,
-                              output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
-                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-                              teacher_model = first_teacher_model, 
-                              use_early_stopping = True,
-                              early_stopping_delta = 0.0001,
-                              early_stopping_metric = "mcc",
-                              early_stopping_metric_minimize = False,
-                              early_stopping_patience = 10,
-                              evaluate_during_training=True,
-                              evaluate_during_training_steps = 250, 
-                              train_batch_size = 8, 
-                              train_df = df_train_ECM[['text','labels']],
-                              eval_df = df_test_ECM[['text','labels']]
-                              )
-  
-  # load the best model from the first finetuning
-  model_best_1st = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
-                                      num_labels=4, 
-                                      use_cuda=cuda_available)
-  
-  print('First Tuning (lr = 3e-05, temp=6) Validation Results')
-  evaluate(model_best_1st, df_test_ECM)
+  second_teacher_model = ClassificationModel(model_type="xlmroberta",
+                                            model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
+                                            num_labels=4,  
+                                            use_cuda=cuda_available)
 
-  # # # Second Finetuning (EP) 
+  # Student Models
+  # # First Finetuning (ECM)
   # student_model = run_training(epoch = 20, 
-  #                             learning_rate = 2e-05,
-  #                             alpha = 0.5,
-  #                             temperature = 4,
-  #                             output_dir = 'distill/1-tune-0-teacher/outputs', 
-  #                             best_model_dir = 'distill/1-tune-0-teacher/best-model', 
-  #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large', #'distill/2-tune-2-teacher/1st-tune/1st-tune-ECM',
-  #                             teacher_model = None, # second_teacher_model, # None
+  #                             learning_rate = 3e-05,
+  #                             temperature = 6,
+  #                             output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/outputs', 
+  #                             best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
+  #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+  #                             teacher_model = first_teacher_model, 
   #                             use_early_stopping = True,
   #                             early_stopping_delta = 0.0001,
-  #                             early_stopping_metric = "eval_loss",
-  #                             early_stopping_metric_minimize = True,
-  #                             early_stopping_patience = 15,
+  #                             early_stopping_metric = "mcc",
+  #                             early_stopping_metric_minimize = False,
+  #                             early_stopping_patience = 10,
   #                             evaluate_during_training=True,
-  #                             evaluate_during_training_steps = 115, 
+  #                             evaluate_during_training_steps = 250, 
   #                             train_batch_size = 8, 
-  #                             train_df = df_train[['text','labels']],
-  #                             eval_df = df_val[['text','labels']]
+  #                             train_df = df_train_ECM[['text','labels']],
+  #                             eval_df = df_test_ECM[['text','labels']]
   #                             )
+  
+  # # load the best model from the first finetuning
+  # model_best_1st = ClassificationModel(model_type="xlmroberta", 
+  #                                     model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
+  #                                     num_labels=4, 
+  #                                     use_cuda=cuda_available)
+  
+  # print('First Tuning (lr = 3e-05, temp=6) Validation Results')
+  # evaluate(model_best_1st, df_test_ECM)
 
-  # # load the best model
-  # model_best = ClassificationModel(model_type="xlmroberta", 
-  #                                 model_name= 'distill/1-tune-0-teacher/best-model', 
-  #                                 num_labels=4, 
-  #                                 use_cuda=cuda_available)
+  # Second Finetuning (EP) 
+  student_model = run_training(epoch = 20, 
+                              learning_rate = 2e-05,
+                              alpha = 0.5,
+                              temperature = 4,
+                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/best-model', 
+                              student_model_name = 'distill/2-tune-2-teacher/1st-tune/3e-05/best-temp-4',
+                              teacher_model = second_teacher_model, 
+                              use_early_stopping = True,
+                              early_stopping_delta = 0.0001,
+                              early_stopping_metric = "eval_loss",
+                              early_stopping_metric_minimize = True,
+                              early_stopping_patience = 15,
+                              evaluate_during_training=True,
+                              evaluate_during_training_steps = 115, 
+                              train_batch_size = 8, 
+                              train_df = df_train[['text','labels']],
+                              eval_df = df_val[['text','labels']]
+                              )
 
-  # # evaluate
-  # print('Knowledge Distillation: 1 Tune 0 Teacher')
-  # print('Validation Performance')
-  # evaluate(model_best, df_val)
+  # load the best model
+  model_best = ClassificationModel(model_type="xlmroberta", 
+                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/1e-05/best-model', 
+                                  num_labels=4, 
+                                  use_cuda=cuda_available)
 
-  # print('Test Performance')
-  # evaluate(model_best, df_test)
+  # evaluate
+  print('2nd Tune 1e-05')
+  print('Test Performance')
+  evaluate(model_best, df_test)
 
-  # print('Native Performance')
-  # evaluate(model_best, df_native)
+  print('Native Performance')
+  evaluate(model_best, df_native)
 
-  # print('EN Performance')
-  # evaluate(model_best, df_EN)
+  print('EN Performance')
+  evaluate(model_best, df_EN)
 
 # LOGS:
 # 53581: nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large model, 5e-05, 20 epoch,  batch size = 8
@@ -341,5 +338,5 @@ if __name__ == "__main__":
 # 54447: 3e-05 w/ temp=15
 # 54448: 3e-05 w/ temp=5
 # 54449: 3e-05 w/ temp=3
-# 54450: 3e-05 w/ temp=1
 # 54451: 3e-05 w/ temp=2
+# 54466: 3e-05 w/ temp=6
