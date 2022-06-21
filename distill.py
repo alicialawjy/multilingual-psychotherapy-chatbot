@@ -264,7 +264,7 @@ if __name__ == "__main__":
 
   # Second Finetuning (EP) 
   student_model = run_training(epoch = 20, 
-                              learning_rate = 2e-05,
+                              learning_rate = 1e-05,
                               alpha = 0.5,
                               temperature = 4,
                               output_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/outputs', 
@@ -333,10 +333,13 @@ if __name__ == "__main__":
 # 54436: 5e-05
 # 54437: 5e-06 (cancelled, too slow)
 # 54444: 1e-05
-# 54442: 3e-05 w/ temp=4
+# 54442: 3e-05 w/ temp=4 (best)
 # 54446: 3e-05 w/ temp=10
 # 54447: 3e-05 w/ temp=15
 # 54448: 3e-05 w/ temp=5
 # 54449: 3e-05 w/ temp=3
 # 54451: 3e-05 w/ temp=2
 # 54466: 3e-05 w/ temp=6
+
+##### HYPERPARAMETER TUNING 2-tune 2-teacher (2nd tuning - base model 54442 lr=3e-05 and temp=4) #####
+# 54474: 1e-05 
