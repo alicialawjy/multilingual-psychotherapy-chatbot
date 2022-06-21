@@ -20,7 +20,10 @@ df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'2e-05 checkpoint 934': 'distill/2-tune-2-teacher/2nd-tune/2e-05/outputs/checkpoint-934-epoch-2'}
+models = {'9e-06 checkpoint 1380': 'distill/2-tune-2-teacher/2nd-tune/9e-06/outputs/checkpoint-1380',
+          '3e-05 checkpoint 1380': 'distill/2-tune-2-teacher/2nd-tune/3e-05/outputs/checkpoint-1380',
+          '3e-05 checkpoint 1401': 'distill/2-tune-2-teacher/2nd-tune/3e-05/outputs/checkpoint-1401-epoch-3',
+          '3e-05 checkpoint 1725': 'distill/2-tune-2-teacher/2nd-tune/3e-05/outputs/checkpoint-1725'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -75,4 +78,5 @@ for checkpt,model_name in models.items():
 
 ##### HYPERPARAMETER TUNING 2-tune 2-teacher (2nd tuning) #####
 # 54480: 1e-05
-# 54481: 2e-05
+# 54482: 2e-05
+# 
