@@ -21,7 +21,11 @@ def evaluate(model, df_dataset):
 df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
 
 # models we want to test
-models = {'2e-05 checkpoint 350': 'empathy_classifier/2e05/outputs/checkpoint-350'}
+models = {'9e-06 checkpoint 750': 'empathy_classifier/9e06/outputs/checkpoint-750',
+          '9e-06 checkpoint 1150': 'empathy_classifier/9e06/outputs/checkpoint-1150',
+          '2e-05 checkpoint 350': 'empathy_classifier/2e05/outputs/checkpoint-350',
+          '3e-05 checkpoint 250': 'empathy_classifier/3e05/outputs/checkpoint-250',
+          '3e-05 checkpoint 750': 'empathy_classifier/3e05/outputs/checkpoint-750'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -43,7 +47,7 @@ for checkpt,model_name in models.items():
   # evaluate(model_best, df_EN)
   # print('CodeSwitch Set')
   # evaluate(model_best, df_codeswitch)
-  print('Empathy Test Set')
+  print(f'Empathy Test Set {checkpt}')
   evaluate(model_best, df_empathy_test)
 
 
@@ -82,3 +86,6 @@ for checkpt,model_name in models.items():
 # 54500: 9e-06 and 3e-05
 # 54507+12: 1e-05 temp=3 and 5 evaluate
 # 54522: temp=6,7
+
+##### Empathy Classifier #####
+# 54554: 2e-05 empathy classifier
