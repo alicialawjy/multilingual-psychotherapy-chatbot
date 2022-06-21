@@ -20,7 +20,7 @@ df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'2e-05 checkpoint 934': 'distill/2-tune-2-teacher/2nd-tune/2e-05/outputs/checkpoint-934'}
+models = {'2e-05 checkpoint 934': 'distill/2-tune-2-teacher/2nd-tune/2e-05/outputs/checkpoint-934-epoch-2'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
