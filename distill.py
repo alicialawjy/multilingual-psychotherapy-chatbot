@@ -236,9 +236,9 @@ if __name__ == "__main__":
   # First Finetuning (ECM)
   student_model = run_training(epoch = 20, 
                               learning_rate = 3e-05,
-                              temperature = 2,
-                              output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-2/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-2/best-model', 
+                              temperature = 6,
+                              output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
                               student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
                               teacher_model = first_teacher_model, 
                               use_early_stopping = True,
@@ -255,11 +255,11 @@ if __name__ == "__main__":
   
   # load the best model from the first finetuning
   model_best_1st = ClassificationModel(model_type="xlmroberta", 
-                                      model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-2/best-model', 
+                                      model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
                                       num_labels=4, 
                                       use_cuda=cuda_available)
   
-  print('First Tuning (lr = 3e-05, temp=2) Validation Results')
+  print('First Tuning (lr = 3e-05, temp=6) Validation Results')
   evaluate(model_best_1st, df_test_ECM)
 
   # # # Second Finetuning (EP) 
