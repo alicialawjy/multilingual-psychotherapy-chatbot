@@ -20,9 +20,11 @@ df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'temp=3 checkpoint 1380': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-3/outputs/checkpoint-1380',
-          'temp=3 checkpoint 2070': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-3/outputs/checkpoint-20700',
-          'temp=5 checkpoint 4025': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-5/outputs/checkpoint-4025'}
+models = {'temp=6 checkpoint 2070': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/outputs/checkpoint-2070',
+          'temp=6 checkpoint 3450': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/outputs/checkpoint-3450',
+          'temp=7 checkpoint 1840': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-1840',
+          'temp=7 checkpoint 2070': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-2070',
+          'temp=7 checkpoint 2185': 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-7/outputs/checkpoint-2185'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -79,4 +81,4 @@ for checkpt,model_name in models.items():
 # 54480: 1e-05
 # 54482: 2e-05
 # 54500: 9e-06 and 3e-05
-# 54503: 1e-05 temp=3 and 5 evaluate
+# 54507+12: 1e-05 temp=3 and 5 evaluate
