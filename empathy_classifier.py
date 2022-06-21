@@ -123,58 +123,31 @@ if __name__ == "__main__":
 
   cuda_available = torch.cuda.is_available()
 
-  # Hyperparameter Tune
-  # Track Performance
-  test_performance = []
-  val_performance = []
+  model = train_model(epoch = 20,
+                      learning_rate = 1e-05,
+                      model_name = "xlm-roberta-base", 
+                      output_dir = 'empathy_classifier/1e05/outputs', 
+                      best_model_dir = 'empathy_classifier/1e05/best-model', 
+                      use_early_stopping = True,
+                      early_stopping_delta = 0.0001,
+                      early_stopping_metric = 'mcc',
+                      early_stopping_metric_minimize = False,
+                      early_stopping_patience = 10,
+                      evaluate_during_training_steps = 115, 
+                      evaluate_during_training = True,  
+                      train_df = df_train[['text','labels']],
+                      eval_df = df_val[['text','labels']]
+                      )
 
-  learning_rate = [1e-05, 2e-05, 3e-05, 4e-05, 5e-05, 6e-05, 7e-05]
-  test_F1 = []
-  val_F1 = []
-  for epoch in range(2,11):
-    test_epoch = []
-    val_epoch = []
-    for lr in learning_rate:
-      model = train_model(epoch = epoch,
-                          learning_rate = lr,
-                          output_dir = f'empathy_classifier/outputs/{str(epoch)}/{str(lr)}', 
-                          best_model_dir = f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}', 
-                          use_early_stopping = True,
-                          early_stopping_delta = 0.01,
-                          early_stopping_metric_minimize = False,
-                          early_stopping_patience = 5,
-                          evaluate_during_training_steps = 500, 
-                          evaluate_during_training=True,  
-                          model_name = "xlm-roberta-base", 
-                          train_df = df_train[['text','labels']],
-                          eval_df = df_val[['text','labels']])
+  # load the best model
+  model_best = ClassificationModel(model_type="xlmroberta", 
+                                  model_name= 'empathy_classifier/1e05/best-model',
+                                  num_labels=3, 
+                                  use_cuda=cuda_available)
 
-      # load the best model
-      model_best = ClassificationModel(model_type="xlmroberta", 
-                                      model_name=f'empathy_classifier/best_model/{str(epoch)}/{str(lr)}',
-                                      num_labels=3, 
-                                      use_cuda=cuda_available)
-
-      # evaluate the best model
-      print(f'Best model of epoch {epoch}, learning rate {lr}')
-      F1_val = evaluate(model_best, df_val)
-      F1_test = evaluate(model_best, df_test)
-
-      test_epoch.append(F1_test)
-      val_epoch.append(F1_val)
-    
-    # Append the performance for the epoch
-    test_performance.append(test_epoch)
-    val_performance.append(val_epoch)
-
-    # print checkpoint
-    print(f'Epoch {epoch} complete!')
-    print(f'val F1 at epoch {epoch}: {val_epoch}')
-    print(f'test F1 at epoch {epoch}: {test_epoch}')
-    
-  print('Hyperparameter Tuning Complete')
-  print(f'Complete val performance: {val_performance}')
-  print(f'Complete test performance: {test_performance}')
+  # evaluate the best model
+  print('Best model with learning rate = 1e-05')
+  evaluate(model_best, df_test)
 
 # LOGS:
-# 
+# 53593: hyperparam with num_labels=3 (checked)
