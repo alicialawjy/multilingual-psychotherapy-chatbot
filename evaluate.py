@@ -20,9 +20,9 @@ df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 
 # models we want to test
-models = {'1e-05 checkpoint 1495': 'distill/2-tune-2-teacher/2nd-tune/1e-05/outputs/checkpoint-1495'}
+models = {'2e-05 checkpoint 934': 'distill/2-tune-2-teacher/2nd-tune/2e-05/outputs/checkpoint-934'}
 
-for checkkpt,model_name in models.items():
+for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
 
   # Load the best model
@@ -33,6 +33,7 @@ for checkkpt,model_name in models.items():
 
   # print(f'ECM finetuning results for {checkkpt}')
   # evaluate(model_best, df_ECM_test)
+  print(f'{checkpt}')
   print('ZH Test Set')
   evaluate(model_best, df_test_EP)
   print('Native Test Set')
@@ -71,4 +72,7 @@ for checkkpt,model_name in models.items():
 # 54438: 5e-05 3750 4500 5750
 # 54439: 5e-06
 # 54445: 3e-05
-# 
+
+##### HYPERPARAMETER TUNING 2-tune 2-teacher (2nd tuning) #####
+# 54480: 1e-05
+# 54481: 2e-05
