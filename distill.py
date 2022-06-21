@@ -264,11 +264,11 @@ if __name__ == "__main__":
 
   # Second Finetuning (EP) 
   student_model = run_training(epoch = 20, 
-                              learning_rate = 2e-05,
+                              learning_rate = 9e-06,
                               alpha = 0.5,
                               temperature = 4,
-                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/2e-05/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/2e-05/best-model', 
+                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/9e-06/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/9e-06/best-model', 
                               student_model_name = 'distill/2-tune-2-teacher/1st-tune/3e-05/best-temp-4',
                               teacher_model = second_teacher_model, 
                               use_early_stopping = True,
@@ -285,12 +285,12 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/2e-05/best-model', 
+                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/9e-06/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
   # evaluate
-  print('2nd Tune 2e-05')
+  print('2nd Tune 9e-06')
   print('Test Performance')
   evaluate(model_best, df_test)
 
