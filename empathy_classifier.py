@@ -52,12 +52,12 @@ class OlidDataset(Dataset):
     return item
 
 def train_model(epoch, 
-                output_dir,
                 learning_rate,
+                output_dir,
+                best_model_dir, 
                 model_name,
                 train_df,
                 eval_df,
-                best_model_dir = 'outputs/best_model', 
                 use_early_stopping=False, 
                 early_stopping_delta=0,
                 early_stopping_metric = "eval_loss",
@@ -84,8 +84,8 @@ def train_model(epoch,
                                   learning_rate=learning_rate,    
                                   optimizer='AdamW')            
 
-  model = ClassificationModel(model_type="xlmroberta",  # tried xlmroberta, bert
-                            model_name=model_name,      # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
+  model = ClassificationModel(model_type="xlmroberta",
+                            model_name=model_name,      
                             args = model_args,          # see above
                             num_labels=3,               # 3 labels - no empathy, neutral, empathetic
                             use_cuda=cuda_available)    # use GPU
@@ -109,9 +109,9 @@ def evaluate(model, df_dataset):
 if __name__ == "__main__":
   ## Datasets
   # EP Empathy Dataset 
-  df_train = pd.read_csv('data/empathy/empatheticpersonas/balanced/EN_ZH_train.csv')
-  df_val = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_val.csv')
-  df_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
+  df_train = pd.read_csv('data/empathy/EP_empathy_train.csv')
+  df_val = pd.read_csv('data/empathy/ZH/EP_ZH_val.csv')
+  df_test = pd.read_csv('data/empathy/ZH/EP_ZH_test.csv')
 
   # Use GPU
   GPU = True
@@ -154,3 +154,5 @@ if __name__ == "__main__":
 # 54544: 2e-05
 # 54550: 3e-05
 # 54551: 9e-06
+# 54568: 4e-05
+# 54569: 5e-05
