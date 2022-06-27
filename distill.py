@@ -1,4 +1,6 @@
-## Code extracted from: https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
+# Code adapted from: 
+# https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
+
 from torch.utils.data import Dataset 
 import pandas as pd
 import os
@@ -55,20 +57,20 @@ class OlidDataset(Dataset):
 
 # Overwrite classification arguments and classification model
 class Distillation_ClassificationArgs(ClassificationArgs):
-    def __init__(self, *args, alpha=0.5, temperature=2.0, **kwargs):
+    def __init__(self, *args, temperature=2.0, **kwargs):
         super().__init__(*args, **kwargs)
-        self.alpha = alpha
         self.temperature = temperature
 
 class Distillation_ClassificationModel(ClassificationModel):
     def __init__(self, *args, teacher_model=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.teacher = teacher_model
-        # place teacher on same device as student
-        self.teacher._move_model_to_device()
+        self.teacher._move_model_to_device() # Place teacher on same device as student
         self.teacher.model.eval()
 
     def _calculate_loss(self, model, inputs, loss_fct, num_labels, args): 
+        # For more information, see Section 5.2.1 of the report on Training Loss.
+
         # Compute outputs
         outputs_student = model(**inputs) # student
 
@@ -83,19 +85,19 @@ class Distillation_ClassificationModel(ClassificationModel):
         student_softmax = F.softmax(outputs_student.logits / self.args.temperature, dim=-1) # student
         student_logsoftmax = F.log_softmax(outputs_student.logits / self.args.temperature, dim=-1) # student log softmax
 
-        # (i) Student Loss (Typical Classification Loss)
+        # (i) Classic Supervised Training Loss 
         student_loss = outputs_student.loss
 
-        # (ii) Teacher-Student Loss
+        # (ii) Distillation Loss
         loss_function = nn.CrossEntropyLoss().to(device) # nn.KLDivLoss(reduction="batchmean").to(device) # KLDivLoss: Kullback-Leibler divergence loss // 
         loss_logits = (loss_function(student_softmax, teacher_softmax)*self.args.temperature**2) # multiply temp**2 to scale it back.
 
-        # (iii) Cosine Loss (based on DistilBERT)
+        # (iii) Cosine Embedding Loss (based on DistilBERT)
         loss_cosine_function = nn.CosineEmbeddingLoss().to(device)
         loss_cosine = loss_cosine_function(teacher_softmax, student_softmax, (torch.ones(teacher_softmax.size()[0])).to(device))
 
         # Return Loss
-        loss = (student_loss + loss_logits + loss_cosine)/3 # self.args.alpha * student_loss + (1.0 - self.args.alpha) * loss_logits
+        loss = (student_loss + loss_logits + loss_cosine)/3 # Take the average of the Triple Loss
         return (loss, *outputs_student[1:])
 
 def run_training(epoch, 
@@ -181,34 +183,34 @@ def run_training(epoch,
                                         use_cuda=cuda_available)
 
   student_model.train_model(train_df = train_df,              # training dataset
-                          eval_df = eval_df)                  # evaluation dataset
+                            eval_df = eval_df)                # evaluation dataset
 
   return student_model                  
 
 
 def evaluate(model, df_dataset):
-    y_pred, _ = model.predict(df_dataset.text.tolist())
-    y_true = df_dataset['labels']
+  y_pred, _ = model.predict(df_dataset.text.tolist())
+  y_true = df_dataset['labels']
 
-    print("Classification Report", classification_report(y_true, y_pred))
-    print("Confusion Matrix", confusion_matrix(y_true, y_pred))
-    print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
-    return f1_score(y_true, y_pred,average='weighted')
+  print("Classification Report", classification_report(y_true, y_pred))
+  print("Confusion Matrix", confusion_matrix(y_true, y_pred))
+  print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
+  return f1_score(y_true, y_pred,average='weighted')
 
 # Run distillation
 if __name__ == "__main__":
   ## Datasets
-  # # sentiment-40k Dataset (First Tune)
-  # df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-  # df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+  # ECM Dataset (First Tune)
+  df_train_ECM = pd.read_csv('data/emotions/ECM/ECM_train.csv')
+  df_test_ECM = pd.read_csv('data/emotions/ECM/ECM_test.csv')
 
-  # EmpatheticPersonas (EP) Dataset (Second Tune)
-  df_train = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv') 
+  # EmpatheticPersonas Dataset (Second Tune)
+  df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EP_train_augmented.csv') 
   df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
   df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
   df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
   df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-  df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+  df_native = pd.read_csv('data/emotions/EmpatheticPersonas/EP_native.csv')
 
   # Use GPU
   GPU = True
@@ -220,12 +222,11 @@ if __name__ == "__main__":
 
   cuda_available = torch.cuda.is_available()
 
-  # Begin First Finetune (ECM)
-  # # Teacher Models
-  # first_teacher_model = ClassificationModel(model_type="xlmroberta",
-  #                                           model_name='emotion_classifier/2-tune-ECMxEP/1st-ECM-tune-9e06', # First Model - ECM 1st-tune
-  #                                           num_labels=4,  
-  #                                           use_cuda=cuda_available)
+  # Teacher Models
+  first_teacher_model = ClassificationModel(model_type="xlmroberta",
+                                            model_name='emotion_classifier/2-tune-ECMxEP/1st-ECM-tune-9e06', # First Model - ECM 1st-tune
+                                            num_labels=4,  
+                                            use_cuda=cuda_available)
 
   second_teacher_model = ClassificationModel(model_type="xlmroberta",
                                             model_name='emotion_classifier/2-tune-ECMxEP/2nd-EP-tune-2e05', # Second Model - EP 2nd-tune
@@ -233,42 +234,42 @@ if __name__ == "__main__":
                                             use_cuda=cuda_available)
 
   # Student Models
-  # # First Finetuning (ECM)
-  # student_model = run_training(epoch = 20, 
-  #                             learning_rate = 3e-05,
-  #                             temperature = 6,
-  #                             output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/outputs', 
-  #                             best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
-  #                             student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
-  #                             teacher_model = first_teacher_model, 
-  #                             use_early_stopping = True,
-  #                             early_stopping_delta = 0.0001,
-  #                             early_stopping_metric = "mcc",
-  #                             early_stopping_metric_minimize = False,
-  #                             early_stopping_patience = 10,
-  #                             evaluate_during_training=True,
-  #                             evaluate_during_training_steps = 250, 
-  #                             train_batch_size = 8, 
-  #                             train_df = df_train_ECM[['text','labels']],
-  #                             eval_df = df_test_ECM[['text','labels']]
-  #                             )
+  # First Finetuning (ECM)
+  student_model = run_training(epoch = 20, 
+                              learning_rate = 3e-05,
+                              temperature = 6,
+                              output_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
+                              student_model_name = 'nreimers/mMiniLMv2-L6-H384-distilled-from-XLMR-Large',
+                              teacher_model = first_teacher_model, 
+                              use_early_stopping = True,
+                              early_stopping_delta = 0.0001,
+                              early_stopping_metric = "mcc",
+                              early_stopping_metric_minimize = False,
+                              early_stopping_patience = 10,
+                              evaluate_during_training=True,
+                              evaluate_during_training_steps = 250, 
+                              train_batch_size = 8, 
+                              train_df = df_train_ECM[['text','labels']],
+                              eval_df = df_test_ECM[['text','labels']]
+                              )
   
-  # # load the best model from the first finetuning
-  # model_best_1st = ClassificationModel(model_type="xlmroberta", 
-  #                                     model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
-  #                                     num_labels=4, 
-  #                                     use_cuda=cuda_available)
+  # load the best model from the first finetuning
+  model_best_1st = ClassificationModel(model_type="xlmroberta", 
+                                      model_name= 'distill/2-tune-2-teacher/1st-tune/3e-05/temp-6/best-model', 
+                                      num_labels=4, 
+                                      use_cuda=cuda_available)
   
-  # print('First Tuning (lr = 3e-05, temp=6) Validation Results')
-  # evaluate(model_best_1st, df_test_ECM)
+  print('First Tuning (lr = 3e-05, temp=6) Validation Results')
+  evaluate(model_best_1st, df_test_ECM)
 
   # Second Finetuning (EP) 
   student_model = run_training(epoch = 20, 
                               learning_rate = 1e-05,
                               alpha = 0.5,
-                              temperature = 4,
-                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-5/outputs', 
-                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-5/best-model', 
+                              temperature = 6,
+                              output_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/outputs', 
+                              best_model_dir = 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/best-model', 
                               student_model_name = 'distill/2-tune-2-teacher/1st-tune/3e-05/best-temp-4',
                               teacher_model = second_teacher_model, 
                               use_early_stopping = True,
@@ -285,12 +286,11 @@ if __name__ == "__main__":
 
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-5/best-model', 
+                                  model_name= 'distill/2-tune-2-teacher/2nd-tune/1e-05/temp-6/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
   # evaluate
-  print('2nd Tune 1e-05 temp=5')
   print('Test Performance')
   evaluate(model_best, df_test)
 
@@ -342,7 +342,11 @@ if __name__ == "__main__":
 # 54466: 3e-05 w/ temp=6
 
 ##### HYPERPARAMETER TUNING 2-tune 2-teacher (2nd tuning - base model 54442 lr=3e-05 and temp=4) #####
-# 54475: 1e-05 
+# 54475: 1e-05 w/ temp=4
 # 54476: 2e-05
 # 54483: 9e-06
 # 54484: 3e-05
+# 54502: 1e-05 w/ temp=5
+# 54503: 1e-05 w/ temp=3
+# 54515: 1e-05 w/ temp=6
+# 54516: temp=7
