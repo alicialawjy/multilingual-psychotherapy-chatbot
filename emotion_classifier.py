@@ -50,12 +50,12 @@ class OlidDataset(Dataset):
     return item
 
 def train_model(epoch, 
-                output_dir,
                 learning_rate,
+                output_dir,
+                best_model_dir,
                 model_name,
                 train_df,
                 eval_df,
-                best_model_dir = 'outputs/best_model', 
                 train_batch_size = 8,
                 use_early_stopping=False, 
                 early_stopping_delta=0,
@@ -63,7 +63,7 @@ def train_model(epoch,
                 early_stopping_metric_minimize = True,
                 early_stopping_patience = 3,
                 evaluate_during_training_steps = 2000, 
-                evaluate_during_training=False  # best model determined by validation set performance
+                evaluate_during_training=False
                 ):
 
   model_args = ClassificationArgs(num_train_epochs=epoch,  
@@ -107,87 +107,81 @@ def evaluate(model, df_dataset):
 
 # Run finetuning
 if __name__ == "__main__":
-    ## Datasets
-    # # Emotion (Twitter) Dataset (First Tune)
-    # df_twitter = pd.read_csv('data/emotions/twitter/twitter_emotions_enzh.csv')
-    # df_train_twitter, df_test_twitter = train_test_split(df_twitter, test_size=0.2, shuffle=True, random_state=0, stratify=df_twitter['labels'])
+  ## Datasets
+  # ECM Dataset (First Tune)
+  df_train_ECM = pd.read_csv('data/emotions/ECM/ECM_train.csv')
+  df_test_ECM = pd.read_csv('data/emotions/ECM/ECM_test.csv')
 
-    # ECM Dataset (First Tune)
-    df_train_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_train.csv')
-    df_test_ECM = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
+  # EmpatheticPersonas Dataset (Second Tune)
+  df_train = pd.read_csv('data/emotions/EmpatheticPersonas/EP_train_augmented.csv') 
+  df_train = df_train.sample(frac=1).reset_index(drop=True) # shuffle the dataset
+  df_val = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
+  df_test = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
+  df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
+  df_native = pd.read_csv('data/emotions/EmpatheticPersonas/EP_native.csv')
 
-    # EmpatheticPersonas (EP) Dataset (Second Tune)
-    df_train_EP = pd.read_csv('data/emotions/EmpatheticPersonas/Augmented/en_zh_concatenating-method.csv')
-    df_val_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_val.csv')
-    df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
-    df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
-    df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
+  # Use GPU
+  GPU = True
+  if GPU:
+      device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+  else:
+      device = torch.device("cpu")
+  print(f"Using {device}")
 
-    # Use GPU
-    GPU = True
-    if GPU:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device("cpu")
-    print(f"Using {device}")
+  cuda_available = torch.cuda.is_available()
 
-    cuda_available = torch.cuda.is_available()
+  # First Finetune (ECM)
+  model = train_model(epoch = 20, 
+                      learning_rate= 9e-06,
+                      output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-8/outputs',
+                      best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-8/best-ECM',
+                      model_name = "xlm-roberta-base",
+                      train_df = df_train_ECM[['text','labels']],
+                      eval_df = df_test_ECM[['text','labels']],
+                      train_batch_size = 8,
+                      use_early_stopping = True,
+                      early_stopping_delta = 0.0001,
+                      early_stopping_metric = "eval_loss",
+                      early_stopping_metric_minimize = True,
+                      early_stopping_patience = 10,
+                      evaluate_during_training_steps = 250, 
+                      evaluate_during_training= True)
 
-    # First Finetune (ECM)
-    # Hyperparameter: train_batch_size = 8; 
-    # model = train_model(epoch = 5, 
-    #                   best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/best-ECM',
-    #                   train_batch_size = 64,
-    #                   use_early_stopping = True,
-    #                   early_stopping_delta = 0.0001,
-    #                   early_stopping_metric = "eval_loss",
-    #                   early_stopping_metric_minimize = True,
-    #                   early_stopping_patience = 5,
-    #                   evaluate_during_training_steps = 40, 
-    #                   evaluate_during_training= True,  
-    #                   output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-64/outputs',
-    #                   learning_rate= 9e-06,
-    #                   model_name = "xlm-roberta-base",
-    #                   train_df = df_train_ECM[['text','labels']],
-    #                   eval_df = df_test_ECM[['text','labels']])
+  # Second Finetune (EP)
+  model = train_model(epoch = 20, 
+                      learning_rate = 2e-05, 
+                      model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
+                      best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/best-final', 
+                      output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/outputs', 
+                      use_early_stopping = True, 
+                      early_stopping_delta = 0.0001, 
+                      early_stopping_metric = "eval_loss", 
+                      early_stopping_metric_minimize = True, 
+                      early_stopping_patience = 10, 
+                      evaluate_during_training= True, 
+                      evaluate_during_training_steps = 115, 
+                      train_batch_size = 8, 
+                      train_df = df_train[['text','labels']], 
+                      eval_df = df_test[['text','labels']])
 
-    # Second Finetune (EP - Hyperparam Tune)
-    model = train_model(epoch = 20, 
-                        learning_rate = 2e-05, 
-                        model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                        best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
-                        output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/outputs', 
-                        use_early_stopping = True, 
-                        early_stopping_delta = 0.0001, 
-                        early_stopping_metric = "eval_loss", 
-                        early_stopping_metric_minimize = True, 
-                        early_stopping_patience = 10, 
-                        evaluate_during_training= True, 
-                        evaluate_during_training_steps = 60, 
-                        train_batch_size = 16, 
-                        train_df = df_train_EP[['text','labels']], 
-                        eval_df = df_test_EP[['text','labels']])
+  # load the best model for this epoch
+  best_model = ClassificationModel(model_type="xlmroberta", 
+                                  model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/best-final', 
+                                  num_labels=4, 
+                                  use_cuda=cuda_available)
 
-    # load the best model for this epoch
-    best_model = ClassificationModel(model_type="xlmroberta", 
-                                    model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-16/best-final', 
-                                    num_labels=4, 
-                                    use_cuda=cuda_available)
+  # Evaluate
+  # Test Result
+  print('Held-Out Test Set')
+  evaluate(best_model, df_test)
 
-    # evaluate its performance
-    print('2nd-tuning with learning rate 2e-05 batch-16')
-    
-    # Test Result
-    print('Held-Out Test Set')
-    evaluate(best_model, df_test_EP)
+  # Native Result
+  print('Native Test Set')
+  evaluate(best_model, df_native)
 
-    # Native Result
-    print('Native Test Set')
-    evaluate(best_model, df_native)
-
-    # EN Result
-    print('EN Test Set')
-    evaluate(best_model, df_EN)
+  # EN Result
+  print('EN Test Set')
+  evaluate(best_model, df_EN)
 
 # LOGS:
 # Last Run: 52657 for Twitter Finetuning
