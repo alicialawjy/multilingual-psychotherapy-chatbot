@@ -1,0 +1,856 @@
+,text,labels
+0,I'm so worried about my exam that I had a bad day.,3
+1,I am stressed out about my exams.,3
+2,I am delighted to say that all is going well.,2
+3,I just passed my exam and I am feeling great.,2
+4,I am upset and depressed.,0
+5,My mood is low.,0
+6,I'm feeling great.,2
+7,I was supposed to see my dad today but he had to change his mind.,0
+8,I don't feel like I have anything going on.,0
+9,"I lost $100 on a bet with my friend, my team was disqualified, and I'm really angry.",1
+10,I don't know why I'm scared.,3
+11,I'm very nervous about going to the dentist.,3
+12,My mom scolded me for being messy when I was trying to clean up.,0
+13,It's a great day so far.,2
+14,"Thank you, and you?",2
+15,I think my girlfriend has been lying to me.,3
+16,"I'm really sad, my puppy ran away yesterday and I can't find him.",0
+17,"Thank you, great thanks.",2
+18,I did something that made me cringe yesterday.,3
+19,I am frustrated.,1
+20,I'm angry.,1
+21,I am being discriminated against.,1
+22,I am angry with my co-workers.,1
+23,I am nervous about my exam.,3
+24,I am not sure.,3
+25,I am at ease today.,2
+26,My heart is racing and I am jittery.,3
+27,I'm afraid of getting Covid-19 because I'm not in great health.,3
+28,I'm really depressed.,0
+29,"I am fine, God is good and life is great.",2
+30,I'm worried at the moment.,3
+31,I am not sure if I will get my work done on time.,3
+32,"I'm annoyed, I think I'm on top of things.",1
+33,I am not happy with my partner's behavior.,1
+34,I am angry and annoyed.,1
+35,I feel like I have been treated badly.,1
+36,I saw my husband cheat on me.,1
+37,I don't feel good.,0
+38,I'm angry today.,1
+39,"Good, got a good night's rest.",2
+40,My best friend won't talk to me because I'm feeling unwell.,0
+41,I'm not feeling well today.,3
+42,I am sad today.,0
+43,I was rained on this morning.,0
+44,I failed my test and I am angry.,1
+45,I don't feel great and I'm worried because I don't know why.,3
+46,I had a bad day today.,1
+47,I lost a friend last night and I am sad today.,0
+48,I'm afraid that my child may be sick.,3
+49,I don't know what to do because she just won't talk to me anymore.,0
+51,I am very worried about our future.,3
+52,I am not doing well.,0
+53,I am worried that my work will not be high quality.,3
+54,I just had a panic attack and I feel terrible.,3
+55,I am feeling great today.,2
+56,It was just miserable today.,0
+57,Everything is going wrong today.,1
+58,I lost money and I am angry.,1
+59,I feel bad.,0
+60,I feel frightened all the time.,3
+61,I was just angry about everything.,1
+62,I had a great day walking in the mountains.,2
+63,I don't like my girl.,1
+64,I am feeling great.,2
+66,I want to punch someone.,1
+67,I'm afraid of what will come.,3
+68,I can't sleep or eat.,0
+69,I am sad.,0
+70,"I've had a good day, thanks a lot.",2
+71,I'm not feeling well.,0
+72,I think I need to be alone because my heart is racing.,3
+73,"I'm afraid I messed up, if I'm honest.",3
+74,I'm doing well and I'm in a good mood.,2
+75,I feel like nothing is going right in my life.,0
+76,I was put on my heels as to what my future holds in this company because of the meeting that I had today.,3
+77,I got into a fight with my mom.,0
+78,I feel great.,2
+80,My dog was put to sleep.,0
+81,I am not sure if I am feeling good.,3
+82,I am not sure what I want to do in the future.,3
+83,Thank you for your kind words.,2
+85,I am feeling a bit down.,0
+86,I found out that my parents are divorcing.,0
+87,I'm worried about the questions that will be used for exams.,3
+88,I had a disagreement with my sister.,0
+90,I am angry.,1
+91,It's sunny.,2
+92,I got into an argument with my brother.,0
+93,I have to go for Covid testing as I am experiencing symptoms and I am afraid I might be positive.,3
+94,I found out that my grandmother is not going to live long.,0
+95,I was unfairly denied a promotion at work.,1
+96,I'm not good at anything.,1
+97,"I'm angry, I was fired from my job.",1
+98,"I left the house angry after a fight with my parents, I feel like they're to blame.",1
+99,My child is sick.,3
+100,I'm a little worried and stressed out.,3
+101,I feel the way I do because they are to blame.,1
+102,I am happy.,2
+103,I'm not able to stay focused and lonely.,0
+104,I punched my ex's car window.,1
+105,I can't face the day because I am not doing well.,3
+106,I don't have a boyfriend or friends.,0
+107,My husband lost his job.,0
+108,I don't know why I am not okay.,1
+109,I am doing great.,2
+110,I feel sad and alone today.,0
+111,I feel prepared to fight.,1
+112,I'm not doing well.,0
+113,I'm feeling great!,2
+114,I was fired recently.,0
+115,It was pretty good.,2
+116,I am not happy with my day so far.,1
+117,I lost a friend last night.,0
+118,"My boss, my husband and my kids are against me.",1
+119,I am very discouraged.,0
+120,"I've been through a rough few days, but I wish I was feeling better.",0
+121,I need to resolve some family issues.,3
+122,I lost my job last year and have been down in the dumps ever since.,0
+123,I am very happy today.,2
+124,I have lost my grandpa recently.,0
+125,I'm very nervous and I'm beside myself.,3
+126,I'm not sure if I've been better or worse.,3
+127,It is a wonderful day to be alive.,2
+128,I am sad because I am not feeling great.,0
+129,I'm angry at everything.,1
+130,"The traffic was terrible, I almost crashed into them.",1
+131,I can't stand my life and my partner can't either.,1
+132,On top of the world!,2
+133,"I feel like there is no light at the end of the tunnel, I'm in arrears with my mortgage, I am stressed today, I feel like there is no light at the end of the tunnel.",3
+134,I am not doing well.,1
+135,I'm sad because my dog ran away.,0
+136,I am so sad that my dog died after being hit by a car.,0
+137,I'm so angry and hurt that she cheated on me.,1
+138,I feel like I'm on top of the world.,2
+139,I fell out with my friend yesterday.,0
+140,I'm feeling down.,0
+141,I'm not sure if I'm feeling good or bad.,3
+142,My mother in law is not going to stop.,1
+143,I am so angry that my friend was flirting with my boyfriend and I don't know how to handle it.,1
+144,I'm angry because people in my work group exclude me.,1
+145,I'm worried about my career.,3
+146,I am worried that my child may have contracted a disease.,3
+147,I feel great today.,2
+148,I can't find a job and I'm feeling depressed.,0
+149,I can't control myself.,1
+150,I just got some really bad news.,1
+151,I hurt myself earlier and I'm not good.,1
+152,I'm really happy.,2
+153,"I found my lost hat, good!",2
+154,Everything is good for me.,2
+155,I am angry with my coworkers.,1
+156,I hate everyone.,1
+157,I'm not going to change my mind as the school year is coming to an end.,0
+158,I might lose my job.,3
+160,I'm feeling lonely.,0
+161,I am not doing well and the person I love talking to won't even acknowledge me anymore.,0
+162,I feel very afraid of the world.,3
+164,Why do you ask that?,3
+165,I dropped a dress size and am feeling great.,2
+168,"I feel terrible, nothing seems to have meaning since my dad died.",0
+169,Thank you for everything.,2
+170,I feel good.,2
+171,I feel bad because of my health condition.,0
+172,I'm very nervous.,3
+173,I can feel that today will be a good day.,2
+175,I am afraid that my child is sick.,3
+176,I'm worried because my business has declined.,3
+177,My friend is being annoying.,1
+178,The new house looks great.,2
+179,I am not sure what to think.,3
+180,Really bad.,0
+181,"Thank you, I'm feeling great.",2
+182,I'm all caught up at work.,2
+183,My football team won today and that makes me happy.,2
+184,"Everything is going well today, I'm so happy.",2
+185,I'm afraid of losing my job.,3
+186,I'm not sure if it's because I'm not sure if something bad is going to happen or if I'm just thinking about it.,3
+187,I can't seem to get out of this low mood.,0
+188,I think I failed a test.,0
+189,nervous,3
+191,I'm angry because my partner cheated on me.,1
+193,I feel like everything is not possible.,0
+194,"Today has been difficult with a little anxiousness creeping in, it grows into fear.",3
+195,"I'm so mean, the person I trusted the most betrayed me in a way I couldn't even imagine.",1
+196,I feel stressed and my head is spinning.,3
+197,I am angry at my friend.,1
+198,My health has deteriorated due to covid-19.,3
+199,I am happy that my boss chose me for that promotion.,2
+200,I want to cry.,0
+201,I feel angry all the time.,1
+202,Great.,2
+203,I feel angry.,1
+204,I feel positive today.,2
+205,I think I have something.,0
+206,Thank you for making me feel very blessed and grateful.,2
+207,"I'm ok, but I feel like we might lose the game.",3
+208,I was angry because my wife left me.,1
+209,I am afraid today.,3
+210,Sad.,0
+211,I went out with my friends.,2
+212,My grandpa is in the hospital.,0
+213,I'm really angry today.,1
+214,great,2
+215,I feel like I'm working.,0
+216,I have too much work to do.,1
+217,Things are going well.,2
+219,My girlfriend dumped me.,0
+220,I'm fine.,0
+221,I would like to bring my friend back to life.,1
+222,I am not ready to talk to someone.,1
+223,"I am feeling great, thanks for asking!",2
+224,I'm sad at the moment.,0
+225,I'm not happy with my job.,1
+226,I am angry because my parents fought with me.,1
+227,I have a bad case of the blues.,0
+228,I hate career politicians and am mad at the situation here.,1
+229,I got angry thinking about my children.,1
+230,Not good.,0
+231,"I'm feeling good, thanks!",2
+232,I am worried I wont pass the test.,3
+234,I am angry with my brother.,1
+235,I am angry because my neighbor called my child a bad name because she was angry that he went into her yard.,1
+236,Not bad.,2
+237,I feel bad.,1
+238,It was kind of heavy today.,0
+239,I feel like I want to hit someone.,1
+240,I slept well last night and am feeling good.,2
+241,Do you know anything about this?,1
+242,I walked out on my job.,1
+243,My boss doesn't respect my time at all.,1
+244,I am feeling good.,2
+245,I was fired for no reason.,1
+246,I've got a lot on my mind and it's making me anxious.,3
+247,I feel sad.,0
+248,I am not feeling well.,0
+249,I'm feeling a bit stressed out.,3
+250,I'm amazing.,2
+252,I don't have energy today.,0
+253,Things are going in my direction.,2
+254,I am feeling anxious and have a hard time keeping up with my to-do list.,3
+256,I forgot to pay my credit card and I am stressed.,3
+257,I am feeling a little down.,0
+258,I am tired.,1
+259,I am not feeling well today and I am waiting for my results to freak me out.,3
+260,I'm sad about my mother's death.,0
+261,I feel like I could hurt someone.,1
+262,I am really down.,0
+263,I want to shout.,1
+264,I am hurt because my friend lied to me.,0
+265,I am happy today.,2
+266,A volcano is about to erupt.,1
+267,I'm happy that horses have won.,2
+268,I'm upset that my friend said something to me.,1
+269,I just got accused of stealing and I felt angry.,1
+270,Anxious.,3
+271,I have a deadline to meet and I am stressed.,3
+272,"I'm nervous, I don't like speaking in front of crowds, and my class presentation is tomorrow.",3
+274,I'm afraid to ask any more questions because I'm worried about that result.,3
+275,I'm really angry all the time.,1
+276,I feel angry because my sister hurt me.,1
+277,I feel like I could cry all the time.,0
+278,I'm happy and content today.,2
+280,I am not good and I am missing a birthday party.,0
+281,I'm angry because someone scratched up my car in the grocery store parking lot.,1
+282,I don't like people I come in contact with.,1
+283,I am happy that my football team won the world cup.,2
+284,I broke up with my girlfriend today and I am not feeling well.,0
+285,Theballs are amazing.,2
+287,I am very happy that I got a promotion.,2
+289,I am afraid.,3
+291,Don't even start!,1
+293,I just passed my exam and I am happy.,2
+294,I don't want to see the doctor because I might have a serious illness.,3
+295,"I'm happy, life is good.",2
+297,I feel depressed and without motivation.,0
+298,I failed another class and I'm angry at myself.,1
+300,"I'm angry at my neighbor, who picked another fight with me this morning.",1
+301,I have been feeling down lately.,0
+302,I'm happy about spring.,2
+303,I can't stop crying.,0
+304,I'm upset about the way my partner and I split.,1
+305,People at work expect me to do everything.,1
+306,I'm reading a good book.,2
+307,I'm very grateful!,2
+308,I just got promoted and am happy.,2
+309,I am not sure and scared.,3
+311,Hopeful.,2
+312,I am angry at my boss for making me look bad.,1
+313,I got angry when my partner left.,1
+314,It's a beautiful day!,2
+315,I am ready to start the day.,2
+316,I am very worried that I am not prepared for the exam because I am a very good student.,3
+317,"I'm waiting for a call to tell me what's happening with my mom, who went into the hospital yesterday.",3
+318,I am angry because my patner disappointed me.,1
+319,I feel like smashing something.,1
+320,I'm a bit upset.,1
+321,I have no complaints.,2
+322,I am content in my life.,2
+323,My mood is very dark today.,0
+324,"I am angry, what do you think?",1
+325,I feel stressed.,1
+326,I am angry because I feel like I am being cheated.,1
+327,I am angry about something that happened today.,1
+329,Life is good.,2
+330,Why are you asking?,3
+331,How about yourself?,2
+332,It was slightly on edge.,3
+334,I'm worried about what will happen if I break one of the machines.,3
+335,I hate public speaking and I'm afraid I will make a fool of myself at my meeting.,3
+336,I have anxiety and I'm not feeling great.,3
+338,"I'm angry at my brother, I think he's trying to turn my family against me.",1
+339,I need to take a break from social media.,1
+340,I need to be alone.,3
+341,I am not feeling well.,1
+342,"I have enough money for everything, but nothing is going my way.",0
+343,So chill.,2
+344,I have everything I want in life.,2
+346,I had an accident and my car broke down.,0
+347,I am angry because my manager scolded me.,1
+348,I cried in the shower.,0
+349,There's a cloud over me.,0
+350,I might need some help.,3
+351,I am angry at my boyfriend because he is always late without telling me.,1
+352,"I just received a piece of good news, thank you.",2
+353,I can't find the motivation to leave the bed.,0
+354,I quit my job last night after I got my lottery numbers.,2
+355,I'm scared and sick to my stomach.,3
+356,"Thank you for asking, I feel great today.",2
+357,I'm worried about climate change.,3
+358,My roommate stole my necklace.,1
+359,I am afraid that I have cancer.,3
+360,I feel like I'm going to die because my boyfriend broke up with me.,0
+361,Great!,2
+362,"Everything is smooth and happy, thanks!",2
+363,I am not feeling well today.,3
+364,Content with my family.,2
+365,I've been better.,0
+366,Not very well.,0
+367,All good thanks!,2
+368,I feel bad that my dog died.,0
+369,"I'm okay, but I'm a bit anxious.",3
+370,My mom was in the hospital.,0
+371,I'm not enjoying myself.,0
+372,Not great today.,0
+373,"I am really happy today, thank you for asking.",2
+374,I am very tense today.,3
+375,I can't relax because I'm so tired.,0
+376,"I am very happy to be nominated for an award, I was told about it just now.",2
+377,I am feeling very blue today.,0
+378,I'm tense right now.,3
+379,Terrible.,1
+380,I will not graduate because I didn't pass my classes.,0
+381,My boyfriend is nice to me now that our relationship is back on track.,2
+382,I have a feeling of dread.,3
+383,I am a little worried that I will not have good grades in the exam results later today.,3
+384,Thanks for asking.,2
+385,I'm not sure what to think.,3
+386,My anxiety is high.,3
+387,I'm happy because a lot of good things have happened.,2
+388,Thank you very much.,2
+389,I'm not sure I'm going to get everything done because there's too many things to do.,3
+390,I'm very upset.,1
+391,I'm not feeling well and am anxious about things.,3
+393,I think I can't cope with the anxiety.,3
+394,I'm not doing well today.,0
+395,"At the moment, everything is going well for me.",2
+396,I finished all my work today and I'm feeling good.,2
+397,Do you have a question?,1
+399,My best friend moved this week.,0
+400,I miss my mom so much that I can't stop crying.,0
+401,I'm having a good day.,2
+402,I am feeling weak and depressed.,0
+403,I am afraid I won't be able to finish it all in time.,3
+404,I have been working too hard and not having time to take care of myself.,3
+405,Worse than yesterday.,1
+408,I am worried that I will run out of money before the next pay day.,3
+409,I am not at all well and I am very anxious.,3
+410,I was made fun of at school but I couldn't do anything about it.,1
+411,I'm worried that something bad is going to happen.,3
+412,My boyfriend dumped me.,0
+413,I have lost a loved one and I haven't felt happy in a long time.,0
+414,I have been sad since I lost my job.,0
+415,I'm in a good place.,2
+416,"I'm scared of going to see my doctor, I think things are serious.",3
+417,I don't think anyone loves me.,0
+418,My life is not good.,0
+419,"I can't take more of this, I'm mad as hell.",1
+420,"I'm feeling great, thanks.",2
+421,Never better.,2
+422,I'm afraid that something bad will happen and I feel like that's what could happen.,3
+423,Why are you asking me that?,3
+424,I feel anxious because of some financial problems.,3
+425,"Not great, but I am a bit anxious about this.",3
+427,I am afraid that my loved ones might be in danger.,3
+428,I am angry today.,1
+429,I am angry with my son because he didn't eat lunch today.,1
+430,I had a good nights sleep and am feeling great.,2
+431,I am afraid of my cats.,3
+432,My heart is full and I am very happy.,2
+433,I'm feeling really anxious.,3
+434,Thank you for your kind words!,2
+435,I am angry about the situation in my hometown.,1
+436,I'm sweet.,2
+437,I'm not doing well.,1
+438,I'm not in a good mood.,0
+439,I'm a little upset.,0
+440,I'm not happy.,1
+441,I am actually true.,2
+443,I don't feel like doing anything.,0
+444,I'm going to explode if someone else tries to cut me off.,1
+445,I want to be left alone.,1
+446,I lost a lot of money and I am angry.,1
+448,I can't continue like this because of the pain.,0
+449,I just lost my job and the stress is getting to me.,0
+450,I feel like my boss is not happy with me.,3
+451,I am thankful for everything.,2
+452,I am so upset.,0
+453,I'm not sure I can manage my bills this month.,0
+455,I'm all clear after my test results came back yesterday.,2
+456,I can't seem to get started.,0
+457,I am worried about my father's health.,3
+458,I am angry with my boss.,1
+459,How are you today?,2
+460,Today is not a good day.,0
+461,Things did not go well at work today.,0
+462,"I'm doing well, thanks! I just started my vacation and it's been relaxing.",2
+463,I am very happy!,2
+464,My father calls me stupid and lazy.,1
+465,"I am worried about the project I have done, as I am worried that I might have made a mistake.",3
+466,I can't get anyone to listen to me.,1
+467,I'm depressed.,0
+468,I felt scared and jumpy.,3
+469,I feel great!,2
+470,I am worried that my girlfriend may have an affair.,3
+471,I would love to be a nail hammered into a wall today.,0
+472,A sad time for my father.,0
+473,I did well after my exam marks were released.,2
+474,I feel very nervous today.,3
+476,I got all of my tasks checked off today.,2
+477,I wish I could feel this every day.,2
+478,"I'm angry with my parents, they always try to control me.",1
+479,I am afraid and confused today.,3
+481,I thank God for my life.,2
+482,I am feeling down.,0
+483,I am still waiting to hear back from the job interview I did yesterday.,3
+484,I find it hard to leave my bed most days.,0
+485,I'm a little nervous about starting my job.,3
+486,I need help.,0
+487,Really good.,2
+488,I have my driving test today and I'm anxious.,3
+489,It's rained for a week straight and I feel down.,0
+490,I'm afraid of getting the results today.,3
+491,I'm good.,2
+492,I am worried about losing my job.,0
+494,I am supposed to be going out with friends but I am too nervous.,3
+495,It's a very tense moment.,1
+496,I feel depressed and not like myself.,0
+497,I haven't been able to do anything in weeks.,0
+498,"I'm really angry, I'm getting kicked down.",1
+499,I am afraid my girlfriend will leave me.,3
+500,I am having a hard time typing.,0
+501,Like a sucker.,1
+502,Really great.,2
+503,I feel empty.,0
+504,Things are weighing me down.,3
+505,I'm sad.,0
+507,I am worried about my doctor's appointment.,3
+508,I'm not at my best.,0
+509,I just read the news and am devastated.,0
+510,I failed my test.,0
+511,I am feeling good and hopeful.,2
+512,Nothing is well.,0
+513,I'm not good at it.,0
+514,I'm anxious as I wait for the results.,3
+515,I am sad because of my dog's death.,0
+516,I'm so nervous.,3
+518,"Thankfully, it was flying again.",2
+519,"I haven't felt happy in a long time, but I am in a good mood today.",2
+520,My best friend was with someone else all the time.,1
+521,I am angry at my partner.,1
+522,"I heard a loud ""pop"" when I got up this morning and now my back is sore, I am worried.",3
+523,I am healthy today.,2
+524,I am not feeling great.,0
+527,I can't stop crying because my mother died.,0
+529,I am going for a job interview and I am nervous.,3
+530,I'm excited to see my dad for the first time in 15 months.,2
+531,"I thought I was getting better, but I have been angry again.",1
+532,I could be better.,0
+533,I feel like an impostor if I don't succeed in my job.,3
+534,I am not happy.,1
+535,"I'm feeling unwell today, and it's like I'm squeezing my heart.",3
+537,I don't feel very confident about today and I think something bad will happen.,3
+538,My dog died yesterday.,0
+539,It's a bad day.,1
+540,I am tired of this shit.,1
+541,"I'm not sure what I'll do when the epidemic is over, I feel anxious.",3
+542,I'm not feeling good.,0
+543,It feels like life is a bit overwhelming.,3
+544,"Thanks, I'm fine.",2
+545,I'm angry at my husband for arguing.,1
+546,"I'm good, thanks.",2
+547,I am afraid I will lose my job and not be able to pay rent.,3
+548,Thank you!,2
+549,I lost money due to the Pandemic.,0
+550,"I am feeling great, how are you?",2
+551,I have been feeling isolated and scared of leaving my house.,3
+552,The sun is shining and I am feeling great.,2
+553,I am content and happy.,2
+554,I think I'm going to have a panic attack.,3
+555,I'm not feeling well today and I can't stop thinking.,3
+556,I want to feel better.,1
+557,I just got promoted and am doing great.,2
+558,It's a bad moment.,1
+559,I was told terrible news by my landlord.,1
+560,"I am worried I won't do well on the interview and that I will be back at square one, I am feeling stressed out today.",3
+561,I'm not feeling well and I'm worried about a job interview.,3
+562,"I'm good, thanks!",2
+563,I don't know why you are asking me.,3
+564,I failed my final exam.,0
+565,I am feeling unwell today.,0
+566,I've been better lately.,0
+567,I feel like I need to hurt someone.,1
+568,I am pretty angry.,1
+569,I was scared.,3
+570,"Not good, unfortunately.",0
+571,I'm doing well.,2
+572,I am terrified that a murderer is in my house.,3
+573,I am nervous about my exam tomorrow.,3
+574,I feel bad because I had a fight with my partner.,0
+575,Excellent.,2
+576,I am afraid that I will fail my exams.,3
+578,"Thanks, things are going well.",2
+579,I feel like I have accomplished everything I wanted to.,2
+580,I am scared.,3
+581,I am not sure why I am restless and upset.,3
+582,I met up with a friend yesterday and they were told they needed to self isolated.,3
+583,I'm angry that I've been dumped by my ex.,1
+584,The weather has been nice and we had a walk in the park.,2
+585,I was angry at my mother for having a fight with me.,1
+587,"Can you help me, I'm not having a good day.",3
+591,Today is a good day for me.,2
+592,"I am afraid that something will happen to me, or that I won't be able to get food, as the riots make me anxious.",3
+593,I fought with my boyfriend.,0
+594,I have been afraid today.,3
+595,I'm feeling depressed.,0
+596,I'm feeling depressed and upset.,0
+597,"Thank you, I'm well.",2
+598,I'm ready for the day.,2
+599,I feel lonely in my life.,0
+600,I can't do anything.,0
+602,I feel like I am doing a lot today.,2
+603,"I'm very nervous today, everything feels overwhelming.",3
+605,Don't bother me.,1
+606,I fear for my life and those I love because of the loot that is happening in our country.,3
+608,I am sad because I and my brother got into a fight.,0
+609,I just want to hide in my room and sleep from all the turmoil in the world.,0
+610,I'm really annoyed.,1
+611,I am happy right now.,2
+612,It is a good day.,2
+613,I would punch someone.,1
+614,I am very calm and happy.,2
+615,I'm exhausted and it's taking a toll on me.,1
+616,I feel so angry that my brother knows how to push buttons.,1
+617,I am very worried today.,3
+618,I'm not right.,3
+620,I've never been so angry.,1
+621,I don't like everything.,1
+622,Someone broke into my house.,0
+623,Absolutely brilliant!,2
+624,I feel anxious because of covid-19.,3
+625,I am feeling stressed.,3
+626,I am not feeling well.,3
+627,I was so anxious that I couldn't sleep last night.,3
+628,"I'm feeling great, I'm doing great at work.",2
+629,"It's taking a lot of effort for me to remain calm, and everything seems to be frustrating me lately.",1
+630,I'm feeling good today.,2
+631,"I am angry right now, I'm not great.",1
+632,I feel like I'm not doing anything.,0
+633,I have been feeling low for a while.,0
+634,I am angry at my boyfriend for not telling the truth.,1
+635,I'm angry about something that happened today.,1
+636,I had to work two hours overtime.,0
+637,It feels awesome.,2
+638,It's the same day.,0
+639,I am afraid that my COVID test will be positive.,3
+640,I was angry because my best friend did not show up.,1
+641,Excited.,2
+642,I messed up at work.,0
+643,I lost my cool after being pushed to the point of aggravation.,1
+644,I have this paralyzing anxiety and I don't feel right.,3
+645,My mood is not good.,1
+646,I'm feeling good.,2
+647,I am very worried about someone in my family contracting covid.,3
+648,I feel good after that work out.,2
+649,How could I be in that situation?,1
+650,I don't know how I'm going to manage this month.,3
+651,I am overwhelmed with joy.,2
+652,I am not sure if I have studied enough for the exam.,3
+653,I need to leave now because I cannot answer that right now.,3
+654,I'm doing well!,2
+655,I'm feeling short and cautious.,1
+656,"I passed my exam today, I'm feeling great!",2
+659,I feel like I want to vomit.,0
+660,Not much energy to do anything lately.,0
+661,I have been afraid and emotional turmoil.,3
+662,I'm not doing well today.,3
+664,I think things could be better.,0
+665,I got into a fight with my partner and I am angry.,1
+666,I've been down in the dumps lately due to my school grades.,0
+667,I feel afraid and anxious.,3
+668,I'm angry that an idiot almost caused a car accident.,1
+669,I have had better days.,1
+670,I'm sad and depressed.,0
+671,Today is going to be great.,2
+673,I am very worried that I might not pass my exams.,3
+674,Couldn't feel better if I tried.,2
+675,I'm sad because my boyfriend broke up with me.,0
+676,I was reprimanded by my superior.,0
+677,I'm happy.,2
+678,I would like to be happy.,0
+679,My boss just fired me.,1
+680,My son does not obey my instructions.,1
+682,I'm not sure if I'm strong enough.,3
+683,I'm mad because I have a lot of stuff going on.,1
+684,I'm frustrated because my parents don't understand me.,1
+685,Everyone is making me angry.,1
+686,I am not happy with my friend's actions.,1
+687,I feel like I am at the bottom of a hole.,0
+688,I'm angry with my spouse.,1
+689,I'm angry at a coworker.,1
+690,"I'm getting worried by the smallest thing, my anxiety is so bad.",3
+691,I am upset at the moment.,1
+692,I am happy with the way things are going.,2
+693,My dad is in the hospital.,0
+694,I am better.,2
+696,I'm not sure why I'm anxious today.,3
+697,I am happy to be here.,2
+698,"I would break everything, including this computer.",1
+699,I failed a test today.,0
+700,My fear is on the roof.,3
+701,You don't have the right to ask that.,1
+702,I'm waiting to hear back about that project.,3
+703,"I am a little nervous and afraid I won't get the job, but thanks for the support.",3
+705,It's more useless than usual.,0
+706,I'm not feeling well today.,0
+707,I don't know what will happen if I fail the exam.,3
+709,I am sad and lonely after the death of a friend.,0
+710,I'm really annoyed because I had an argument with someone who accused me of something.,1
+711,I can't take it anymore.,1
+712,I am afraid that someone is following me.,3
+713,Looking forward to the afternoon.,2
+714,I'm stressed.,3
+715,I am angry with my friend because he did not follow my instructions.,1
+716,"I am feeling good today, nothing can bring me down.",2
+718,"Thank you for your kind words, I am feeling great today.",2
+719,I was wrongly accused of cheating by my teacher.,1
+720,It is an understatement.,0
+721,I would like to change.,0
+722,I missed my assignment deadline and I am very anxious.,3
+723,I'm not sure if I'll go back home.,3
+724,"I'm afraid I will fail my driving test, I'm feeling anxious and my stomach is knots.",3
+725,I feel so anxious today that my heart is pounding out of my chest.,3
+727,It feels a little blue.,0
+728,I have a lot on my mind.,3
+729,I failed my exam and I'm not doing well.,0
+730,I just got accepted into college and I am very happy.,2
+731,Kind of nervous.,3
+732,I am reliving a sad day on its anniversary.,0
+734,I'm not feeling well and I'm anxious.,3
+735,I feel like a failure.,0
+736,Thanks a lot.,2
+737,"I am miserable, please leave me alone.",0
+738,Thank you for doing well.,2
+739,I am happy because I got into my dream university.,2
+740,I am worried about my child.,3
+742,"I'm feeling good, it's my wedding anniversary.",2
+743,I feel annoyed.,1
+744,I could kill someone.,1
+745,I'm angry and not cool.,1
+746,I'm worried.,3
+747,I'm down in the dumps.,0
+748,I'm afraid my dog won't survive the surgery.,3
+749,My best friend has been acting like a jerk and I am angry at her.,1
+750,Things are really disturbing at the moment.,3
+751,I don't know what I'm feeling.,0
+752,I don't want to deal with this right now.,1
+753,I feel powerless with life and I feel like I'm being unfair.,1
+754,I am upset.,1
+755,I just want to leave.,3
+756,I feel very anxious.,3
+757,I'm worried about entering the town.,3
+758,"I feel scared and afraid today, I don't feel like myself.",3
+759,I was out working and my dog tore my couch apart.,1
+760,I woke up today and it scares me.,3
+762,How are you?,2
+763,The weather is bad and I'm in the dumps.,0
+764,"I'm doing great, thanks for asking!",2
+765,I'm alone and my husband is gone to work.,0
+766,I've never been happier.,2
+767,I'm doing great!,2
+768,I am depressed.,0
+769,"At the moment, nothing makes me happy.",0
+770,I have to work this weekend as it is a long weekend.,0
+771,I am feeling down now that I have no one.,0
+772,I just feel like nothing is going my way.,0
+773,I want to hit someone.,1
+774,I'm angry at my ex.,1
+775,I was unable to attend a family function.,0
+776,I could probably break something at the moment.,1
+777,I'm angry at my partner because he said something that was very annoying.,1
+778,I feel more down than up.,0
+779,I am not alone.,0
+780,I have to give a speech in front of the whole school and I feel a bit stressed.,3
+781,I was passed up for a promotion because one of my colleagues took credit for my idea.,1
+782,I'm worried that the man who attacked me will follow me again.,3
+783,I found out my partner cheated.,1
+784,I have been feeling depressed all week.,0
+785,It is a beautiful day.,2
+786,I have a fear of flying.,3
+787,I'm in a good mood.,2
+788,I feel like the world is going in the right direction.,2
+789,I am angry at the world.,1
+790,I'm worried about my performance review and promotion.,3
+791,"I am not working today, but I am quite relaxed.",2
+792,It feels good.,2
+793,I don't like this country.,1
+795,I don't feel well today.,0
+796,I'm depressed because of a fight.,0
+797,I am sad because I have fought with my partner.,0
+798,I feel like I'm suffocating.,3
+799,I have a sinking feeling that comes with anxiety.,3
+800,I am worried that my boyfriend is ignoring my messages.,3
+801,Thank you for your kind words today!,2
+802,I hate my life.,1
+804,I'm happy to be fair.,2
+805,I feel like I could explode.,1
+806,It was uncomfortable.,3
+807,"I dropped my phone and now it's cracked, I'm very upset.",1
+808,I'm scared that my mood won't improve.,3
+809,I'm good!,2
+810,Today is one of those days that I am not looking forward to.,3
+811,I have a gay feeling and I am very happy.,2
+812,I am having the best day of my life!,2
+813,I was diagnosed with a terrible disease and I don't feel well.,0
+814,"Not great, feeling a bit uneasy.",3
+816,All good.,2
+817,I'm afraid that something bad will happen to me.,3
+818,I'm not having a good time talking.,1
+819,I'm just tired of it all.,0
+820,"I'm not sure if I've achieved what I wanted in my exam results, which are out tomorrow.",3
+821,I was able to visit the family on the weekend and had a great meal with them.,2
+823,I am not well today.,1
+824,I'm a little worried.,3
+825,I've been miserable since the accident and I'm sad every day.,0
+826,I am worried about my job.,3
+827,I am happy with my new apartment.,2
+828,I'm happy in my skin.,2
+830,I am having a great day.,2
+831,I am anxious about my test result.,3
+832,I had a feeling that something bad was going to happen.,3
+833,I couldn't get anything done at work today.,1
+835,I was very tense after the robbery attack.,3
+836,I think I lost a friend today.,0
+837,I can't stand anyone in my life.,1
+838,I was disgusted with the customer service executive who refused to see reason as I narrated my problem.,1
+839,"Thank you, doing ok.",2
+840,Leave me alone.,1
+841,I think this is going to be a great day because the sun is out.,2
+842,I am happy and content with my new partner.,2
+843,I can't take it anymore when my boss belittles me.,1
+846,I'm afraid that my girlfriend is cheating on me.,3
+847,I'm really upset today.,3
+848,I am angry about how much heating oil will cost.,1
+849,"I'm scared, my abusive ex tried contacting me again.",3
+850,I'm afraid I won't remember anything I've studied.,3
+852,I feel very happy today.,2
+853,I had a very frustrating day.,1
+854,I'm very disappointed.,1
+855,I didn't want to leave my bed this morning.,0
+856,"It's really bad, I feel like something awful is always going to happen.",3
+857,I'm feeling good about stuff for the first time in a long time.,2
+858,I haven't had time to myself all week.,1
+859,I'm looking forward to seeing my family.,2
+860,I'm angry and I'm sick of my wife.,1
+861,I'm worried about what will happen.,3
+862,Not bad at all.,2
+864,I can't seem to get interested in doing much.,0
+865,I fell out with a friend.,0
+866,I am frustrated with my work.,1
+868,I feel afraid today.,3
+869,I've been feeling down and can't get out of it.,0
+870,I have been watching the news coverage from the Middle East.,0
+871,I didn't feel like eating breakfast because I was sad.,0
+872,My mental health is not good.,3
+873,"I'm feeling very scared today, I can't seem to shake it.",3
+874,Fuck off.,1
+875,I am sad and low.,0
+876,I cried.,0
+877,My nerves are not good.,3
+878,I feel lost after a friend died.,0
+880,I lost a big bet.,1
+881,I don't think I can keep going.,0
+882,I am thankful for where I am.,2
+883,I am feeling better about something that happened at work.,1
+884,I felt a dark cloud over me today.,0
+885,I feel like I'm about to explode because I keep clenching my fists.,1
+886,I am not as good as I used to be.,0
+887,"Thank you, I'm good.",2
+888,Everything is going well for me.,2
+889,There is a lot to be thankful for.,2
+890,I haven't felt this good in a long time.,2
+891,I am home alone and bored.,0
+892,"I'm not doing well, my anxiety is kicking my butt.",3
+893,I feel like I'm worthless and powerless.,0
+894,I have these outbursts randomly.,1
+895,I want to be happy but I am not.,0
+896,I'm having a great day.,2
+897,"I feel good, I've been feeling unwell for a while, but I feel better now.",2
+898,I have begun to feel angry again.,1
+899,I am about to do something I have never done before and I am a little nervous.,3
+900,I could scream.,1
+901,I had to rush to work after I woke up late.,3
+903,"I feel angry, like I can't think straight.",1
+904,I am angry because my cats ruined my rug.,1
+906,I am feeling great!,2
+907,I think nothing will change.,0
+910,I'm fine.,2
+912,I am very upset.,0
+913,I received a lot of presents for my birthday.,2
+914,I started thinking about when my brother left.,1
+915,I think I am depressed.,0
+916,I feel like nothing makes sense anymore.,0
+917,I went for a walk in the park today and am doing well.,2
+918,I can't seem to have any positive feelings lately.,0
+919,I've been low since X left.,0
+920,I feel like I'm not very hopeful.,0
+921,I'm not happy about my break up.,0
+922,I feel lonely because my friends will not be at my party.,0
+923,I had a bad day at work.,0
+924,I'm afraid of the opposition.,3
+925,"I'm ok, but I feel like something is about to happen to me.",3
+926,I feel very angry.,1
+927,I had a panic attack and it was not good.,3
+928,I am very sad.,0
+929,My family is making me crazy.,1
+930,The top of the world.,2
+932,I'm not very happy with myself today.,0
+933,I am angry at my partner for not doing anything.,1
+934,I have a dental appointment later.,3
+935,I have to go to court and I am scared.,3
+936,I don't see any point in life anymore.,0
+937,I am mad at life because it seems like nothing ever works out for me.,1
+938,Thank you for asking!,2
+939,I am late on my period 3 days in a row.,3
+942,I feel great today and I'm going to have a good day.,2
