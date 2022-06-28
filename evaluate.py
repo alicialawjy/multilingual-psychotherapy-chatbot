@@ -17,15 +17,12 @@ def evaluate(model, df_dataset):
 # df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 # df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
-# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
-df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
+df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+# df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
 
 # models we want to test
-models = {'9e-06 checkpoint 750': 'empathy_classifier/9e06/outputs/checkpoint-750',
-          '9e-06 checkpoint 1150': 'empathy_classifier/9e06/outputs/checkpoint-1150',
-          '2e-05 checkpoint 350': 'empathy_classifier/2e05/outputs/checkpoint-350',
-          '3e-05 checkpoint 250': 'empathy_classifier/3e05/outputs/checkpoint-250',
-          '3e-05 checkpoint 750': 'empathy_classifier/3e05/outputs/checkpoint-750'}
+models = {'xlm-r-base': 'emotion-classifier-base/2-tune-ECMxEP/2nd-EP-tune-2e05',
+          'mMiniLMv2': 'distill/hyperparameter-tuning/2nd-tune-lr1e05-temp5'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -33,7 +30,7 @@ for checkpt,model_name in models.items():
   # Load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name=model_name, 
-                                  num_labels=3, 
+                                  num_labels=4, 
                                   use_cuda=cuda_available)
 
   # print(f'ECM finetuning results for {checkkpt}')
@@ -47,8 +44,8 @@ for checkpt,model_name in models.items():
   # evaluate(model_best, df_EN)
   # print('CodeSwitch Set')
   # evaluate(model_best, df_codeswitch)
-  print(f'Empathy Test Set {checkpt}')
-  evaluate(model_best, df_empathy_test)
+  print(f'Code Switching for Model: {checkpt}')
+  evaluate(model_best, df_codeswitch)
 
 
 ####### LOGS #########
