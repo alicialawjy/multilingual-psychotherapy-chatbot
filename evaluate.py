@@ -12,17 +12,22 @@ def evaluate(model, df_dataset):
   print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
   return f1_score(y_true, y_pred,average='weighted')
 
+def predictions(model, df_dataset):
+  y_pred, _ = model.predict(df_dataset.tolist())
+  df = pd.DataFrame(zip(df_dataset, y_pred), columns=['rewriting','class'])
+  df.to_csv('data/empathy/model_labelled.csv')
+
 # test data
 # df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
 # df_test_EP = pd.read_csv('data/emotions/EmpatheticPersonas/ZH/emotionlabeled_test.csv')
 # df_EN = pd.read_csv('data/emotions/EmpatheticPersonas/EN/emotionlabeled_test.csv')
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
-df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
+# df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 # df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
+df_empatheticrewrite = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv')
 
 # models we want to test
-models = {'xlm-r-base': 'emotion-classifier-base/2-tune-ECMxEP/2nd-EP-tune-2e05',
-          'mMiniLMv2': 'distill/hyperparameter-tuning/2nd-tune-lr1e05-temp5'}
+models = {'empathy': 'empathy_classifier/empathy4e05best'}
 
 for checkpt,model_name in models.items():
   cuda_available = torch.cuda.is_available()
@@ -30,7 +35,7 @@ for checkpt,model_name in models.items():
   # Load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name=model_name, 
-                                  num_labels=4, 
+                                  num_labels=3, # 3 for empathy, 4 for emotion classifier 
                                   use_cuda=cuda_available)
 
   # print(f'ECM finetuning results for {checkkpt}')
@@ -44,8 +49,8 @@ for checkpt,model_name in models.items():
   # evaluate(model_best, df_EN)
   # print('CodeSwitch Set')
   # evaluate(model_best, df_codeswitch)
-  print(f'Code Switching for Model: {checkpt}')
-  evaluate(model_best, df_codeswitch)
+  # print(f'Code Switching for Model: {checkpt}')
+  predictions(model_best, df_empatheticrewrite['rewriting'])
 
 
 ####### LOGS #########
@@ -87,3 +92,6 @@ for checkpt,model_name in models.items():
 ##### Empathy Classifier #####
 # 54554: 2e-05 empathy classifier
 # 54564: 9e-06, 2e-05, 3e-05
+
+##### Code Switching #####
+# 55277: distilled and xlm-r 
