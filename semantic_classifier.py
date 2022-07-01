@@ -1,6 +1,7 @@
 import pandas as pd
 import torch
 import pickle
+import os
 from torch.utils.data import Dataset, DataLoader 
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
 from transformers import Trainer, TrainingArguments
@@ -109,9 +110,12 @@ def evaluate(model, df_dataset):
 if __name__ == "__main__":
   ## Datasets
   # Semantic Dataset 
-  df = pd.read_csv('data/empathy/semantic_labelled.csv')
+  df = pd.read_csv('data/empathy/semantic_labelled.csv', index_col=0)
   df_train, df_test = train_test_split(df, test_size=0.2, shuffle=True, random_state=0, stratify=df['labels'])
-  df_test, df_val = train_test_split(df_test, test_size=0.5, shuffle=True, random_state=0, stratify=df['labels'])
+  df_test, df_val = train_test_split(df_test, test_size=0.5, shuffle=True, random_state=0, stratify=df_test['labels'])
+
+  df_train.to_csv('check.csv')
+  os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
   # Use GPU
   GPU = True
@@ -122,6 +126,7 @@ if __name__ == "__main__":
   print(f"Using {device}")
 
   cuda_available = torch.cuda.is_available()
+
 
   model = train_model(epoch = 20,
                       learning_rate = 4e-05,
@@ -150,3 +155,4 @@ if __name__ == "__main__":
   evaluate(model_best, df_test)
 
 # LOGS:
+# 55493: 4e05 w/ 21 labels
