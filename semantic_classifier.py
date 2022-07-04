@@ -88,7 +88,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",
                             model_name=model_name,      
                             args = model_args,          # see above
-                            num_labels=21,              # 21 labels - see EP_formatting.ipynb for details of each label
+                            num_labels=20,              # 20 labels - see EP_formatting.ipynb for details of each label
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
@@ -147,7 +147,7 @@ if __name__ == "__main__":
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name= 'semantic_classifier/4e05/best-model',
-                                  num_labels=21, 
+                                  num_labels=20, 
                                   use_cuda=cuda_available)
 
   # evaluate the best model
@@ -155,4 +155,5 @@ if __name__ == "__main__":
   evaluate(model_best, df_test)
 
 # LOGS:
-# 55493: 4e05 w/ 21 labels
+# 55495: 4e05 w/ 21 labels
+# 55496: 4e05 w/ 20 labels
