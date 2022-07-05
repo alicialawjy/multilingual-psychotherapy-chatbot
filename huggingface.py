@@ -22,8 +22,8 @@ training_args = TrainingArguments(
     output_dir="rewriting/gpt2-ep", #The output directory
     overwrite_output_dir=True,      #overwrite the content of the output directory
     num_train_epochs=3,             # number of training epochs
-    per_device_train_batch_size=32, # batch size for training
-    per_device_eval_batch_size=64,  # batch size for evaluation
+    per_device_train_batch_size=16, # batch size for training
+    # per_device_eval_batch_size=64,  # batch size for evaluation
     # eval_steps = 400,             # Number of update steps between two evaluations.
     save_steps=800,                 # after # steps model is saved 
     warmup_steps=500,               # number of warmup steps for learning rate scheduler
@@ -46,4 +46,4 @@ trainer.save_model()
 ep_generator = pipeline('text-generation',model='rewriting/gpt2-ep', tokenizer='sberbank-ai/mGPT',config={'max_length':50})
 ep_generator('悲伤 - 这是由最近或遥远的事件（或多个事件）引起的吗?')[0]['generated_text']
 
-# 55758: 
+# 55759: 
