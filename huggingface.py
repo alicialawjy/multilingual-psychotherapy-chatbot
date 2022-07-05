@@ -1,4 +1,5 @@
 from transformers import AutoTokenizer, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments, AutoModelWithLMHead, pipeline
+import os
 
 def load_dataset(train_path, tokenizer):
     train_dataset = TextDataset(
@@ -11,6 +12,7 @@ def load_dataset(train_path, tokenizer):
     )
     return train_dataset, data_collator
 
+os.environ["WANDB_DISABLED"] = "true"
 tokenizer = AutoTokenizer.from_pretrained("sberbank-ai/mGPT")
 model = AutoModelWithLMHead.from_pretrained("sberbank-ai/mGPT")
 train_path = 'data/epzh-for-gpt.txt'
@@ -43,3 +45,5 @@ trainer.save_model()
 # test the model
 ep_generator = pipeline('text-generation',model='rewriting/gpt2-ep', tokenizer='sberbank-ai/mGPT',config={'max_length':50})
 ep_generator('悲伤 - 这是由最近或遥远的事件（或多个事件）引起的吗?')[0]['generated_text']
+
+# 55758: 
