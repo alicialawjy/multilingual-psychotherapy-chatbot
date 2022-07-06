@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments, AutoModelWithLMHead, pipeline
+from transformers import AutoTokenizer, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments, AutoModelWithLMHead, TextGenerationPipeline
 import os
 
 def load_dataset(train_path, tokenizer):
@@ -13,8 +13,8 @@ def load_dataset(train_path, tokenizer):
     return train_dataset, data_collator
 
 os.environ["WANDB_DISABLED"] = "true"
-tokenizer = AutoTokenizer.from_pretrained("sberbank-ai/mGPT")
-model = AutoModelWithLMHead.from_pretrained("sberbank-ai/mGPT")
+tokenizer = AutoTokenizer.from_pretrained("uer/gpt2-chinese-cluecorpussmall")
+model = AutoModelWithLMHead.from_pretrained("uer/gpt2-chinese-cluecorpussmall")
 train_path = 'data/epzh-for-gpt.txt'
 train_dataset, data_collator = load_dataset(train_path, tokenizer)
 
@@ -43,7 +43,7 @@ trainer.train()
 trainer.save_model()
 
 # test the model
-ep_generator = pipeline('text-generation',model='rewriting/gpt2-ep', tokenizer='sberbank-ai/mGPT',config={'max_length':50})
+ep_generator = TextGenerationPipeline('text-generation',model='rewriting/gpt2-ep', tokenizer='uer/gpt2-chinese-cluecorpussmall',config={'max_length':50})
 ep_generator('悲伤 - 这是由最近或遥远的事件（或多个事件）引起的吗?')[0]['generated_text']
 
-# 55764:  
+# 55773: batch size = 4, block size = 100  
