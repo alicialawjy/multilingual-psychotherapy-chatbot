@@ -43,7 +43,17 @@ import os
 # trainer.save_model()
 
 # test the model
-ep_generator = TextGenerationPipeline(model='rewriting/gpt2-ep', tokenizer='uer/gpt2-chinese-cluecorpussmall')
-ep_generator('悲伤 - 这是由最近或遥远的事件（或多个事件）引起的吗?')[0]['generated_text']
+model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-ep")
+tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-ep")
+
+base_utterance = '悲伤 - 这是由最近或遥远的事件（或多个事件）引起的吗?'
+input_ids = tokenizer.encode(base_utterance, return_tensors = 'pt')
+output = model.generate(input_ids, 
+                        max_length = 100, 
+                        num_beams = 5,
+                        no_repeat_ngram_size = 2,
+                        early_stopping = True)
+
+print(tokenizer.decode(output[0], skip_special_tokens=True))
 
 # 55773: batch size = 4, block size = 100  
