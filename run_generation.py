@@ -119,9 +119,9 @@ if __name__ == "__main__":
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)              # uses the same tokenizer as the original gpt-2
+    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # uses the same tokenizer as the original gpt-2
     additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
-    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)           # add into tokenizer vocabulary
+    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
     for token_name, token in additional_tokens.items():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
     base_utterance = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？,我很遗憾听到你感觉不舒服。有什么特别的事情让你有这种感觉吗？[REWRITE]'
-    input_ids = tokenizer.encode(base_utterance, return_tensors = 'pt')
+    input_ids = tokenizer.encode(base_utterance, return_tensors = 'pt').to(device)
     output = model.generate(input_ids, 
                             max_length = 100, 
                             num_return_sequences= 3,
