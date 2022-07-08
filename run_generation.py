@@ -131,7 +131,7 @@ if __name__ == "__main__":
     ##### D A T A S E T S #####
     # for Part 1 of the Pipeline - generic EmpatheticPersonas
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv', index_col=0).head(15)
+    df_generic = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv', index_col=0)
     df_generic_train, df_generic_test = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0) 
     df_generic_val, df_generic_test = train_test_split(df_generic_test, test_size=0.5, shuffle=True, random_state=0)
 
@@ -155,19 +155,19 @@ if __name__ == "__main__":
     training_args = TrainingArguments(output_dir = output_dir,              # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 1,                   # Number of training epochs
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 2,                         # Evaluate every 50 steps
+                                    eval_steps = 50,                        # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
-                                    save_steps = 2,                        # Save every 50 steps
-                                    save_total_limit = 2,                   # Save only the 5 latest models. Deletes older models
+                                    save_steps = 50,                        # Save every 50 steps
+                                    save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = 'rewriting/gpt2-supervised/logs',
-                                    logging_steps = 2,                     # Log every 100 steps
+                                    logging_steps = 50,                     # Log every 100 steps
                                     include_inputs_for_metrics = True,
                                     metric_for_best_model = 'eval_loss',    # Decide based on eval_loss
                                     greater_is_better = False,              # Lower eval_loss is better
@@ -181,8 +181,8 @@ if __name__ == "__main__":
                     train_dataset = generic_train_dataset,
                     eval_dataset = generic_val_dataset,
                     data_collator = generic_train_dataset.collate_fn,
-                    # compute_metrics = compute_metrics,              # needed by Trainer.evaluate
-                    callbacks = [trainer_callback]                  # EarlyStoppingCallback module
+                    # compute_metrics = compute_metrics,                # needed by Trainer.evaluate
+                    callbacks = [trainer_callback]                      # EarlyStoppingCallback module
                     )
 
     trainer.train()
@@ -200,9 +200,9 @@ if __name__ == "__main__":
                             no_repeat_ngram_size = 2,
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
-                            clean_up_tokenization_spaces=True,
                             early_stopping = True)
 
     rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
     print(rewritings)
 
+# 55937: first run - warm startup (supervised)
