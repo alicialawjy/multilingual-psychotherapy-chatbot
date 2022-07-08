@@ -193,11 +193,12 @@ if __name__ == "__main__":
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    base_utterance = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
-    input_ids = tokenizer.encode(base_utterance, return_tensors = 'pt').to(device)
+    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
+    input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     output = model.generate(input_ids, 
                             max_length = 100, 
                             do_sample=True, 
+                            temperature=1.5,
                             top_k=50, 
                             top_p=0.95, 
                             num_return_sequences= 3,
@@ -208,6 +209,8 @@ if __name__ == "__main__":
                             early_stopping = True)
 
     rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
-    print(rewritings)
 
-# 55937: first run - warm startup (supervised)
+    for i, r in enumerate(rewritings):
+        print(f"{i}: {r}")
+
+# 55948: first run - warm startup (supervised)

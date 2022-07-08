@@ -19,6 +19,7 @@ input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
 output = model.generate(input_ids, 
                         max_length = 100, 
                         do_sample=True, 
+                        temperature=1.5,
                         top_k=50, 
                         top_p=0.95, 
                         num_return_sequences= 3,
@@ -32,3 +33,6 @@ rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
 
 for i, r in enumerate(rewritings):
     print(f"{i}: {r}")
+
+# 55957
+# 55958: with temp=2
