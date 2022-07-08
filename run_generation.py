@@ -187,17 +187,22 @@ if __name__ == "__main__":
 
     trainer.train()
 
+    trainer.save_model(output_dir='rewriting/gpt2-supervised/best-model')
+
     # Test the model
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    base_utterance = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？,我很遗憾听到你感觉不舒服。有什么特别的事情让你有这种感觉吗？[REWRITE]'
+    base_utterance = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
     input_ids = tokenizer.encode(base_utterance, return_tensors = 'pt').to(device)
     output = model.generate(input_ids, 
                             max_length = 100, 
+                            do_sample=True, 
+                            top_k=50, 
+                            top_p=0.95, 
                             num_return_sequences= 3,
                             num_beams = 5,
-                            no_repeat_ngram_size = 2,
+                            # no_repeat_ngram_size = 2,
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
                             early_stopping = True)
