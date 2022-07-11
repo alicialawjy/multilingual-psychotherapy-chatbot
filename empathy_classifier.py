@@ -98,7 +98,7 @@ def train_model(epoch,
 
 def evaluate(model, df_dataset):
   y_pred, _ = model.predict(df_dataset.text.tolist())
-  y_true = df_dataset['labels']
+  y_true = df_dataset['binary']
 
   print("Classification Report", classification_report(y_true, y_pred))
   print("Confusion Matrix", confusion_matrix(y_true, y_pred))
@@ -109,9 +109,9 @@ def evaluate(model, df_dataset):
 if __name__ == "__main__":
   ## Datasets
   # EP Empathy Dataset 
-  df_train = pd.read_csv('data/empathy/EP_empathy_labelled_train_binary.csv')
-  df_val = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_val_binary.csv')
-  df_test = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_test_binary.csv')
+  df_train = pd.read_csv('data/empathy/EP_empathy_labelled_train_binary.csv').head(5)
+  df_val = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_val_binary.csv').head(5)
+  df_test = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_test_binary.csv').head(5)
 
   # Use GPU
   GPU = True
@@ -135,8 +135,8 @@ if __name__ == "__main__":
                       early_stopping_patience = 10,
                       evaluate_during_training_steps = 50, 
                       evaluate_during_training = True,  
-                      train_df = df_train[['text','labels']],
-                      eval_df = df_val[['text','labels']]
+                      train_df = df_train[['text','binary']],
+                      eval_df = df_val[['text','binary']]
                       )
 
   # load the best model
@@ -156,3 +156,4 @@ if __name__ == "__main__":
 # 54551: 9e-06
 # 54568: 4e-05
 # 54569: 5e-05
+# 56085: 4e-05 with binary classifier
