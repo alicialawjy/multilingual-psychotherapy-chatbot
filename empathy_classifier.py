@@ -87,7 +87,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",
                             model_name=model_name,      
                             args = model_args,          # see above
-                            num_labels=3,               # 3 labels - no empathy, neutral, empathetic
+                            num_labels=2,               # 3 labels - no empathy, neutral, empathetic
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
@@ -109,9 +109,9 @@ def evaluate(model, df_dataset):
 if __name__ == "__main__":
   ## Datasets
   # EP Empathy Dataset 
-  df_train = pd.read_csv('data/empathy/EP_empathy_train.csv')
-  df_val = pd.read_csv('data/empathy/ZH/EP_ZH_val.csv')
-  df_test = pd.read_csv('data/empathy/ZH/EP_ZH_test.csv')
+  df_train = pd.read_csv('data/empathy/EP_empathy_labelled_train_binary.csv')
+  df_val = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_val_binary.csv')
+  df_test = pd.read_csv('data/empathy/ZH_labelled/EP_ZH_test_binary.csv')
 
   # Use GPU
   GPU = True
@@ -142,7 +142,7 @@ if __name__ == "__main__":
   # load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name= 'empathy_classifier/4e05/best-model',
-                                  num_labels=3, 
+                                  num_labels=2, 
                                   use_cuda=cuda_available)
 
   # evaluate the best model
