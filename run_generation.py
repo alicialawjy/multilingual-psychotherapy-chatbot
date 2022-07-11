@@ -320,6 +320,11 @@ def run_RL():
         logs['env/reward_std'] = torch.std(rewards).cpu().numpy()
         logs['env/reward_dist'] = rewards.cpu().numpy()
         wandb.log(logs)
+    
+    # Save Model
+    output_dir = "rewriting/gpt2-trl"
+    gpt2_model.save_pretrained(output_dir)
+    gpt2_tokenizer.save_pretrained(output_dir)
 
 # 55948: first run - warm startup (supervised)
 if __name__ == "__main__":
