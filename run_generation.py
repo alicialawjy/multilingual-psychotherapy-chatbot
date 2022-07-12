@@ -314,10 +314,10 @@ def run_RL():
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             total_score = [emp*2 + sem*2 for (emp,sem) in zip(empathy_score, semantic_score)] 
-            total_score = torch.stack(total_score) # convert list of tensors into a single tensor
-            empathy.append(empathy_score)
-            semantic.append(semantic_score)
-            rewards.append(total_score)
+            # convert list of tensors into a single tensor and append
+            empathy.append(torch.stack(empathy_score))
+            semantic.append(torch.stack(semantic_score))
+            rewards.append(torch.stack(total_score))
 
         empathy = torch.cat(empathy)
         semantic = torch.cat(semantic)
