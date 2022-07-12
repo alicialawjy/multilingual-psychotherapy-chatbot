@@ -317,7 +317,7 @@ def run_RL():
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score - inverse perplexity
-            outputs = gpt2_model(input_ids=response_tensors[i*fbs:(i+1)*fbs], labels=response_tensors[i*fbs:(i+1)*fbs])
+            outputs = gpt2_model(**{'input_ids':response_tensors[i*fbs:(i+1)*fbs], 'labels':response_tensors[i*fbs:(i+1)*fbs]})
             print(outputs)
             fluency_score = [1/loss for loss in outputs.loss]
             print(fluency_score)
@@ -356,7 +356,7 @@ def run_RL():
         logs['env/reward_dist'] = rewards.cpu().numpy()
         wandb.log(logs)
 
-        if epoch % 100 == 0: # save every 100 epochs
+        if epoch % 50 == 0: # save every 50 epochs
             output_dir = f"rewriting/gpt2-trl/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
