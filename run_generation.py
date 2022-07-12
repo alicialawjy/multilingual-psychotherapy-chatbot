@@ -226,6 +226,9 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
+        "empathy_weight": 4,    # logits range from 0 - 0.9
+        "semantic_weight": 0.25, # logits range from 0 - 20
+        "fluency_weight": 1
     }
 
     # random seed
@@ -304,6 +307,7 @@ def run_RL():
         rewards = []
         empathy = []
         semantic = []
+        fluency = []
         for i in range(int(config['batch_size']/fbs)):
             # empathy score - take the logit for high empathy [:,1]
             empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
@@ -312,15 +316,25 @@ def run_RL():
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            # fluency score - inverse perplexity
+            outputs = gpt2_model(input_ids=response_tensors[i*fbs:(i+1)*fbs], labels=response_tensors[i*fbs:(i+1)*fbs])
+            print(outputs)
+            fluency_score = [1/loss for loss in outputs.loss]
+            print(fluency_score)
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
-            total_score = [emp*2 + sem*2 for (emp,sem) in zip(empathy_score, semantic_score)] 
+            w_e = config['empathy_weight']
+            w_s = config['semantic_weight']
+            w_f = config['fluency_weight']
+            total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
             # convert list of tensors into a single tensor and append
-            empathy.append(torch.stack(empathy_score))
+            empathy.append(empathy_score)
             semantic.append(torch.stack(semantic_score))
+            fluency.append(torch.stack(fluency_score))
             rewards.append(torch.stack(total_score))
 
         empathy = torch.cat(empathy)
         semantic = torch.cat(semantic)
+        fluency = torch.cat(fluency)
         rewards = torch.cat(rewards).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
 
@@ -331,9 +345,9 @@ def run_RL():
         
         # Log everything
         timing['time/epoch'] = time.time()-t0
-        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, rewards.cpu().tolist())]
+        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, fluency, rewards.cpu().tolist())]
         logs.update({'game_log':wandb.Table(
-            columns=['prompt', 'response', 'empathy_logit','sematic_logit','reward'],
+            columns=['prompt', 'response', 'empathy_logit','sematic_logit','inv_ppl','reward'],
             rows=table_rows)})
         logs.update(timing)
         logs.update(stats)
