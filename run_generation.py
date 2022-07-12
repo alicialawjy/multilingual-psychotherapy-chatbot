@@ -260,6 +260,7 @@ def run_RL():
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/trl_train.csv', index_col=0) # DataFrame
     dict_train_text, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
+    _ = dict_train_encoded.to(device)
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised=True) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
@@ -284,7 +285,7 @@ def run_RL():
         response_tensors = []
         for i in tqdm(range(int(config['batch_size']/fbs))):
             queries = batch_dict[i*fbs:(i+1)*fbs]
-            response  = respond_to_batch(gpt2_model, queries,txt_len=config['max_len'])
+            response = respond_to_batch(gpt2_model, queries, txt_len=config['max_len'])
             response_tensors.append(response)
         
         response_tensors = torch.cat(response_tensors) # encoded responses
@@ -329,3 +330,5 @@ def run_RL():
 # 55948: first run - warm startup (supervised)
 if __name__ == "__main__":
     run_RL()
+
+# 56129: first run
