@@ -275,7 +275,7 @@ def run_RL():
         # Batch prompts
         batch_idx = random.choices(range(train_dataloader.__len__()),k=config['batch_size'])
         batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]
-        batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids']  # prompts (encoded)
+        batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)  # prompts (encoded)
         game_data['prompt'] = [dict_train_text[idx] for idx in batch_idx]       # prompts
         
         # Get the corresponding responses to the prompts
@@ -286,7 +286,7 @@ def run_RL():
             response = respond_to_batch(gpt2_model, queries, txt_len=config['max_len'])
             response_tensors.append(response)
         
-        response_tensors = torch.cat(response_tensors) # encoded responses
+        response_tensors = torch.cat(response_tensors).to(device) # encoded responses
         game_data['response'] = [gpt2_tokenizer.decode(response_tensors[i, :]) for i in range(config['batch_size'])]
         timing['time/get_response'] = time.time()-t
 
@@ -299,7 +299,7 @@ def run_RL():
                                         attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach() # take the logit for high empathy
             pos_logits.append(res)
 
-        rewards = torch.cat(pos_logits)
+        rewards = torch.cat(pos_logits).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
 
         # Run PPO Training 
