@@ -301,7 +301,9 @@ def run_RL():
         # REWARD SCORING
         t = time.time()
         classifier_inputs, attention_masks = build_bert_batch_from_txt(game_data['response'], semantic_tokenizer, device) # tokenise inputs for classifiers
-        pos_logits = []
+        rewards = []
+        empathy = []
+        semantic = []
         for i in range(int(config['batch_size']/fbs)):
             # empathy score - take the logit for high empathy [:,1]
             empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
@@ -313,9 +315,13 @@ def run_RL():
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             total_score = [emp*2 + sem*2 for (emp,sem) in zip(empathy_score, semantic_score)] 
             total_score = torch.stack(total_score) # convert list of tensors into a single tensor
-            pos_logits.append(total_score)
+            empathy.append(empathy_score)
+            semantic.append(semantic_score)
+            rewards.append(total_score)
 
-        rewards = torch.cat(pos_logits).to(device)
+        empathy = torch.cat(empathy)
+        semantic = torch.cat(semantic)
+        rewards = torch.cat(rewards).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
 
         # Run PPO Training 
@@ -325,9 +331,9 @@ def run_RL():
         
         # Log everything
         timing['time/epoch'] = time.time()-t0
-        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], rewards.cpu().tolist())]
+        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, rewards.cpu().tolist())]
         logs.update({'game_log':wandb.Table(
-            columns=['prompt', 'response', 'reward'],
+            columns=['prompt', 'response', 'empathy_logit','sematic_logit','reward'],
             rows=table_rows)})
         logs.update(timing)
         logs.update(stats)
@@ -335,9 +341,14 @@ def run_RL():
         logs['env/reward_std'] = torch.std(rewards).cpu().numpy()
         logs['env/reward_dist'] = rewards.cpu().numpy()
         wandb.log(logs)
-    
+
+        if epoch % 100 == 0: # save every 100 epochs
+            output_dir = f"rewriting/gpt2-trl/{epoch}"
+            gpt2_model.save_pretrained(output_dir)
+            gpt2_tokenizer.save_pretrained(output_dir)
+
     # Save Model
-    output_dir = "rewriting/gpt2-trl"
+    output_dir = "rewriting/gpt2-trl/end"
     gpt2_model.save_pretrained(output_dir)
     gpt2_tokenizer.save_pretrained(output_dir)
 
@@ -349,4 +360,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/goxl4q7m?workspace=user-alicialawjy
 # 56181: use rewards *2
 #   https://wandb.ai/alicialawjy/satbot/runs/31ar6kcy
-# 
+# 56200: use semantic classifier * 2 + empathy * 2 for rewards
+#   https://wandb.ai/alicialawjy/satbot/runs/23gngqt6
