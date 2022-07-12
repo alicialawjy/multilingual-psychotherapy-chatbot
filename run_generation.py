@@ -47,10 +47,9 @@ class GPT2RewritingDataset(Dataset):
     DataLoader for GPT-2 Rewriting Task 
 
     '''
-    def __init__(self, tokenizer, encodings, supervised=True): # ok
+    def __init__(self, tokenizer, encodings): # ok
         self.encodings = encodings
         self.tokenizer = tokenizer
-        self.supervised = supervised
 
     def __len__(self): # ok
         return len(self.encodings['input_ids'])
@@ -133,9 +132,9 @@ def run_supervised():
 
     # Get DataLoader object, used by Trainer
     # (set supervised = False for validation and test sets: i.e. don't append rewritings)
-    generic_train_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_train, supervised=True) 
-    generic_val_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_val, supervised=False)  
-    generic_test_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_test, supervised=False) 
+    generic_train_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_train) 
+    generic_val_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_val)  
+    generic_test_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_test) 
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -260,8 +259,7 @@ def run_RL():
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/trl_train.csv', index_col=0) # DataFrame
     dict_train_text, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
-    _ = dict_train_encoded.to(device)
-    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised=True) # dataloader object
+    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
@@ -284,7 +282,7 @@ def run_RL():
         t = time.time()
         response_tensors = []
         for i in tqdm(range(int(config['batch_size']/fbs))):
-            queries = batch_dict[i*fbs:(i+1)*fbs]
+            queries = batch_dict[i*fbs:(i+1)*fbs].to(device)
             response = respond_to_batch(gpt2_model, queries, txt_len=config['max_len'])
             response_tensors.append(response)
         
@@ -331,4 +329,4 @@ def run_RL():
 if __name__ == "__main__":
     run_RL()
 
-# 56129: first run
+# 56133:
