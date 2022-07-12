@@ -22,6 +22,7 @@ def encoded_df(df, supervised, tokenizer):
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
+    semantic_label = df['semantic'].values.tolist()
 
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
@@ -40,7 +41,7 @@ def encoded_df(df, supervised, tokenizer):
                             truncation = True
                             )
 
-    return formatted_input, encoded_input
+    return formatted_input, semantic_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
     ''' 
@@ -126,9 +127,9 @@ def run_supervised():
     df_generic_val, df_generic_test = train_test_split(df_generic_test, test_size=0.5, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    _, dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer) 
-    _, dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
-    _, dict_generic_test = encoded_df(df=df_generic_test, supervised=False, tokenizer=tokenizer) 
+    _, _, dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer) 
+    _, _, dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
+    _, _, dict_generic_test = encoded_df(df=df_generic_test, supervised=False, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     # (set supervised = False for validation and test sets: i.e. don't append rewritings)
@@ -207,23 +208,24 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": "rewriting/gpt2-supervised/best-model",                  # generative model (gpt2)
+        "lm_name": "rewriting/gpt2-supervised/best-model",                  # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
         "empathy_classifier_name": "empathy_classifier/binary-empathy",     # empathy classifier (xlm-r)
+        "semantic_classifier_name": "semantic_classifier/4e05/best-model",  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
         "steps": 51200,                                                     # aka epochs = steps/batch_size = 51200/256 = 200 epochs
-        "batch_size": 256,
-        "forward_batch_size": 16,
+        "batch_size": 64, # 2
+        "forward_batch_size": 16, # 2
         "ppo_epochs": 4,
         "max_len": 100,
         "lr": 1e-5,
         "init_kl_coef":0.2,
         "seed": 1,
-        #"target": 6,
-        #"horizon":10000,
-        #"gamma":1,
-        #"lam":0.95,
-        #"cliprange": .2,
-        #"cliprange_value":.2,
-        #"vf_coef":.1, 
+        "target": 6,
+        "horizon":10000,
+        "gamma":1,
+        "lam":0.95,
+        "cliprange": .2,
+        "cliprange_value":.2,
+        "vf_coef":.1, 
     }
 
     # random seed
@@ -247,6 +249,11 @@ def run_RL():
     empathy_classifier = AutoModelForSequenceClassification.from_pretrained(EMPATHY_CLASSIFIER_NAME).to(device)
     empathy_tokenizer = AutoTokenizer.from_pretrained(EMPATHY_CLASSIFIER_NAME)
 
+    # Semantic Classifier
+    SEMANTIC_CLASSIFIER_NAME = config['semantic_classifier_name']
+    semantic_classifier = AutoModelForSequenceClassification.from_pretrained(SEMANTIC_CLASSIFIER_NAME).to(device)
+    semantic_tokenizer = AutoTokenizer.from_pretrained(SEMANTIC_CLASSIFIER_NAME)
+
     # GPT2 Language Models
     # NOTE: need to change line8 in gpt2.py of trl lib from transformers.modeling_utils to generation_utils
     GPT2_PRETRAINED_NAME = config['lm_name']
@@ -257,8 +264,8 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/trl_train.csv', index_col=0) # DataFrame
-    dict_train_text, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
+    df = pd.read_csv('data/empathy/trl_train_semantic_labelled.csv', index_col=0) # DataFrame
+    dict_train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
@@ -275,8 +282,9 @@ def run_RL():
         # Batch prompts
         batch_idx = random.choices(range(train_dataloader.__len__()),k=config['batch_size'])
         batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]
-        batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)  # prompts (encoded)
-        game_data['prompt'] = [dict_train_text[idx] for idx in batch_idx]       # prompts
+        batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
+        game_data['prompt'] = [dict_train_text[idx] for idx in batch_idx]                   # prompts
+        batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
         
         # Get the corresponding responses to the prompts
         t = time.time()
@@ -290,14 +298,22 @@ def run_RL():
         game_data['response'] = [gpt2_tokenizer.decode(response_tensors[i, :]) for i in range(config['batch_size'])]
         timing['time/get_response'] = time.time()-t
 
-        # Empathy Scoring
+        # REWARD SCORING
         t = time.time()
-        empathy_inputs, attention_masks = build_bert_batch_from_txt(game_data['response'], empathy_tokenizer, device) # tokenise inputs
+        classifier_inputs, attention_masks = build_bert_batch_from_txt(game_data['response'], semantic_tokenizer, device) # tokenise inputs for classifiers
         pos_logits = []
         for i in range(int(config['batch_size']/fbs)):
-            res = empathy_classifier.forward(empathy_inputs[i*fbs:(i+1)*fbs],
-                                        attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach() # take the logit for high empathy
-            pos_logits.append(res)
+            # empathy score - take the logit for high empathy [:,1]
+            empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach() 
+            # semantic score - take the logit for the corr semantic
+            semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
+            semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
+            total_score = [emp*2 + sem*2 for (emp,sem) in zip(empathy_score, semantic_score)] 
+            total_score = torch.stack(total_score) # convert list of tensors into a single tensor
+            pos_logits.append(total_score)
 
         rewards = torch.cat(pos_logits).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
@@ -329,4 +345,8 @@ def run_RL():
 if __name__ == "__main__":
     run_RL()
 
-# 56133:
+# 56175: first run with rewards * 1
+#   https://wandb.ai/alicialawjy/satbot/runs/goxl4q7m?workspace=user-alicialawjy
+# 56181: use rewards *2
+#   https://wandb.ai/alicialawjy/satbot/runs/31ar6kcy
+# 
