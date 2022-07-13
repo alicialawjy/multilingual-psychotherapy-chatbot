@@ -212,7 +212,7 @@ def run_RL():
         "batch_size": 32, # 2
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
-        "max_len": 100,
+        "max_len": 50,
         "lr": 1e-5,
         "init_kl_coef":0.2,
         "seed": 1,
@@ -223,7 +223,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,     # logits range from 0 - 0.9
+        "empathy_weight": 4,     # logits range from 0 - 0.9
         "semantic_weight": 0.1, # logits range from 0 - 20
         "fluency_weight": 1
     }
@@ -386,5 +386,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/1ldhy878
 # 56286: feed only base utterances
 #   https://wandb.ai/alicialawjy/satbot/runs/242vjtvj?workspace=user-alicialawjy
-# 56298: we = 2, ws = 0.1, no fluency, target KL = 3 (half initial) w/ base utt only
-#   https://wandb.ai/alicialawjy/satbot/runs/viyxs7q3
+# 56302: we = 2, ws = 0.1, no fluency, target KL = 3 (half initial) w/ base utt only
+#   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
