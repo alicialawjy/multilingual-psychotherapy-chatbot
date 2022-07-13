@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised/200+200'
+    main_dir = 'rewriting/gpt2-supervised/25'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -106,18 +106,17 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/100+100/best-model'
+    PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall' # 'rewriting/gpt2-supervised/100+100/best-model'
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # uses the same tokenizer as the model
-    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
-    # tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
-    # for token_name, token in additional_tokens.items():
-    #     setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
+    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)                 # uses the same tokenizer as the model
+    additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
+    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
+    for token_name, token in additional_tokens.items():
+        setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
-    # model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
-    # tokenizer.save_pretrained(output_dir)                                           # save the new tokenizer in the model directory
+    model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
 
     ##### D A T A S E T S #####
     # for Part 1 of the Pipeline - generic EmpatheticPersonas
@@ -143,7 +142,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 200,                 # Number of training epochs
+                                    num_train_epochs = 25,                 # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -175,7 +174,9 @@ def run_supervised():
 
     trainer.train()
 
-    trainer.save_model(output_dir=f'{main_dir}/best-model')
+    # Save Model and tokeniser
+    trainer.save_model(output_dir=main_dir)
+    tokenizer.save_pretrained(output_dir=main_dir)                      # save the new tokenizer in the model directory
 
     # Test the model
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
@@ -364,7 +365,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_RL()
+    run_supervised()
 
 ##### LOGS #####
 # SUPERVISED
@@ -372,6 +373,7 @@ if __name__ == "__main__":
 # 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
 # 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
 # 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
+# 56: 25 epochs only
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
@@ -388,3 +390,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/242vjtvj?workspace=user-alicialawjy
 # 56302: we = 2, ws = 0.1, no fluency, target KL = 3 (half initial) w/ base utt only
 #   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
+# 56325: we = 4, ws = 0.25, no fluency, target KL = 3 w/ base utt only
+#   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
