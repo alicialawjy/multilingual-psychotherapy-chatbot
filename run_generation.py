@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised/50+50'
+    main_dir = 'rewriting/gpt2-supervised/100+100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -106,7 +106,7 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/best-model'
+    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/50+50/best-model'
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
@@ -143,7 +143,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 100,                 # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -369,7 +369,7 @@ if __name__ == "__main__":
 ##### LOGS #####
 # SUPERVISED
 # 55948: first run - warm startup (supervised)
-# 56268: extra 50 epochs from rewriting/gpt2-supervised/best-model
+# 56269: extra 50 epochs from rewriting/gpt2-supervised/best-model
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
