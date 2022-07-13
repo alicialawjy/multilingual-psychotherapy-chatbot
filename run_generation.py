@@ -318,7 +318,8 @@ def run_RL():
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score - inverse perplexity
-            fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
+            with torch.no_grad():
+                fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
             print(fluency_score)
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
