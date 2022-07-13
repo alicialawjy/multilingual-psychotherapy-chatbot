@@ -262,6 +262,7 @@ def run_RL():
     GPT2_PRETRAINED_NAME = config['lm_name']
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
+    gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # used to measure perplexity
     gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                        # gpt2 tokenizer
 
     wandb.watch(gpt2_model, log='all')
@@ -317,7 +318,7 @@ def run_RL():
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score - inverse perplexity
-            outputs = gpt2_model(**{'input_ids':response_tensors[i*fbs:(i+1)*fbs], 'labels':response_tensors[i*fbs:(i+1)*fbs]})
+            outputs = gpt2_evaluate(**{'input_ids':response_tensors[i*fbs:(i+1)*fbs], 'labels':response_tensors[i*fbs:(i+1)*fbs]})
             print(outputs)
             fluency_score = [1/loss for loss in outputs.loss]
             print(fluency_score)
