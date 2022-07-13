@@ -122,7 +122,7 @@ def run_supervised():
     ##### D A T A S E T S #####
     # for Part 1 of the Pipeline - generic EmpatheticPersonas
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv', index_col=0)
+    df_generic = pd.read_csv('data/empathy/train_semantic_labelled_2144.csv', index_col=0)
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -369,7 +369,7 @@ if __name__ == "__main__":
 ##### LOGS #####
 # SUPERVISED
 # 55948: first run - warm startup (supervised)
-
+# 56268: extra 50 epochs from rewriting/gpt2-supervised/best-model
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
@@ -378,3 +378,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/31ar6kcy
 # 56200: use semantic classifier * 2 + empathy * 2 for rewards
 #   https://wandb.ai/alicialawjy/satbot/runs/23gngqt6
+# 56252: semantic + empathy + fluency
+#   https://wandb.ai/alicialawjy/satbot/runs/3tfhoa2w?workspace=user-alicialawjy
