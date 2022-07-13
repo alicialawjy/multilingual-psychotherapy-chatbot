@@ -320,17 +320,17 @@ def run_RL():
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
             w_s = config['semantic_weight']
-            w_f = config['fluency_weight']
-            total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
+            # w_f = config['fluency_weight']
+            total_score = [e * w_e + s * w_s for (e,s) in zip(empathy_score, semantic_score)] # removed fluency_score
             # convert list of tensors into a single tensor and append
             empathy.append(empathy_score)
             semantic.append(torch.stack(semantic_score))
-            fluency.append(torch.stack(fluency_score))
+            # fluency.append(torch.stack(fluency_score))
             rewards.append(torch.stack(total_score))
 
         empathy = torch.cat(empathy)
         semantic = torch.cat(semantic)
-        fluency = torch.cat(fluency)
+        #fluency = torch.cat(fluency)
         rewards = torch.cat(rewards).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
 
@@ -341,9 +341,9 @@ def run_RL():
         
         # Log everything
         timing['time/epoch'] = time.time()-t0
-        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, fluency, rewards.cpu().tolist())]
+        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, rewards.cpu().tolist())] # removed fluency
         logs.update({'game_log':wandb.Table(
-            columns=['prompt', 'response', 'empathy_logit','sematic_logit','inv_ppl','reward'],
+            columns=['prompt', 'response', 'empathy_logit','sematic_logit','reward'], # removed inv_ppl
             rows=table_rows)})
         logs.update(timing)
         logs.update(stats)
@@ -383,5 +383,8 @@ if __name__ == "__main__":
 # 56252: semantic + empathy + fluency
 #   https://wandb.ai/alicialawjy/satbot/runs/3tfhoa2w?workspace=user-alicialawjy
 # 56283: include 2144 empathetic datasets
+#   https://wandb.ai/alicialawjy/satbot/runs/1ldhy878
 # 56286: feed only base utterances
-# we = 2, ws = 0.1, no fluency, target KL = 3 (half initial)
+#   https://wandb.ai/alicialawjy/satbot/runs/242vjtvj?workspace=user-alicialawjy
+# 56298: we = 2, ws = 0.1, no fluency, target KL = 3 (half initial) w/ base utt only
+#   https://wandb.ai/alicialawjy/satbot/runs/viyxs7q3
