@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    output_dir = 'rewriting/gpt2-supervised'
+    main_dir = 'rewriting/gpt2-supervised/50+50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -106,36 +106,33 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall'
+    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/best-model'
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # uses the same tokenizer as the original gpt-2
-    additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
-    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
-    for token_name, token in additional_tokens.items():
-        setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
+    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # uses the same tokenizer as the model
+    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
+    # tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
+    # for token_name, token in additional_tokens.items():
+    #     setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
-    model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
-    tokenizer.save_pretrained(output_dir)                                           # save the new tokenizer in the model directory
+    # model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
+    # tokenizer.save_pretrained(output_dir)                                           # save the new tokenizer in the model directory
 
     ##### D A T A S E T S #####
     # for Part 1 of the Pipeline - generic EmpatheticPersonas
     # DataFrames
     df_generic = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv', index_col=0)
-    df_generic_train, df_generic_test = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0) 
-    df_generic_val, df_generic_test = train_test_split(df_generic_test, test_size=0.5, shuffle=True, random_state=0)
+    df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
     _, _, dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer) 
     _, _, dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
-    _, _, dict_generic_test = encoded_df(df=df_generic_test, supervised=False, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     # (set supervised = False for validation and test sets: i.e. don't append rewritings)
     generic_train_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_train) 
     generic_val_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_val)  
-    generic_test_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_test) 
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -143,7 +140,7 @@ def run_supervised():
                                             early_stopping_threshold = 0.001)
 
     # Training Arguments
-    training_args = TrainingArguments(output_dir = output_dir,              # Output directory where checkpoints + models are saved
+    training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
                                     num_train_epochs = 50,                  # Number of training epochs
@@ -157,7 +154,7 @@ def run_supervised():
                                     save_steps = 50,                        # Save every 50 steps
                                     save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
-                                    logging_dir = 'rewriting/gpt2-supervised/logs',
+                                    logging_dir = f'{main_dir}/logs',
                                     logging_steps = 50,                     # Log every 100 steps
                                     include_inputs_for_metrics = True,
                                     metric_for_best_model = 'eval_loss',    # Decide based on eval_loss
@@ -178,7 +175,7 @@ def run_supervised():
 
     trainer.train()
 
-    trainer.save_model(output_dir='rewriting/gpt2-supervised/best-model')
+    trainer.save_model(output_dir=f'{main_dir}/best-model')
 
     # Test the model
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
@@ -188,15 +185,15 @@ def run_supervised():
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     output = model.generate(input_ids, 
                             max_length = 100, 
-                            do_sample=True, 
-                            temperature=1.5,
-                            top_k=50, 
-                            top_p=0.95, 
-                            num_return_sequences= 3,
+                            do_sample = True, 
+                            temperature = 1.5,
+                            top_k = 50, 
+                            top_p = 0.95, 
+                            num_return_sequences = 3,
                             num_beams = 5,
                             # no_repeat_ngram_size = 2,
-                            clean_up_tokenization_spaces=True,
-                            return_full_text=False,
+                            clean_up_tokenization_spaces = True,
+                            return_full_text = False,
                             early_stopping = True)
 
     rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
@@ -258,7 +255,6 @@ def run_RL():
     semantic_tokenizer = AutoTokenizer.from_pretrained(SEMANTIC_CLASSIFIER_NAME)
 
     # GPT2 Language Models
-    # NOTE: need to change line8 in gpt2.py of trl lib from transformers.modeling_utils to generation_utils
     GPT2_PRETRAINED_NAME = config['lm_name']
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
@@ -366,10 +362,16 @@ def run_RL():
     gpt2_model.save_pretrained(output_dir)
     gpt2_tokenizer.save_pretrained(output_dir)
 
-# 55948: first run - warm startup (supervised)
-if __name__ == "__main__":
-    run_RL()
 
+if __name__ == "__main__":
+    run_supervised()
+
+##### LOGS #####
+# SUPERVISED
+# 55948: first run - warm startup (supervised)
+
+
+# REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
 #   https://wandb.ai/alicialawjy/satbot/runs/goxl4q7m?workspace=user-alicialawjy
 # 56181: use rewards *2
