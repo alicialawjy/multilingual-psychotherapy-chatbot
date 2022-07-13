@@ -208,9 +208,9 @@ def run_RL():
         "lm_name": "rewriting/gpt2-supervised/best-model",                  # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
         "empathy_classifier_name": "empathy_classifier/binary-empathy",     # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
-        "steps": 51200,                                                     # aka epochs = steps/batch_size = 51200/256 = 200 epochs
-        "batch_size": 64, # 2
-        "forward_batch_size": 16, # 2
+        "steps": 12800,                                                     # aka epochs = steps/batch_size = 12800/32 = 400 epochs
+        "batch_size": 32, # 2
+        "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
         "max_len": 100,
         "lr": 1e-5,
@@ -223,7 +223,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 4,    # logits range from 0 - 0.9
+        "empathy_weight": 4,     # logits range from 0 - 0.9
         "semantic_weight": 0.25, # logits range from 0 - 20
         "fluency_weight": 1
     }
@@ -364,13 +364,14 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 ##### LOGS #####
 # SUPERVISED
 # 55948: first run - warm startup (supervised)
 # 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
 # 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
+# 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
