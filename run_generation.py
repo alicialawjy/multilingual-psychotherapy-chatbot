@@ -106,7 +106,7 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/50+50/best-model'
+    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/100+100/best-model'
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
