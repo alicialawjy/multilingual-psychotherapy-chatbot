@@ -142,9 +142,9 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 25,                 # Number of training epochs
+                                    num_train_epochs = 10,                 # Number of training epochs
                                     warmup_steps = 50,
-                                    per_device_train_batch_size = 4,        # Batch size for training
+                                    per_device_train_batch_size = 16,        # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
@@ -373,7 +373,7 @@ if __name__ == "__main__":
 # 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
 # 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
 # 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
-# 56342: 25 epochs only
+# 56343: 25 epochs only
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
