@@ -216,15 +216,15 @@ def run_RL():
         "lr": 1e-5,
         "init_kl_coef":0.2,
         "seed": 1,
-        "target": 6,
+        "target": 3,
         "horizon":10000,
         "gamma":1,
         "lam":0.95,
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 4,     # logits range from 0 - 0.9
-        "semantic_weight": 0.25, # logits range from 0 - 20
+        "empathy_weight": 2,     # logits range from 0 - 0.9
+        "semantic_weight": 0.1, # logits range from 0 - 20
         "fluency_weight": 1
     }
 
@@ -258,7 +258,7 @@ def run_RL():
     GPT2_PRETRAINED_NAME = config['lm_name']
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
-    gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # used to measure perplexity
+    # gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # used to measure perplexity
     gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                        # gpt2 tokenizer
 
     wandb.watch(gpt2_model, log='all')
@@ -313,10 +313,10 @@ def run_RL():
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
-            # fluency score - inverse perplexity
-            with torch.no_grad():
-                fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
-            print(fluency_score)
+            # # fluency score - inverse perplexity
+            # with torch.no_grad():
+            #     fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
+            # print(fluency_score)
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
             w_s = config['semantic_weight']
@@ -383,4 +383,5 @@ if __name__ == "__main__":
 # 56252: semantic + empathy + fluency
 #   https://wandb.ai/alicialawjy/satbot/runs/3tfhoa2w?workspace=user-alicialawjy
 # 56283: include 2144 empathetic datasets
-# feed only base utterances
+# 56286: feed only base utterances
+# we = 2, ws = 0.1, no fluency, target KL = 3 (half initial)
