@@ -224,7 +224,7 @@ def run_RL():
         "cliprange_value":.2,
         "vf_coef":.1, 
         "empathy_weight": 4,     # logits range from 0 - 0.9
-        "semantic_weight": 0.1, # logits range from 0 - 20
+        "semantic_weight": 0.25, # logits range from 0 - 20
         "fluency_weight": 1
     }
 
