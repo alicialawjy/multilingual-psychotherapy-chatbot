@@ -293,7 +293,7 @@ def run_RL():
         # Get the corresponding responses to the prompts
         t = time.time()
         response_tensors = []
-        for i in tqdm(range(int(config['batch_size']/fbs))):
+        for i in range(int(config['batch_size']/fbs)):
             queries = batch_dict[i*fbs:(i+1)*fbs].to(device)
             response = respond_to_batch(gpt2_model, queries, txt_len=config['max_len'])
             response_tensors.append(response)
@@ -318,9 +318,7 @@ def run_RL():
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score - inverse perplexity
-            outputs = gpt2_evaluate(**{'input_ids':response_tensors[i*fbs:(i+1)*fbs], 'labels':response_tensors[i*fbs:(i+1)*fbs]})
-            print(outputs)
-            fluency_score = [1/loss for loss in outputs.loss]
+            fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
             print(fluency_score)
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
