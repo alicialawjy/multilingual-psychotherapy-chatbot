@@ -264,7 +264,7 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/trl_train_semantic_labelled.csv', index_col=0) # DataFrame
+    df = pd.read_csv('data/empathy/base_utt_semantic_labelled.csv', index_col=0) # DataFrame
     dict_train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded) # dataloader object
     
@@ -382,3 +382,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/23gngqt6
 # 56252: semantic + empathy + fluency
 #   https://wandb.ai/alicialawjy/satbot/runs/3tfhoa2w?workspace=user-alicialawjy
+# 56283: include 2144 empathetic datasets
+# feed only base utterances
