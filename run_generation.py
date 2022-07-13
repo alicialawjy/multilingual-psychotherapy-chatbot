@@ -175,8 +175,8 @@ def run_supervised():
     trainer.train()
 
     # Save Model and tokeniser
-    trainer.save_model(output_dir=main_dir)
-    tokenizer.save_pretrained(output_dir=main_dir)                      # save the new tokenizer in the model directory
+    trainer.save_model(f'{main_dir}/best-model')
+    tokenizer.save_pretrained(f'{main_dir}/best-model')                      # save the new tokenizer in the model directory
 
     # Test the model
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
@@ -373,7 +373,7 @@ if __name__ == "__main__":
 # 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
 # 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
 # 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
-# 56: 25 epochs only
+# 56342: 25 epochs only
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
