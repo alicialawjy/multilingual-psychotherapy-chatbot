@@ -12,7 +12,7 @@ print(f"Using {device}")
 
 PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/25/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
-tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)         
+tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
 prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
         '[PROMPT]男性[SEP]18-39,悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
@@ -38,7 +38,10 @@ prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起�
 
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
-    output = model.generate(input_ids, 
+    input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
+    print(input_ids)
+
+    output = model.generate(input_ids,
                             max_length = 100, 
                             do_sample=True, 
                             temperature=1.5,
@@ -50,10 +53,11 @@ for p in prompt:
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
                             early_stopping = True)
-    print(tokenizer.decode(output, skip_special_tokens=True))
-    #rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
 
-    #for i, r in enumerate(rewritings):
+    print(tokenizer.decode(output[0], skip_special_tokens=True))
+    # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
+
+    # for i, r in enumerate(rewritings):
     #    print(f"{i}: {r}")
 
 # 55957
