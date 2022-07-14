@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-extended/100'
+    main_dir = 'rewriting/gpt2-supervised-extended/400'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -140,10 +140,10 @@ def run_supervised():
     # Training Arguments
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
-                                    learning_rate = 1e-5,                   # Learning rate
+                                    learning_rate = 5e-5,                   # Learning rate
                                     num_train_epochs = 100,                  # Number of training epochs
                                     warmup_steps = 50,
-                                    per_device_train_batch_size = 16,       # Batch size for training
+                                    per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
@@ -379,6 +379,8 @@ if __name__ == "__main__":
 # 56345: 10 epochs only
 # 56354: 20 epochs
 # 56355: 30 epochs
+# 56458: 100 epochs with extended dataset
+# 56466: 50 epochs with extended dataset
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
