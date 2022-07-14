@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised/25'
+    main_dir = 'rewriting/gpt2-supervised-extended/100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -110,18 +110,17 @@ def run_supervised():
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)                 # uses the same tokenizer as the model
+    tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
     additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
-    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary
+    tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
     model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
 
     ##### D A T A S E T S #####
-    # for Part 1 of the Pipeline - generic EmpatheticPersonas
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/train_semantic_labelled_2144.csv', index_col=0)
+    df_generic = pd.read_csv('data/empathy/low-high-empathy-8094.csv', index_col=0)
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -142,9 +141,9 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 25,                 # Number of training epochs
+                                    num_train_epochs = 100,                  # Number of training epochs
                                     warmup_steps = 50,
-                                    per_device_train_batch_size = 16,        # Batch size for training
+                                    per_device_train_batch_size = 16,       # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
@@ -184,6 +183,8 @@ def run_supervised():
 
     prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
+    input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
+
     output = model.generate(input_ids, 
                             max_length = 100, 
                             do_sample = True, 
@@ -197,10 +198,11 @@ def run_supervised():
                             return_full_text = False,
                             early_stopping = True)
 
-    rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
+    print(tokenizer.decode(output[0], skip_special_tokens=True))
+    # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
 
-    for i, r in enumerate(rewritings):
-        print(f"{i}: {r}")
+    # for i, r in enumerate(rewritings):
+    #     print(f"{i}: {r}")
 
 
 def run_RL():
@@ -373,8 +375,10 @@ if __name__ == "__main__":
 # 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
 # 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
 # 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
-# 56343: 25 epochs only
+# 56348: 25 epochs only
 # 56345: 10 epochs only
+# 56354: 20 epochs
+# 56355: 30 epochs
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
