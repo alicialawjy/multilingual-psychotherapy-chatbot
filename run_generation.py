@@ -92,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-extended/400'
+    main_dir = 'rewriting/gpt2-supervised-clean/100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -120,7 +120,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/low-high-empathy-8094.csv', index_col=0)
+    df_generic = pd.read_csv('data/empathy/low-high-empathy-2144-clean.csv', index_col=0)
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -181,7 +181,7 @@ def run_supervised():
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
+    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
 
@@ -380,7 +380,13 @@ if __name__ == "__main__":
 # 56354: 20 epochs
 # 56355: 30 epochs
 # 56458: 100 epochs with extended dataset
-# 56466: 50 epochs with extended dataset
+# 56466: 50 epochs with extended dataset w/ lr = 1e-05, train_batch = 16
+# 56469: 100 epochs w/ train_batch = 4, lr = 5e-05
+# 56470: 400 epochs
+# 56474: 200 epochs
+# 56475: 50 epochs w/ roy's params
+# 56481: 60
+# 56482: 70
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
