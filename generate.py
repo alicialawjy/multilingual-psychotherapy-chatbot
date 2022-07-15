@@ -10,9 +10,30 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised/450/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-numeric/200/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
+
+prompt = ['[PROMPT]0[REWRITE]',
+        '[PROMPT]1[REWRITE]',
+        '[PROMPT]2[REWRITE]',
+        '[PROMPT]3[REWRITE]',
+        '[PROMPT]4[REWRITE]',
+        '[PROMPT]5[REWRITE]',
+        '[PROMPT]6[REWRITE]',
+        '[PROMPT]7[REWRITE]',
+        '[PROMPT]8[REWRITE]',
+        '[PROMPT]9[REWRITE]',
+        '[PROMPT]10[REWRITE]',
+        '[PROMPT]11[REWRITE]',
+        '[PROMPT]12[REWRITE]',
+        '[PROMPT]13[REWRITE]',
+        '[PROMPT]14[REWRITE]',
+        '[PROMPT]15[REWRITE]',
+        '[PROMPT]16[REWRITE]',
+        '[PROMPT]17[REWRITE]',
+        '[PROMPT]18[REWRITE]',
+        '[PROMPT]19[REWRITE]']
 
 # prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
 #         '[PROMPT]男性[SEP]18-39,悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
@@ -36,26 +57,26 @@ tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
 #         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
 #         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
 
-prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]',
-        '[PROMPT]男性[SEP]18-39,悲伤[SEP]最近或遥远[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]过协议x，无法控制的情绪[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]问一些问题[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]以下情绪：[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]救星[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]受害者[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]控制某人[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]责怪自己[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]考虑其他观点[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]经历个人危机[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]推荐协议[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感受{}对吗[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择情绪[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢参与再见[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择协议[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试协议按“继续”[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]更好还是更糟[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（好）[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（糟）[REWRITE]']
+# prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]',
+#         '[PROMPT]男性[SEP]18-39,悲伤[SEP]最近或遥远[REWRITE]',
+#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]过协议x，无法控制的情绪[REWRITE]',
+#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]问一些问题[REWRITE]',
+#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]以下情绪：[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]救星[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]受害者[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]控制某人[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]责怪自己[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]考虑其他观点[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]经历个人危机[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]推荐协议[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感受{}对吗[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择情绪[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢参与再见[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择协议[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试协议按“继续”[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]更好还是更糟[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（好）[REWRITE]',
+#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（糟）[REWRITE]']
 
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
@@ -104,3 +125,7 @@ for p in prompt:
 ##### 2144 dataset w/ summarised base utterance #####
 # 56489: epoch 100
 # 56550: epoch 400
+
+##### 2144 dataset w/ numeric #####
+# : epoch 200
+# : epoch 400

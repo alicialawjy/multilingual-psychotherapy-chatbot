@@ -27,7 +27,7 @@ def encoded_df(df, supervised, tokenizer):
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
     for (s, r) in list(zip(semantic_label, rewriting)):
-        input = '[PROMPT]' + s + '[REWRITE]'
+        input = '[PROMPT]' + str(s) + '[REWRITE]'
         # if supervised, append the rewritings as well
         if supervised:
             input += r
@@ -401,10 +401,13 @@ if __name__ == "__main__":
 # 56481: 60
 # 56482: 70
 
-# use summarised base utterances
+# use summarised base utterances (promising)
 # 56486: epoch = 100
 # 56490: epoch = 400
 
+# use numeric without gender, age and emotion
+# 56553: epoch = 200
+# 56554: epoch = 400
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
