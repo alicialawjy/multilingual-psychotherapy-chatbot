@@ -17,31 +17,22 @@ import random
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, supervised, tokenizer):
     # extract df columns
-    # gender = df['gender'].values.tolist()
-    # age = df['age'].values.tolist()
-    # emotion = df['emotion'].values.tolist()
-    # base = df['base'].values.tolist()
+    gender = df['gender'].values.tolist()
+    age = df['age'].values.tolist()
+    emotion = df['emotion'].values.tolist()
+    base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
     semantic_label = df['semantic'].values.tolist()
 
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
-    for (s, r) in list(zip(semantic_label, rewriting)):
-        input = '[PROMPT]' + str(s) + '[REWRITE]'
+    for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
+        input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
         # if supervised, append the rewritings as well
         if supervised:
             input += r
         
         formatted_input.append(input)
-
-    # formatted_input = []
-    # for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
-    #     input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
-    #     # if supervised, append the rewritings as well
-    #     if supervised:
-    #         input += r
-        
-    #     formatted_input.append(input)
 
     # encode the formatted input
     encoded_input = tokenizer(formatted_input, 
@@ -101,7 +92,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-numeric/200'
+    main_dir = 'rewriting/gpt2-supervised-clean/400'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -150,7 +141,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 200,                  # Number of training epochs
+                                    num_train_epochs = 400,                 # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
@@ -406,8 +397,9 @@ if __name__ == "__main__":
 # 56490: epoch = 400
 
 # use numeric without gender, age and emotion
-# 56553: epoch = 200
-# 56554: epoch = 400
+# 56555: epoch = 200 (needs wayyy more training)
+# 56556: epoch = 400
+# 56560: epoch = 800
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1
