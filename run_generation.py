@@ -181,7 +181,7 @@ def run_supervised():
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    prompt = '[PROMPT]1[REWRITE]' # '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
+    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
 
@@ -199,10 +199,7 @@ def run_supervised():
                             early_stopping = True)
 
     print(tokenizer.decode(output[0], skip_special_tokens=True))
-    # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
 
-    # for i, r in enumerate(rewritings):
-    #     print(f"{i}: {r}")
 
 
 def run_RL():
@@ -395,6 +392,11 @@ if __name__ == "__main__":
 # use summarised base utterances (promising)
 # 56486: epoch = 100
 # 56490: epoch = 400
+# 56576: epoch = 400 cleaned somemore + balanced
+# 56583: epoch = 500
+# 56577: epoch = 600 not bad
+# 56584: epoch = 700
+# 56580: epoch = 800 bad, overfitted and spitting nonsense
 
 # use numeric without gender, age and emotion
 # 56555: epoch = 200 (needs wayyy more training)
