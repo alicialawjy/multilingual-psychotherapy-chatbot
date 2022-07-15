@@ -48,9 +48,10 @@ class GPT2RewritingDataset(Dataset):
     DataLoader for GPT-2 Rewriting Task 
 
     '''
-    def __init__(self, tokenizer, encodings): # ok
+    def __init__(self, tokenizer, encodings, supervised=True): # ok
         self.encodings = encodings
         self.tokenizer = tokenizer
+        self.supervised = supervised
 
     def __len__(self): # ok
         return len(self.encodings['input_ids'])
@@ -60,8 +61,16 @@ class GPT2RewritingDataset(Dataset):
         # # ['input_ids', 'past_key_values', 'attention_mask', 'token_type_ids', 'position_ids', 'head_mask', 
         # # 'inputs_embeds','encoder_hidden_states', 'encoder_attention_mask', 'labels', 'use_cache', 
         # # 'output_attentions', 'output_hidden_states','return_dict', 'labels', 'label', 'label_ids']
-        return {'labels': self.encodings['input_ids'][idx], 'input_ids': self.encodings['input_ids'][idx], 'attention_mask': self.encodings['attention_mask'][idx], 'token_type_ids': self.encodings['token_type_ids'][idx]}
- 
+        input_ids = self.encodings['input_ids'][idx]
+        attention_mask = self.encodings['attention_mask'][idx]
+        if not self.supervised:
+            # if not supervised, remove the EOS token that automatically gets added by the encoder
+            last_idx = torch.sum(attention_mask) - 1
+            input_ids[last_idx] = 0 
+            attention_mask[last_idx] = 0
+
+        return {'labels': input_ids, 'input_ids': input_ids, 'attention_mask': attention_mask}
+        
     # Takes batches of the input data
     def collate_fn(self, batch):
         # format into tensors
@@ -72,10 +81,9 @@ class GPT2RewritingDataset(Dataset):
         for b in batch:
             input_ids.append(list(b['input_ids']))
             attention_mask.append(list(b['attention_mask']))
-            token_type_ids.append(list(b['token_type_ids']))
             labels.append(list(b['labels']))
         
-        return {'labels': torch.tensor(labels), 'input_ids': torch.tensor(input_ids), 'attention_mask': torch.tensor(attention_mask), 'token_type_ids': torch.tensor(token_type_ids)}
+        return {'labels': torch.tensor(labels), 'input_ids': torch.tensor(input_ids), 'attention_mask': torch.tensor(attention_mask)}
 
 ############# GPT-2 Custom Trainer ############# 
 # class GPT2_Trainer(Trainer):
@@ -222,7 +230,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 4,     # logits range from 0 - 0.9
+        "empathy_weight": 4,    # logits range from 0 - 0.9
         "semantic_weight": 0.4, # logits range from 0 - 20
         "fluency_weight": 1
     }
@@ -253,7 +261,7 @@ def run_RL():
     semantic_classifier = AutoModelForSequenceClassification.from_pretrained(SEMANTIC_CLASSIFIER_NAME).to(device)
     semantic_tokenizer = AutoTokenizer.from_pretrained(SEMANTIC_CLASSIFIER_NAME)
 
-    # GPT2 Language Models
+    # # GPT2 Language Models
     GPT2_PRETRAINED_NAME = config['lm_name']
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
@@ -265,7 +273,7 @@ def run_RL():
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/base_utt_semantic_labelled_clean.csv', index_col=0) # DataFrame
     dict_train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
-    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded) # dataloader object
+    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised = False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
@@ -419,3 +427,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
 # 56325: we = 4, ws = 0.25, no fluency, target KL = 3 w/ base utt only
 #   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
+# 56587: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt
+#   https://wandb.ai/alicialawjy/satbot/runs/abtqa40r
