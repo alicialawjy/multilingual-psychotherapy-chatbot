@@ -363,7 +363,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 ##### LOGS #####
 # SUPERVISED
