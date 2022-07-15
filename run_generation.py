@@ -201,14 +201,13 @@ def run_supervised():
     print(tokenizer.decode(output[0], skip_special_tokens=True))
 
 
-
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": "rewriting/gpt2-supervised/best-model",                  # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
+        "lm_name": 'rewriting/gpt2-supervised-clean/600/best-model',        # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
         "empathy_classifier_name": "empathy_classifier/binary-empathy",     # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
-        "steps": 12800,                                                     # aka epochs = steps/batch_size = 12800/32 = 400 epochs
+        "steps": 19200,                                                     # aka epochs = steps/batch_size = 19200/32 = 600 epochs
         "batch_size": 32, # 2
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
@@ -224,7 +223,7 @@ def run_RL():
         "cliprange_value":.2,
         "vf_coef":.1, 
         "empathy_weight": 4,     # logits range from 0 - 0.9
-        "semantic_weight": 0.25, # logits range from 0 - 20
+        "semantic_weight": 0.4, # logits range from 0 - 20
         "fluency_weight": 1
     }
 
@@ -258,13 +257,13 @@ def run_RL():
     GPT2_PRETRAINED_NAME = config['lm_name']
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
-    # gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # used to measure perplexity
+    # gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)          # used to measure perplexity
     gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                        # gpt2 tokenizer
 
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/base_utt_semantic_labelled.csv', index_col=0) # DataFrame
+    df = pd.read_csv('data/empathy/base_utt_semantic_labelled_clean.csv', index_col=0) # DataFrame
     dict_train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded) # dataloader object
     
