@@ -17,22 +17,31 @@ import random
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, supervised, tokenizer):
     # extract df columns
-    gender = df['gender'].values.tolist()
-    age = df['age'].values.tolist()
-    emotion = df['emotion'].values.tolist()
-    base = df['base'].values.tolist()
+    # gender = df['gender'].values.tolist()
+    # age = df['age'].values.tolist()
+    # emotion = df['emotion'].values.tolist()
+    # base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
     semantic_label = df['semantic'].values.tolist()
 
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
-    for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
-        input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
+    for (s, r) in list(zip(semantic_label, rewriting)):
+        input = '[PROMPT]' + s + '[REWRITE]'
         # if supervised, append the rewritings as well
         if supervised:
             input += r
         
         formatted_input.append(input)
+
+    # formatted_input = []
+    # for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
+    #     input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
+    #     # if supervised, append the rewritings as well
+    #     if supervised:
+    #         input += r
+        
+    #     formatted_input.append(input)
 
     # encode the formatted input
     encoded_input = tokenizer(formatted_input, 
@@ -92,7 +101,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-clean/100'
+    main_dir = 'rewriting/gpt2-supervised-numeric/200'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -141,7 +150,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 100,                  # Number of training epochs
+                                    num_train_epochs = 200,                  # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
@@ -181,7 +190,7 @@ def run_supervised():
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
+    prompt = '[PROMPT]1[REWRITE]' # '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
 
@@ -379,14 +388,23 @@ if __name__ == "__main__":
 # 56345: 10 epochs only
 # 56354: 20 epochs
 # 56355: 30 epochs
-# 56458: 100 epochs with extended dataset
+
+# with extended dataset
+# 56458: 100 epochs 
 # 56466: 50 epochs with extended dataset w/ lr = 1e-05, train_batch = 16
+
+# w/ roy's params
 # 56469: 100 epochs w/ train_batch = 4, lr = 5e-05
 # 56470: 400 epochs
 # 56474: 200 epochs
-# 56475: 50 epochs w/ roy's params
+# 56475: 50 epochs 
 # 56481: 60
 # 56482: 70
+
+# use summarised base utterances
+# 56486: epoch = 100
+# 56490: epoch = 400
+
 
 # REINFORCEMENT LEARNING RUNS
 # 56175: first run with rewards * 1

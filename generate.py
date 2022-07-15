@@ -100,3 +100,7 @@ for p in prompt:
 # 56480: 200 epochs
 # 56483: 60
 # 56484: 70
+
+##### 2144 dataset w/ summarised base utterance #####
+# 56489: epoch 100
+# 56550: epoch 400
