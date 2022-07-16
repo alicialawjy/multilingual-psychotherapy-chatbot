@@ -230,7 +230,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 4,    # logits range from 0 - 0.9
+        "empathy_weight": 2,    # logits range from 0 - 0.9
         "semantic_weight": 0.4, # logits range from 0 - 20
         "fluency_weight": 1
     }
@@ -278,7 +278,8 @@ def run_RL():
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
     fbs = config['forward_batch_size']  # forward batch size
-
+    mean_max = 0
+    stdev_min = 100 # set a large number
     for epoch in tqdm(range(int(np.ceil(config["steps"]/config['batch_size'])))):
         torch.cuda.empty_cache()
         logs = dict()
@@ -354,20 +355,27 @@ def run_RL():
             rows=table_rows)})
         logs.update(timing)
         logs.update(stats)
-        logs['env/reward_mean'] = torch.mean(rewards).cpu().numpy()
-        logs['env/reward_std'] = torch.std(rewards).cpu().numpy()
+        reward_mean = torch.mean(rewards).cpu().numpy()
+        reward_std = torch.std(rewards).cpu().numpy()
+        logs['env/reward_mean'] = reward_mean
+        logs['env/reward_std'] = reward_std
         logs['env/reward_dist'] = rewards.cpu().numpy()
         wandb.log(logs)
 
-        if epoch % 50 == 0: # save every 50 epochs
+        # save if a better checkpoint observed
+        if reward_mean < mean_max or reward_std > stdev_min: 
+            # if only one of the metrics are better, save for consideration
             output_dir = f"rewriting/gpt2-trl/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
-
-    # Save Model
-    output_dir = "rewriting/gpt2-trl/end"
-    gpt2_model.save_pretrained(output_dir)
-    gpt2_tokenizer.save_pretrained(output_dir)
+            # print to see in vim 
+            for r in zip(game_data['prompt'], game_data['response']):
+                print(r)
+            
+            if reward_mean <= mean_max and reward_std >= stdev_min: 
+                # only replace the mean and std dev if both beaten 
+                mean_max = reward_mean 
+                stdev_min = reward_std
 
 
 if __name__ == "__main__":
@@ -427,5 +435,6 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
 # 56325: we = 4, ws = 0.25, no fluency, target KL = 3 w/ base utt only
 #   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
-# 56587: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt
-#   https://wandb.ai/alicialawjy/satbot/runs/abtqa40r
+# 56589: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt
+#   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
+# lower empathy weightage, model is exploiting empathy and not generating sensible sentences
