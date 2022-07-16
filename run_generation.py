@@ -363,7 +363,7 @@ def run_RL():
         wandb.log(logs)
 
         # save if a better checkpoint observed
-        if reward_mean < mean_max or reward_std > stdev_min: 
+        if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
             output_dir = f"rewriting/gpt2-trl/{epoch}"
             gpt2_model.save_pretrained(output_dir)
@@ -372,7 +372,7 @@ def run_RL():
             for r in zip(game_data['prompt'], game_data['response']):
                 print(r)
             
-            if reward_mean <= mean_max and reward_std >= stdev_min: 
+            if reward_mean >= mean_max and reward_std <= stdev_min: 
                 # only replace the mean and std dev if both beaten 
                 mean_max = reward_mean 
                 stdev_min = reward_std
@@ -435,6 +435,7 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
 # 56325: we = 4, ws = 0.25, no fluency, target KL = 3 w/ base utt only
 #   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
-# 56589: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt
+# 56589: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt (model is exploiting empathy and not generating sensible sentences)
 #   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
-# lower empathy weightage, model is exploiting empathy and not generating sensible sentences
+# 56601: lower empathy weightage (2)
+#   
