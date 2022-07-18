@@ -122,7 +122,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-transformation/50'
+    main_dir = 'rewriting/gpt2-supervised-transformation-v2/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -151,7 +151,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/low-high-empathy-11098.csv')
+    df_generic = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv')
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -229,7 +229,7 @@ def run_supervised():
                             return_full_text = False,
                             early_stopping = True)
 
-    print(tokenizer.decode(output[0], skip_special_tokens=True))
+    print(tokenizer.decode(output[0])) #, skip_special_tokens=True
 
 def run_RL():
     ##### P A R A M E T E R S ######
@@ -441,6 +441,8 @@ if __name__ == "__main__":
 # 56560: epoch = 800
 
 # low-high empathy pairs balanced (11098)
+# 56730: epoch = 25
+# 56725: epoch = 50
 # 56719: epoch = 100
 # 56703: epoch = 200
 # 56715: epoch = 300
