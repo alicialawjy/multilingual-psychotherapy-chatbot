@@ -10,74 +10,33 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-clean/400/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-clean/200/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
-# prompt = ['[PROMPT]0[REWRITE]',
-#         '[PROMPT]1[REWRITE]',
-#         '[PROMPT]2[REWRITE]',
-#         '[PROMPT]3[REWRITE]',
-#         '[PROMPT]4[REWRITE]',
-#         '[PROMPT]5[REWRITE]',
-#         '[PROMPT]6[REWRITE]',
-#         '[PROMPT]7[REWRITE]',
-#         '[PROMPT]8[REWRITE]',
-#         '[PROMPT]9[REWRITE]',
-#         '[PROMPT]10[REWRITE]',
-#         '[PROMPT]11[REWRITE]',
-#         '[PROMPT]12[REWRITE]',
-#         '[PROMPT]13[REWRITE]',
-#         '[PROMPT]14[REWRITE]',
-#         '[PROMPT]15[REWRITE]',
-#         '[PROMPT]16[REWRITE]',
-#         '[PROMPT]17[REWRITE]',
-#         '[PROMPT]18[REWRITE]',
-#         '[PROMPT]19[REWRITE]']
+prompt = ['[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
+        '[HIGH]悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
+        '[HIGH]悲伤[SEP]您最近是否尝试过协议6，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
+        '[HIGH]悲伤[SEP]您最近是否尝试过协议11，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
+        '[HIGH]悲伤[SEP]谢谢。现在我会问一些问题以了解您的情况。[REWRITE]',
+        '[HIGH]悲伤[SEP]您是否对某人有强烈的感受或表达以下任何情绪：[REWRITE]',
+        '[HIGH]悲伤[SEP]您认为您应该成为别人的救星吗？[REWRITE]',
+        '[HIGH]悲伤[SEP]您是否将自己视为受害者，将自己的负面情绪归咎于他人？[REWRITE]',
+        '[HIGH]悲伤[SEP]您觉得您在试图控制某人吗？[REWRITE]',
+        '[HIGH]悲伤[SEP]当出现问题时，您是否总是责怪和指责自己？[REWRITE]',
+        '[HIGH]悲伤[SEP]在之前的对话中，您是否考虑过其他提出的观点？[REWRITE]',
+        '[HIGH]悲伤[SEP]您是否正在经历个人危机（与亲人相处有困难，例如与朋友闹翻）？[REWRITE]',
+        '[HIGH]快乐[SEP]那很好！让我推荐一个您可以尝试的协议。[REWRITE]',
+        '[HIGH]所有情绪[SEP]根据您所说的，我相信您正在感受{}。这个对吗？[REWRITE]',
+        '[HIGH]所有情绪[SEP]我很抱歉。请从下面的情绪中选择最能反映您感受的情绪：[REWRITE]',
+        '[HIGH]所有情绪[SEP]感谢您的参与。再见[REWRITE]',
+        '[HIGH]所有情绪[SEP]这是我的建议，请选择您想尝试的协议[REWRITE]',
+        '[HIGH]所有情绪[SEP]请现在尝试通过此协议。完成后，按“继续”[REWRITE]',
+        '[HIGH]所有情绪[SEP]采取此协议后，您感觉更好还是更糟？[REWRITE]',
+        '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
+        '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
 
-# prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
-#         '[PROMPT]男性[SEP]18-39,悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
-#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您最近是否尝试过协议6，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
-#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您最近是否尝试过协议11，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
-#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]谢谢。现在我会问一些问题以了解您的情况。[REWRITE]',
-#         '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您是否对某人有强烈的感受或表达以下任何情绪：[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您认为您应该成为别人的救星吗？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您是否将自己视为受害者，将自己的负面情绪归咎于他人？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您觉得您在试图控制某人吗？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]当出现问题时，您是否总是责怪和指责自己？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]在之前的对话中，您是否考虑过其他提出的观点？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您是否正在经历个人危机（与亲人相处有困难，例如与朋友闹翻）？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]那很好！让我推荐一个您可以尝试的协议。[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]根据您所说的，我相信您正在感受{}。这个对吗？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]我很抱歉。请从下面的情绪中选择最能反映您感受的情绪：[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢您的参与。再见[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]这是我的建议，请选择您想尝试的协议[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]请现在尝试通过此协议。完成后，按“继续”[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]采取此协议后，您感觉更好还是更糟？[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
-#         '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
-
-prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事[REWRITE]',
-        '[PROMPT]男性[SEP]18-39,悲伤[SEP]最近或遥远[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]协议x[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]问一些问题[REWRITE]',
-        '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]以下情绪[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]救星[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]受害者[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]控制某人[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]责怪自己[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]考虑其他[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]个人危机[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]推荐协议[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感受{}[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择情绪[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢再见[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择协议[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试协议按“继续”[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]更好还是更糟[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（好）[REWRITE]',
-        '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（糟）[REWRITE]']
-
+print('epoch 200, low-high empathy pairs with transformation token, no age and gender')
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
@@ -100,6 +59,71 @@ for p in prompt:
 
     # for i, r in enumerate(rewritings):
     #    print(f"{i}: {r}")
+
+def hide():
+    prompt = ['[PROMPT]0[REWRITE]',
+            '[PROMPT]1[REWRITE]',
+            '[PROMPT]2[REWRITE]',
+            '[PROMPT]3[REWRITE]',
+            '[PROMPT]4[REWRITE]',
+            '[PROMPT]5[REWRITE]',
+            '[PROMPT]6[REWRITE]',
+            '[PROMPT]7[REWRITE]',
+            '[PROMPT]8[REWRITE]',
+            '[PROMPT]9[REWRITE]',
+            '[PROMPT]10[REWRITE]',
+            '[PROMPT]11[REWRITE]',
+            '[PROMPT]12[REWRITE]',
+            '[PROMPT]13[REWRITE]',
+            '[PROMPT]14[REWRITE]',
+            '[PROMPT]15[REWRITE]',
+            '[PROMPT]16[REWRITE]',
+            '[PROMPT]17[REWRITE]',
+            '[PROMPT]18[REWRITE]',
+            '[PROMPT]19[REWRITE]']
+
+    prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
+            '[PROMPT]男性[SEP]18-39,悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您最近是否尝试过协议6，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您最近是否尝试过协议11，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]谢谢。现在我会问一些问题以了解您的情况。[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]您是否对某人有强烈的感受或表达以下任何情绪：[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您认为您应该成为别人的救星吗？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您是否将自己视为受害者，将自己的负面情绪归咎于他人？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您觉得您在试图控制某人吗？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]当出现问题时，您是否总是责怪和指责自己？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]在之前的对话中，您是否考虑过其他提出的观点？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]您是否正在经历个人危机（与亲人相处有困难，例如与朋友闹翻）？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]那很好！让我推荐一个您可以尝试的协议。[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]根据您所说的，我相信您正在感受{}。这个对吗？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]我很抱歉。请从下面的情绪中选择最能反映您感受的情绪：[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢您的参与。再见[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]这是我的建议，请选择您想尝试的协议[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]请现在尝试通过此协议。完成后，按“继续”[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]采取此协议后，您感觉更好还是更糟？[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
+
+    prompt = ['[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事[REWRITE]',
+            '[PROMPT]男性[SEP]18-39,悲伤[SEP]最近或遥远[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]协议x[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]问一些问题[REWRITE]',
+            '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]以下情绪[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]救星[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]受害者[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]控制某人[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]责怪自己[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]考虑其他[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]悲伤[SEP]个人危机[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]快乐[SEP]推荐协议[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感受{}[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择情绪[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]感谢再见[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]选择协议[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试协议按“继续”[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]更好还是更糟[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（好）[REWRITE]',
+            '[PROMPT]女性[SEP]18-39[SEP]所有情绪[SEP]尝试另一协议（糟）[REWRITE]']
 
 # 55957
 # 55959: with temp=2
@@ -125,6 +149,10 @@ for p in prompt:
 ##### 2144 dataset w/ summarised base utterance #####
 # 56489: epoch 100
 # 56550: epoch 400
+# 56578: epoch 400 with balanced
+# 56579: epoch 600
+# 56585: epoch 500
+# 56586: epoch 700
 
 ##### 2144 dataset w/ numeric #####
 # 56557: epoch 200
