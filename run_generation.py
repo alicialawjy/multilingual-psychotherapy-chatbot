@@ -122,7 +122,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-transformation-v2/50'
+    main_dir = 'rewriting/gpt2-supervised-transformation-v2/100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
