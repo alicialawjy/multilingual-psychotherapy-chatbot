@@ -10,11 +10,12 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation/300/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation/50/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
 prompt = ['[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
+        '[LOW]悲伤[SEP]我很遗憾听到你感觉不舒服。有什么特别的事情让你有这种感觉吗？[REWRITE]',
         '[HIGH]悲伤[SEP]这是由最近或遥远的事件（或多个事件）引起的吗？[REWRITE]',
         '[HIGH]悲伤[SEP]您最近是否尝试过协议6，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
         '[HIGH]悲伤[SEP]您最近是否尝试过协议11，并发现由于旧事件而重新点燃了无法控制的情绪？[REWRITE]',
@@ -36,7 +37,7 @@ prompt = ['[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
 
-print('epoch 400, low-high empathy pairs with transformation token, no age and gender')
+print('epoch 50, low-high empathy pairs with transformation token, no age and gender')
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
@@ -161,4 +162,8 @@ def hide():
 # 56559: epoch 400
 
 ###### 11098 transformation ######
+# 56722: epoch 100
+# 56707: epoch 200
 # 56714: epoch 400
+# 56718: epoch 300
+
