@@ -10,7 +10,7 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-clean/200/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation/300/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
@@ -36,7 +36,7 @@ prompt = ['[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
 
-print('epoch 200, low-high empathy pairs with transformation token, no age and gender')
+print('epoch 400, low-high empathy pairs with transformation token, no age and gender')
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
@@ -44,7 +44,7 @@ for p in prompt:
     output = model.generate(input_ids,
                             max_length = 100, 
                             do_sample=True, 
-                            temperature=1.5,
+                            temperature=1,
                             top_k=50, 
                             top_p=0.95, 
                             num_return_sequences= 1,
@@ -53,6 +53,8 @@ for p in prompt:
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
                             early_stopping = True)
+
+
 
     print(tokenizer.decode(output[0], skip_special_tokens=True))
     # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
@@ -157,3 +159,6 @@ def hide():
 ##### 2144 dataset w/ numeric #####
 # 56557: epoch 200
 # 56559: epoch 400
+
+###### 11098 transformation ######
+# 56714: epoch 400
