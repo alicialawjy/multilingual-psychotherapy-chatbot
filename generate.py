@@ -10,7 +10,7 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation/50/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation-v2/13+7/best-model'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
@@ -37,7 +37,7 @@ prompt = ['[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉好多了）[REWRITE]',
         '[HIGH]所有情绪[SEP]您想尝试另一种协议吗？ （病人感觉更糟)[REWRITE]']
 
-print('epoch 50, low-high empathy pairs with transformation token, no age and gender')
+print('epoch 13+7, low-high empathy pairs with transformation token, no age and gender')
 for p in prompt:
     input_ids = tokenizer.encode(p, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
@@ -57,7 +57,7 @@ for p in prompt:
 
 
 
-    print(tokenizer.decode(output[0], skip_special_tokens=True))
+    print(tokenizer.decode(output[0])) #, skip_special_tokens=True
     # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
 
     # for i, r in enumerate(rewritings):
@@ -131,39 +131,8 @@ def hide():
 # 55957
 # 55959: with temp=2
 
-##### 2144 dataset model #####
-# 56440: 25 epoch model with no EOS token
-# 56443: 100 epoch model with no EOS token
-# 56447: 50 epoch model with no EOS token
-# 56448: 200 epoch
-
-##### 8094 dataset model #####
-# 56463: 100 epoch 
-# 56467: 50 epoch
-
-##### 8094 dataset model w/ Roy's params #####
-# 56472: 100 epoch
-# 56473: 400 epoch
-# 56479: 50 epochs
-# 56480: 200 epochs
-# 56483: 60
-# 56484: 70
-
-##### 2144 dataset w/ summarised base utterance #####
-# 56489: epoch 100
-# 56550: epoch 400
-# 56578: epoch 400 with balanced
-# 56579: epoch 600
-# 56585: epoch 500
-# 56586: epoch 700
-
-##### 2144 dataset w/ numeric #####
-# 56557: epoch 200
-# 56559: epoch 400
-
-###### 11098 transformation ######
-# 56722: epoch 100
-# 56707: epoch 200
-# 56714: epoch 400
-# 56718: epoch 300
+##### 7094 dataset #####
+# 56758: 13.44 epoch
+# 56766: 6.72 epoch
+# 
 
