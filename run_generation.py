@@ -17,17 +17,37 @@ import random
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, supervised, tokenizer):
     # extract df columns
-    gender = df['gender'].values.tolist()
-    age = df['age'].values.tolist()
+    #gender = df['gender'].values.tolist()
+    #age = df['age'].values.tolist()
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
     semantic_label = df['semantic'].values.tolist()
+    transformation = df['transformation'].values.tolist()
+
+    # # concatenate df columns horizontally, joining with the respective tokens
+    # formatted_input = []
+    # for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
+    #     input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
+    #     # if supervised, append the rewritings as well
+    #     if supervised:
+    #         input += r
+        
+    #     formatted_input.append(input)
 
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
-    for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
-        input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
+    for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
+        input = ''
+        if transformation == 'HIGH':
+            input += '[HIGH]'
+        elif transformation == 'LOW':
+            input += '[LOW]'
+        else:
+            raise Exception("No transformation listed")
+
+        input += e + '[SEP]' + b + '[REWRITE]'
+        # input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + 
         # if supervised, append the rewritings as well
         if supervised:
             input += r
@@ -100,7 +120,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-clean/400'
+    main_dir = 'rewriting/gpt2-supervised-clean/200'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -119,7 +139,8 @@ def run_supervised():
 
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
-    additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
+    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
+    additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}    # additional tokens for conditional generation
     tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
@@ -128,7 +149,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/low-high-empathy-2144-clean.csv', index_col=0)
+    df_generic = pd.read_csv('data/empathy/low-high-empathy-11098.csv', index_col=0)
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -149,7 +170,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 400,                 # Number of training epochs
+                                    num_train_epochs = 200,                 # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
@@ -175,8 +196,8 @@ def run_supervised():
                     train_dataset = generic_train_dataset,
                     eval_dataset = generic_val_dataset,
                     data_collator = generic_train_dataset.collate_fn,
-                    # compute_metrics = compute_metrics,                # needed by Trainer.evaluate
-                    callbacks = [trainer_callback]                      # EarlyStoppingCallback module
+                    #compute_metrics = compute_metrics,                    # needed by Trainer.evaluate
+                    callbacks = [trainer_callback]                        # EarlyStoppingCallback module
                     )
 
     trainer.train()
@@ -189,14 +210,14 @@ def run_supervised():
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    prompt = '[PROMPT]男性[SEP]18-39[SEP]悲伤[SEP]特别事件[REWRITE]'
+    prompt = '[HIGH]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
 
     output = model.generate(input_ids, 
                             max_length = 100, 
                             do_sample = True, 
-                            temperature = 1.2,
+                            temperature = 1,
                             top_k = 50, 
                             top_p = 0.95, 
                             num_return_sequences = 3,
@@ -223,7 +244,7 @@ def run_RL():
         "lr": 1e-5,
         "init_kl_coef":0.2,
         "seed": 1,
-        "target": 3,
+        "target": 1,
         "horizon":10000,
         "gamma":1,
         "lam":0.95,
@@ -288,7 +309,7 @@ def run_RL():
         t0 = time.time()
         
         # Batch prompts
-        batch_idx = random.choices(range(train_dataloader.__len__()),k=config['batch_size'])
+        batch_idx = random.sample(range(train_dataloader.__len__()),k=config['batch_size'])
         batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
         game_data['prompt'] = [dict_train_text[idx] for idx in batch_idx]                   # prompts
@@ -379,7 +400,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_RL()
+    run_supervised()
 
 ##### LOGS #####
 # SUPERVISED
@@ -437,5 +458,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
 # 56589: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt (model is exploiting empathy and not generating sensible sentences)
 #   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
-# 56601: lower empathy weightage (2)
-#   
+# 56618: lower empathy weightage (2)
+#   https://wandb.ai/alicialawjy/satbot/runs/1va386cz
