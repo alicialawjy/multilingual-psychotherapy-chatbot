@@ -62,7 +62,7 @@ def encoded_df(df, supervised, tokenizer):
                             )
 
     print(formatted_input)
-    
+
     return formatted_input, semantic_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
@@ -122,7 +122,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-clean/200'
+    main_dir = 'rewriting/gpt2-supervised-transformation/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -172,7 +172,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 200,                 # Number of training epochs
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 50,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
@@ -212,7 +212,7 @@ def run_supervised():
     # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
     # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
 
-    prompt = '[HIGH]男性[SEP]18-39[SEP]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
+    prompt = '[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
     input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
     input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
 
@@ -230,7 +230,6 @@ def run_supervised():
                             early_stopping = True)
 
     print(tokenizer.decode(output[0], skip_special_tokens=True))
-
 
 def run_RL():
     ##### P A R A M E T E R S ######
@@ -442,7 +441,12 @@ if __name__ == "__main__":
 # 56560: epoch = 800
 
 # low-high empathy pairs balanced (11098)
+# 56719: epoch = 100
 # 56703: epoch = 200
+# 56715: epoch = 300
+# 56708: epoch = 400
+# 56717: epoch = 800
+
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
