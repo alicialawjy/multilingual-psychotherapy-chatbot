@@ -122,7 +122,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-transformation-v2/50'
+    main_dir = 'rewriting/gpt2-supervised-transformation-v2/13+7'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -136,7 +136,7 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall' # 'rewriting/gpt2-supervised/100+100/best-model'
+    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation-v2/50/checkpoint-20000' #'uer/gpt2-chinese-cluecorpussmall' 
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
@@ -172,7 +172,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 7,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
@@ -180,7 +180,7 @@ def run_supervised():
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
                                     eval_steps = 500,                        # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
-                                    save_steps = 50,                        # Save every 50 steps
+                                    save_steps = 500,                        # Save every 50 steps
                                     save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
@@ -198,8 +198,8 @@ def run_supervised():
                     train_dataset = generic_train_dataset,
                     eval_dataset = generic_val_dataset,
                     data_collator = generic_train_dataset.collate_fn,
-                    #compute_metrics = compute_metrics,                    # needed by Trainer.evaluate
-                    callbacks = [trainer_callback]                        # EarlyStoppingCallback module
+                    #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
+                    #callbacks = [trainer_callback]                          # EarlyStoppingCallback module
                     )
 
     trainer.train()
@@ -404,52 +404,9 @@ if __name__ == "__main__":
     run_supervised()
 
 ##### LOGS #####
-# SUPERVISED
-# 55948: first run - warm startup (supervised)
-# 56269: extra 50 epochs from 'rewriting/gpt2-supervised/best-model'
-# 56270: extra 100 epochs from 'rewriting/gpt2-supervised/50+50/best-model'
-# 56275: extra 200 epochs from 'rewriting/gpt2-supervised/100+100/best-model'
-# 56348: 25 epochs only
-# 56345: 10 epochs only
-# 56354: 20 epochs
-# 56355: 30 epochs
-
-# with extended dataset
-# 56458: 100 epochs 
-# 56466: 50 epochs with extended dataset w/ lr = 1e-05, train_batch = 16
-
-# w/ roy's params
-# 56469: 100 epochs w/ train_batch = 4, lr = 5e-05
-# 56470: 400 epochs
-# 56474: 200 epochs
-# 56475: 50 epochs 
-# 56481: 60
-# 56482: 70
-
-# use summarised base utterances (promising)
-# 56486: epoch = 100
-# 56490: epoch = 400
-# 56576: epoch = 400 cleaned somemore + balanced
-# 56583: epoch = 500
-# 56577: epoch = 600 not bad
-# 56584: epoch = 700
-# 56580: epoch = 800 bad, overfitted and spitting nonsense
-
-# use numeric without gender, age and emotion
-# 56555: epoch = 200 (needs wayyy more training)
-# 56556: epoch = 400
-# 56560: epoch = 800
-
-# low-high empathy pairs balanced (11098)
-# 56730: epoch = 25
-# 56725: epoch = 50
-# 56719: epoch = 100
-# 56703: epoch = 200
-# 56715: epoch = 300
-# 56708: epoch = 400
-# 56717: epoch = 800
-
-# low-high empathy v2 (only base>>1, base>>2, 0>>2 transformations)
+# data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
+# 56749: epoch = 50 >> trained for 13.44 epochs
+# continue to train for 20 epochs
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
