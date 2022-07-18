@@ -165,7 +165,7 @@ def run_supervised():
 
     ##### T R A I N I N G #####
     # Early Stopping Module
-    trainer_callback = EarlyStoppingCallback(early_stopping_patience = 5,
+    trainer_callback = EarlyStoppingCallback(early_stopping_patience = 20,
                                             early_stopping_threshold = 0.001)
 
     # Training Arguments
@@ -173,18 +173,18 @@ def run_supervised():
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
                                     num_train_epochs = 50,                  # Number of training epochs
-                                    warmup_steps = 50,
+                                    warmup_steps = 100,
                                     per_device_train_batch_size = 4,       # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 50,                        # Evaluate every 50 steps
+                                    eval_steps = 500,                        # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
                                     save_steps = 50,                        # Save every 50 steps
                                     save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
-                                    logging_steps = 50,                     # Log every 100 steps
+                                    logging_steps = 500,                     # Log every 100 steps
                                     include_inputs_for_metrics = True,
                                     metric_for_best_model = 'eval_loss',    # Decide based on eval_loss
                                     greater_is_better = False,              # Lower eval_loss is better
@@ -449,6 +449,7 @@ if __name__ == "__main__":
 # 56708: epoch = 400
 # 56717: epoch = 800
 
+# low-high empathy v2 (only base>>1, base>>2, 0>>2 transformations)
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
