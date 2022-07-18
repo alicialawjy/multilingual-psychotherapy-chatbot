@@ -172,7 +172,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 100,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -180,8 +180,8 @@ def run_supervised():
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
                                     eval_steps = 500,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
-                                    save_steps = 500,                       # Save every 50 steps
-                                    save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
+                                    save_steps = 1500,                      # Save every 500 steps
+                                    # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
                                     logging_steps = 500,                     # Log every 100 steps
@@ -408,6 +408,8 @@ if __name__ == "__main__":
 # 56749: epoch = 50 >> trained for 13.44 epochs
 # 56759: continue to train for 20 epochs lr = 5e-05
 # 56770: 56759 but with smaller lr 3.5e-05
+# 567774: full 50 epochs
+
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
