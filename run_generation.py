@@ -39,9 +39,9 @@ def encoded_df(df, supervised, tokenizer):
     formatted_input = []
     for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
         input = ''
-        if transformation == 'HIGH':
+        if t == 'HIGH':
             input += '[HIGH]'
-        elif transformation == 'LOW':
+        elif t == 'LOW':
             input += '[LOW]'
         else:
             raise Exception("No transformation listed")
@@ -61,6 +61,8 @@ def encoded_df(df, supervised, tokenizer):
                             truncation = True
                             )
 
+    print(formatted_input)
+    
     return formatted_input, semantic_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
@@ -149,7 +151,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/low-high-empathy-11098.csv', index_col=0)
+    df_generic = pd.read_csv('data/empathy/low-high-empathy-11098.csv')
     df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -439,7 +441,10 @@ if __name__ == "__main__":
 # 56556: epoch = 400
 # 56560: epoch = 800
 
-# REINFORCEMENT LEARNING RUNS
+# low-high empathy pairs balanced (11098)
+# 56703: epoch = 200
+
+##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
 #   https://wandb.ai/alicialawjy/satbot/runs/goxl4q7m?workspace=user-alicialawjy
 # 56181: use rewards *2
