@@ -122,7 +122,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-transformation-v2/13+7'
+    main_dir = 'rewriting/gpt2-supervised-transformation-v2/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -136,12 +136,12 @@ def run_supervised():
 
     ##### G P T - 2 #####
     # Model
-    PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-transformation-v2/50/checkpoint-20000' #'uer/gpt2-chinese-cluecorpussmall' 
+    PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
     model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
-    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}    # additional tokens for conditional generation
+    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  # additional tokens for conditional generation
     additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}    # additional tokens for conditional generation
     tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
@@ -165,22 +165,22 @@ def run_supervised():
 
     ##### T R A I N I N G #####
     # Early Stopping Module
-    trainer_callback = EarlyStoppingCallback(early_stopping_patience = 20,
-                                            early_stopping_threshold = 0.001)
+    # trainer_callback = EarlyStoppingCallback(early_stopping_patience = 20,
+    #                                         early_stopping_threshold = 0.001)
 
     # Training Arguments
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 7,                  # Number of training epochs
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 100,
-                                    per_device_train_batch_size = 4,       # Batch size for training
+                                    per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 500,                        # Evaluate every 50 steps
+                                    eval_steps = 500,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
-                                    save_steps = 500,                        # Save every 50 steps
+                                    save_steps = 500,                       # Save every 50 steps
                                     save_total_limit = 5,                   # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
@@ -199,7 +199,7 @@ def run_supervised():
                     eval_dataset = generic_val_dataset,
                     data_collator = generic_train_dataset.collate_fn,
                     #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
-                    #callbacks = [trainer_callback]                          # EarlyStoppingCallback module
+                    #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
                     )
 
     trainer.train()
@@ -406,7 +406,8 @@ if __name__ == "__main__":
 ##### LOGS #####
 # data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
 # 56749: epoch = 50 >> trained for 13.44 epochs
-# continue to train for 20 epochs
+# 56759: continue to train for 20 epochs lr = 5e-05
+# 56770: 56759 but with smaller lr 3.5e-05
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
