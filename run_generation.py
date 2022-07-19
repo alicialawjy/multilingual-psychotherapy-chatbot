@@ -151,8 +151,9 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv')
-    df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
+    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1)
+    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv')
+    # df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
     _, _, dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer) 
@@ -172,7 +173,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 100,                  # Number of training epochs
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -409,7 +410,7 @@ if __name__ == "__main__":
 # 56759: continue to train for 20 epochs lr = 5e-05
 # 56770: 56759 but with smaller lr 3.5e-05
 # 567774: full 50 epochs
-
+# 56775: 100 epochs 
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
