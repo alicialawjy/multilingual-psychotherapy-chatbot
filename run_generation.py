@@ -16,7 +16,11 @@ import random
 from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
-def encoded_df(df, supervised, tokenizer):
+def encoded_df(df, supervised, train=False, tokenizer):
+    '''
+    supervised (bool): true if supervised learning, false if reinforcement learning
+    train (bool): true if training dataset, false is test/validation. only relevant for supervised learning.
+    '''
     # extract df columns
     #gender = df['gender'].values.tolist()
     #age = df['age'].values.tolist()
@@ -24,8 +28,11 @@ def encoded_df(df, supervised, tokenizer):
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
     transformation = df['transformation'].values.tolist()
-    semantic_label = df['semantic'].values.tolist()
-    transformation_label = [1 if t=='HIGH' else 0 for t in transformation]
+
+    if not supervised:
+        semantic_label = df['semantic'].values.tolist()
+        transformation_label = df['transformation_label'].values.tolist()
+    
 
     # # concatenate df columns horizontally, joining with the respective tokens
     # formatted_input = []
@@ -50,8 +57,8 @@ def encoded_df(df, supervised, tokenizer):
 
         input += e + '[SEP]' + b + '[REWRITE]'
         # input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + 
-        # if supervised, append the rewritings as well
-        if supervised:
+        # if training dataset for supervised learning, append the rewritings as well
+        if supervised and train:
             input += r
         
         formatted_input.append(input)
@@ -188,13 +195,13 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1).head(1)
-    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv').head(2)
+    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1)
+    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv')
     # df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer)
-    dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
+    dict_generic_train = encoded_df(df=df_generic_train, supervised=True, train=True, tokenizer=tokenizer)
+    dict_generic_val = encoded_df(df=df_generic_val, supervised=True, train=False, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     # (set supervised = False for validation and test sets: i.e. don't append rewritings)
@@ -375,13 +382,13 @@ def run_RL():
         semantic = []
         fluency = []
         for i in range(int(config['batch_size']/fbs)):
-            # empathy score - take the logit corr to the transformation for high empathy [:,1]
+            # empathy score - take the logit for the corr transformation 
             empathy_score_all = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
-                                                        attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach() 
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
             empathy_score = [logits[idx] for (logits, idx) in zip(empathy_score_all, batch_transformation_label[i*fbs:(i+1)*fbs])]
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
-                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # # fluency score - inverse perplexity
             # with torch.no_grad():
@@ -473,3 +480,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
 # 56618: lower empathy weightage (2)
 #   https://wandb.ai/alicialawjy/satbot/runs/1va386cz
+# 56850: with the 45000checkpoint model
+#   
