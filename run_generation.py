@@ -13,6 +13,7 @@ from trl.gpt2 import GPT2HeadWithValueModel, respond_to_batch
 from trl.ppo import PPOTrainer
 from trl.core import build_bert_batch_from_txt
 import random
+from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, supervised, tokenizer):
@@ -22,8 +23,9 @@ def encoded_df(df, supervised, tokenizer):
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
-    semantic_label = df['semantic'].values.tolist()
     transformation = df['transformation'].values.tolist()
+    semantic_label = df['semantic'].values.tolist()
+    transformation_label = [1 if t=='HIGH' else 0 for t in transformation]
 
     # # concatenate df columns horizontally, joining with the respective tokens
     # formatted_input = []
@@ -61,9 +63,7 @@ def encoded_df(df, supervised, tokenizer):
                             truncation = True
                             )
 
-    print(formatted_input)
-
-    return formatted_input, semantic_label, encoded_input
+    return encoded_input if supervised else formatted_input, semantic_label, transformation_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
     ''' 
@@ -119,6 +119,42 @@ class GPT2RewritingDataset(Dataset):
 
     #     return loss
 
+# def compute_metrics(eval_predictions):
+#     # Eval_predictions gives the logits and loss of the predicted words
+#     # Convert predictions into their textual representations
+#     response = eval_predictions.predictions
+#     PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall' # 'rewriting/gpt2-supervised-transformation-v2/100'
+#     gpt2tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+
+#     all_input_ids = []
+#     for r in response:
+#         input_ids = []
+#         for word in r:
+#             # Get the logits
+#             logits = torch.unsqueeze(torch.tensor(word),dim=0)
+#             # Greedy search: take most likely
+#             next_token = torch.argmax(logits, dim=-1).unsqueeze(1)
+#             # Append to input_ids
+#             input_ids.append(next_token)
+
+#         input_ids = torch.squeeze(torch.stack(input_ids))
+#         all_input_ids.append(input_ids)
+
+#     all_input_ids=torch.stack(all_input_ids)
+
+#     # Get the scores per textual output
+#     CLASSIFIER_MODEL_NAME = 'saved_models/Knowledge Distillation/2nd-tune-lr1e05-temp5'
+#     classifiertokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+#     empathy_classifier =  AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_MODEL_NAME).to(device)
+
+#     score = 0
+#     for text in all_input_ids:
+#         gpt_decoded = gpt2tokenizer.decode(text[0])
+#         classifier_encoded =  classifiertokenizer(gpt_decoded, padding=True, truncation=True, return_tensors='pt')
+#         empathy_logits = 
+
+#     print('decoded pred:', )
+
 
 ############# Main Code ############# 
 def run_supervised():
@@ -148,16 +184,17 @@ def run_supervised():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
     model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
+    tokenizer.save_pretrained(f'{main_dir}')                      # save the new tokenizer in the model directory
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1)
-    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv')
+    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1).head(1)
+    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv').head(2)
     # df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    _, _, dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer) 
-    _, _, dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
+    dict_generic_train = encoded_df(df=df_generic_train, supervised=True, tokenizer=tokenizer)
+    dict_generic_val = encoded_df(df=df_generic_val, supervised=False, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     # (set supervised = False for validation and test sets: i.e. don't append rewritings)
@@ -173,13 +210,13 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 2,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 500,                       # Evaluate every 50 steps
+                                    eval_steps = 1,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
                                     save_steps = 1500,                      # Save every 500 steps
                                     # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
@@ -194,14 +231,14 @@ def run_supervised():
 
     # Trainer
     trainer = Trainer(args=training_args,
-                    model = model,
-                    tokenizer = tokenizer,
-                    train_dataset = generic_train_dataset,
-                    eval_dataset = generic_val_dataset,
-                    data_collator = generic_train_dataset.collate_fn,
-                    #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
-                    #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
-                    )
+                            model = model,
+                            tokenizer = tokenizer,
+                            train_dataset = generic_train_dataset,
+                            eval_dataset = generic_val_dataset,
+                            data_collator = generic_train_dataset.collate_fn,
+                            #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
+                            #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
+                            )
 
     trainer.train()
 
@@ -235,10 +272,10 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-clean/600/best-model',        # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
-        "empathy_classifier_name": "empathy_classifier/binary-empathy",     # empathy classifier (xlm-r)
-        "semantic_classifier_name": "semantic_classifier/4e05/best-model",  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
-        "steps": 19200,                                                     # aka epochs = steps/batch_size = 19200/32 = 600 epochs
+        "lm_name": 'rewriting/gpt2-supervised-transformation-v2/100/checkpoint-43500',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
+        "empathy_classifier_name": "empathy_classifier/binary-empathy",                     # empathy classifier (xlm-r)
+        "semantic_classifier_name": "semantic_classifier/4e05/best-model",                  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
+        "steps": 1920,                                                                      
         "batch_size": 32, # 2
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
@@ -294,8 +331,8 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/base_utt_semantic_labelled_clean.csv', index_col=0) # DataFrame
-    dict_train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
+    df = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv', index_col=0) # DataFrame
+    dict_train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised = False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
@@ -316,6 +353,7 @@ def run_RL():
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
         game_data['prompt'] = [dict_train_text[idx] for idx in batch_idx]                   # prompts
         batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
+        batch_transformation_label = [transformation_label[idx] for idx in batch_idx]    
         
         # Get the corresponding responses to the prompts
         t = time.time()
@@ -337,9 +375,10 @@ def run_RL():
         semantic = []
         fluency = []
         for i in range(int(config['batch_size']/fbs)):
-            # empathy score - take the logit for high empathy [:,1]
-            empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
+            # empathy score - take the logit corr to the transformation for high empathy [:,1]
+            empathy_score_all = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach() 
+            empathy_score = [logits[idx] for (logits, idx) in zip(empathy_score_all, batch_transformation_label[i*fbs:(i+1)*fbs])]
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()         # this is shape (batch_size x 20)
@@ -354,7 +393,7 @@ def run_RL():
             # w_f = config['fluency_weight']
             total_score = [e * w_e + s * w_s for (e,s) in zip(empathy_score, semantic_score)] # removed fluency_score
             # convert list of tensors into a single tensor and append
-            empathy.append(empathy_score)
+            empathy.append(torch.stack(empathy_score))
             semantic.append(torch.stack(semantic_score))
             # fluency.append(torch.stack(fluency_score))
             rewards.append(torch.stack(total_score))
@@ -402,7 +441,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 ##### LOGS #####
 # data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
@@ -411,6 +450,7 @@ if __name__ == "__main__":
 # 56770: 56759 but with smaller lr 3.5e-05
 # 567774: full 50 epochs
 # 56775: 100 epochs 
+
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
