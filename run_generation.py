@@ -16,7 +16,7 @@ import random
 from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
-def encoded_df(df, supervised, train=False, tokenizer):
+def encoded_df(df, tokenizer, supervised, train=False):
     '''
     supervised (bool): true if supervised learning, false if reinforcement learning
     train (bool): true if training dataset, false is test/validation. only relevant for supervised learning.
