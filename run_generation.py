@@ -373,9 +373,11 @@ def run_RL():
             queries = batch_dict[i*fbs:(i+1)*fbs].to(device)
             response = respond_to_batch(gpt2_model, queries, txt_len=config['max_len'])
             response_tensors.append(response)
+            print(queries)
         
         response_tensors = torch.cat(response_tensors).to(device) # encoded responses
         game_data['response'] = [gpt2_tokenizer.decode(response_tensors[i, :]) for i in range(config['batch_size'])]
+        print(game_data['response'])
         timing['time/get_response'] = time.time()-t
 
         # REWARD SCORING
@@ -495,5 +497,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57170: experiment 3b checkpoint 30000
 #   https://wandb.ai/alicialawjy/satbot/runs/3keb8s2g?workspace=user-alicialawjy
-# 57172: experiment 3
+# 57173: experiment 3
 #   
