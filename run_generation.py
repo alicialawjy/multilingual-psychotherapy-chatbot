@@ -47,17 +47,18 @@ def encoded_df(df, tokenizer, supervised, train=False):
     # concatenate df columns horizontally, joining with the respective tokens
     formatted_input = []
     for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-        input = ''
+        # input = ''
+        input = e + '[SEP]' + b # + '[REWRITE]'
+        # instead of [REWRITE], we use [HIGH] or [LOW]
         if t == 'HIGH':
             input += '[HIGH]'
         elif t == 'LOW':
             input += '[LOW]'
         else:
             raise Exception("No transformation listed!")
-
-        input += e + '[SEP]' + b + '[REWRITE]'
         # input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + 
         # if training dataset for supervised learning, append the rewritings as well
+
         if supervised and train:
             input += r
         
@@ -168,7 +169,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-experiment3/50'
+    main_dir = 'rewriting/gpt2-supervised-experiment3b/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -187,8 +188,10 @@ def run_supervised():
 
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
-    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  # additional tokens for conditional generation
-    additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}    # additional tokens for conditional generation
+    # additional tokens for conditional generation
+    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  
+    # additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}
+    additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]'}
     tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
@@ -441,7 +444,7 @@ if __name__ == "__main__":
 # 56770: 56759 but with smaller lr 3.5e-05
 # 567774: full 50 epochs
 # 56775: 100 epochs 
-# 56971: experiment 3 50 epochs
+# 56980: experiment 3 50 epochs
 
 
 ##### REINFORCEMENT LEARNING RUNS #####
