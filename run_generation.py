@@ -70,7 +70,10 @@ def encoded_df(df, tokenizer, supervised, train=False):
                             truncation = True
                             )
 
-    return encoded_input if supervised else formatted_input, semantic_label, transformation_label, encoded_input
+    if supervised:
+        return encoded_input 
+    else:
+        return formatted_input, semantic_label, transformation_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
     ''' 
@@ -438,6 +441,7 @@ if __name__ == "__main__":
 # 56770: 56759 but with smaller lr 3.5e-05
 # 567774: full 50 epochs
 # 56775: 100 epochs 
+# 56971: experiment 3 50 epochs
 
 
 ##### REINFORCEMENT LEARNING RUNS #####
