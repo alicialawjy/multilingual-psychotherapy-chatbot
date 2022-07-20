@@ -123,7 +123,6 @@ class GPT2RewritingDataset(Dataset):
             last_idx = torch.sum(attention_mask) - 1
             input_ids[last_idx] = 0 
             attention_mask[last_idx] = 0
-            print(input_ids)
 
         return {'labels': input_ids, 'input_ids': input_ids, 'attention_mask': attention_mask}
         
@@ -293,7 +292,7 @@ def run_RL():
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
         "max_len": 50,
-        "lr": 1e-5,
+        "lr": 5e-6,
         "init_kl_coef":0.2,
         "seed": 1,
         "target": 6,
@@ -344,15 +343,16 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0) # DataFrame
-    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=True, train=True, tokenizer=gpt2_tokenizer) # format and encode
+    df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0).sample(frac=1) # DataFrame
+    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, train=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
-    # sanity check
-    print(f'text example: {train_text[0]}')
-    print(f"encoding: {dict_train_encoded['input_ids'][0]}")
-    print(f'transformation_label:{transformation_label[0]}')
-    print(f'semantic_label:{semantic_label[0]}')
 
+    # # sanity check
+    # print(f'text example: {train_text[0]}')
+    # print(f"encoding: {dict_train_encoded['input_ids'][0]}")
+    # print(f'transformation_label:{transformation_label[0]}')
+    # print(f'semantic_label:{semantic_label[0]}')
+    
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
     fbs = config['forward_batch_size']  # forward batch size
