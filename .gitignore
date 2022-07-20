@@ -1,5 +1,7 @@
 satbot/
 runs/
+venv/
 outputs/
 saved_models/
 prism-master/
+LisaBot/

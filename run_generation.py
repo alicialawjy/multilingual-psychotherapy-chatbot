@@ -53,7 +53,7 @@ def encoded_df(df, tokenizer, supervised, train=False):
         elif t == 'LOW':
             input += '[LOW]'
         else:
-            raise Exception("No transformation listed")
+            raise Exception("No transformation listed!")
 
         input += e + '[SEP]' + b + '[REWRITE]'
         # input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + 
@@ -77,10 +77,10 @@ class GPT2RewritingDataset(Dataset):
     DataLoader for GPT-2 Rewriting Task 
 
     '''
-    def __init__(self, tokenizer, encodings, supervised=True): # ok
+    def __init__(self, tokenizer, encodings, train=True): # ok
         self.encodings = encodings
         self.tokenizer = tokenizer
-        self.supervised = supervised
+        self.train = train
 
     def __len__(self): # ok
         return len(self.encodings['input_ids'])
@@ -92,8 +92,8 @@ class GPT2RewritingDataset(Dataset):
         # # 'output_attentions', 'output_hidden_states','return_dict', 'labels', 'label', 'label_ids']
         input_ids = self.encodings['input_ids'][idx]
         attention_mask = self.encodings['attention_mask'][idx]
-        if not self.supervised:
-            # if not supervised, remove the EOS token that automatically gets added by the encoder
+        if not self.train:
+            # if not for training, remove the EOS token that automatically gets added by the encoder
             last_idx = torch.sum(attention_mask) - 1
             input_ids[last_idx] = 0 
             attention_mask[last_idx] = 0
@@ -165,7 +165,7 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-transformation-v2/100'
+    main_dir = 'rewriting/gpt2-supervised-experiment3/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -191,22 +191,20 @@ def run_supervised():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
 
     model.resize_token_embeddings(len(tokenizer))                                   # resize the model token embedding space
-    tokenizer.save_pretrained(f'{main_dir}')                      # save the new tokenizer in the model directory
+    tokenizer.save_pretrained(f'{main_dir}')                                        # save the new tokenizer in the model directory
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_generic_train = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv').sample(frac=1)
-    df_generic_val = pd.read_csv('data/empathy/low-high-empathy-7253-v2-val.csv')
-    # df_generic_train, df_generic_val = train_test_split(df_generic, test_size=0.2, shuffle=True, random_state=0)
+    df_supervised = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv',index_col=0)
+    df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    dict_generic_train = encoded_df(df=df_generic_train, supervised=True, train=True, tokenizer=tokenizer)
-    dict_generic_val = encoded_df(df=df_generic_val, supervised=True, train=False, tokenizer=tokenizer) 
+    dict_train = encoded_df(df=df_train, supervised=True, train=True, tokenizer=tokenizer)
+    dict_val = encoded_df(df=df_val, supervised=True, train=False, tokenizer=tokenizer) # train false makes sure rewriting not appended
 
     # Get DataLoader object, used by Trainer
-    # (set supervised = False for validation and test sets: i.e. don't append rewritings)
-    generic_train_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_train) 
-    generic_val_dataset = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_generic_val)  
+    dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
+    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=False) # train false makes sure eos token removed
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -216,20 +214,20 @@ def run_supervised():
     # Training Arguments
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
-                                    learning_rate = 5e-5,                   # Learning rate
-                                    num_train_epochs = 2,                  # Number of training epochs
+                                    learning_rate = 1e-5,                   # Learning rate
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 1,                       # Evaluate every 50 steps
+                                    eval_steps = 500,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
                                     save_steps = 1500,                      # Save every 500 steps
                                     # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
-                                    logging_steps = 500,                     # Log every 100 steps
+                                    logging_steps = 500,                    # Log every 100 steps
                                     include_inputs_for_metrics = True,
                                     metric_for_best_model = 'eval_loss',    # Decide based on eval_loss
                                     greater_is_better = False,              # Lower eval_loss is better
@@ -238,14 +236,14 @@ def run_supervised():
 
     # Trainer
     trainer = Trainer(args=training_args,
-                            model = model,
-                            tokenizer = tokenizer,
-                            train_dataset = generic_train_dataset,
-                            eval_dataset = generic_val_dataset,
-                            data_collator = generic_train_dataset.collate_fn,
-                            #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
-                            #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
-                            )
+                    model = model,
+                    tokenizer = tokenizer,
+                    train_dataset = dataloader_train,
+                    eval_dataset = dataloader_val,
+                    data_collator = dataloader_train.collate_fn,
+                    #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
+                    #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
+                    )
 
     trainer.train()
 
@@ -253,28 +251,7 @@ def run_supervised():
     trainer.save_model(f'{main_dir}/best-model')
     tokenizer.save_pretrained(f'{main_dir}/best-model')                      # save the new tokenizer in the model directory
 
-    # Test the model
-    # model = AutoModelWithLMHead.from_pretrained("rewriting/gpt2-supervised") # use our trained 
-    # tokenizer = AutoTokenizer.from_pretrained("rewriting/gpt2-supervised") # uses the same tokenizer as the original gpt-2
-
-    prompt = '[HIGH]悲伤[SEP]这是由特别事件引起的吗？[REWRITE]'
-    input_ids = tokenizer.encode(prompt, return_tensors = 'pt').to(device)
-    input_ids = input_ids[0][:-1].view(1,-1) # remove [EOS] token but maintain shape
-
-    output = model.generate(input_ids, 
-                            max_length = 100, 
-                            do_sample = True, 
-                            temperature = 1,
-                            top_k = 50, 
-                            top_p = 0.95, 
-                            num_return_sequences = 3,
-                            num_beams = 5,
-                            # no_repeat_ngram_size = 2,
-                            clean_up_tokenization_spaces = True,
-                            return_full_text = False,
-                            early_stopping = True)
-
-    print(tokenizer.decode(output[0])) #, skip_special_tokens=True
+    print(f'Training Completed! See {main_dir}/best-model for the best-model with lowest eval_loss')
 
 def run_RL():
     ##### P A R A M E T E R S ######
@@ -452,7 +429,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_RL()
+    run_supervised()
 
 ##### LOGS #####
 # data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
@@ -484,5 +461,8 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
 # 56618: lower empathy weightage (2)
 #   https://wandb.ai/alicialawjy/satbot/runs/1va386cz
-# 56850: with the 45000checkpoint model
-#   
+# 56863: with the 45000checkpoint model
+#   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
+# 56901: with the 4500 checkpoint model
+#   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
+# 56917: with the 50 epoch best model
