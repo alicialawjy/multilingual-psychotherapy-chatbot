@@ -43,34 +43,12 @@ def encoded_df(df, tokenizer, supervised, train=False):
         
     #     formatted_input.append(input)
 
-    # # EXPERIMENT 3
-    # formatted_input = []
-    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-
-    #     input = ''
-
-    #     # instead of [REWRITE], we use [HIGH] or [LOW]
-    #     if t == 'HIGH':
-    #         input += '[HIGH]'
-    #     elif t == 'LOW':
-    #         input += '[LOW]'
-    #     else:
-    #         raise Exception("No transformation listed!")
-        
-    #     input += e + '[SEP]' + b + '[REWRITE]'
-
-    #     # if training dataset for supervised learning, append the rewritings as well
-
-    #     if supervised and train:
-    #         input += r
-        
-    #     formatted_input.append(input)
-    
-    # EXPERIMENT 3B
+    # EXPERIMENT 3
     formatted_input = []
     for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
 
-        input = e + '[SEP]' + b 
+        input = ''
+
         # instead of [REWRITE], we use [HIGH] or [LOW]
         if t == 'HIGH':
             input += '[HIGH]'
@@ -78,12 +56,34 @@ def encoded_df(df, tokenizer, supervised, train=False):
             input += '[LOW]'
         else:
             raise Exception("No transformation listed!")
+        
+        input += e + '[SEP]' + b + '[REWRITE]'
 
         # if training dataset for supervised learning, append the rewritings as well
+
         if supervised and train:
             input += r
         
         formatted_input.append(input)
+    
+    # # EXPERIMENT 3B
+    # formatted_input = []
+    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
+
+    #     input = e + '[SEP]' + b 
+    #     # instead of [REWRITE], we use [HIGH] or [LOW]
+    #     if t == 'HIGH':
+    #         input += '[HIGH]'
+    #     elif t == 'LOW':
+    #         input += '[LOW]'
+    #     else:
+    #         raise Exception("No transformation listed!")
+
+    #     # if training dataset for supervised learning, append the rewritings as well
+    #     if supervised and train:
+    #         input += r
+        
+    #     formatted_input.append(input)
 
     # encode the formatted input
     encoded_input = tokenizer(formatted_input, 
@@ -283,7 +283,7 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-experiment3b/50/checkpoint-30000',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
+        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-34500',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
         "empathy_classifier_name": "empathy_classifier/binary-empathy",               # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",            # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
         "steps": 10000,                                                                      
@@ -493,5 +493,6 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57168: experiment 3b checkpoint 30000
+# 57170: experiment 3b checkpoint 30000
 #   https://wandb.ai/alicialawjy/satbot/runs/ts1udy3j
+# 
