@@ -117,11 +117,13 @@ class GPT2RewritingDataset(Dataset):
         # # 'output_attentions', 'output_hidden_states','return_dict', 'labels', 'label', 'label_ids']
         input_ids = self.encodings['input_ids'][idx]
         attention_mask = self.encodings['attention_mask'][idx]
+
         if not self.train:
             # if not for training, remove the EOS token that automatically gets added by the encoder
             last_idx = torch.sum(attention_mask) - 1
             input_ids[last_idx] = 0 
             attention_mask[last_idx] = 0
+            print(input_ids)
 
         return {'labels': input_ids, 'input_ids': input_ids, 'attention_mask': attention_mask}
         
@@ -344,12 +346,8 @@ def run_RL():
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0) # DataFrame
     train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
-    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train = False) # dataloader object
-    # sanity check
-    print(f'text example: {train_text[0]}')
-    print(f"encoding: {dict_train_encoded['input_ids'][0]}")
-    print(f'transformation_label:{transformation_label[0]}')
-    print(f'semantic_label:{semantic_label}')
+    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
+
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
     fbs = config['forward_batch_size']  # forward batch size
@@ -366,9 +364,10 @@ def run_RL():
         batch_idx = random.sample(range(train_dataloader.__len__()),k=config['batch_size'])
         batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
-        game_data['prompt'] = [train_text[idx] for idx in batch_idx]                   # prompts
+        game_data['prompt'] = [train_text[idx] for idx in batch_idx]                        # prompts
         batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
         batch_transformation_label = [transformation_label[idx] for idx in batch_idx]    
+        print(batch_dict_list[0])
         
         # Get the corresponding responses to the prompts
         t = time.time()
