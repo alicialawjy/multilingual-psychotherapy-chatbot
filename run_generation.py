@@ -262,10 +262,10 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-transformation-v2/100/checkpoint-43500',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
-        "empathy_classifier_name": "empathy_classifier/binary-empathy",                     # empathy classifier (xlm-r)
-        "semantic_classifier_name": "semantic_classifier/4e05/best-model",                  # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
-        "steps": 1920,                                                                      
+        "lm_name": 'rewriting/gpt2-supervised-experiment3b/50/checkpoint-30000',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
+        "empathy_classifier_name": "empathy_classifier/binary-empathy",               # empathy classifier (xlm-r)
+        "semantic_classifier_name": "semantic_classifier/4e05/best-model",            # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
+        "steps": 10000,                                                                      
         "batch_size": 32, # 2
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
@@ -280,8 +280,8 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,    # logits range from 0 - 0.9
-        "semantic_weight": 0.4, # logits range from 0 - 20
+        "empathy_weight": 3,    # logits range from 0 - 0.9
+        "semantic_weight": 0.3, # logits range from 0 - 20
         "fluency_weight": 1
     }
 
@@ -321,7 +321,7 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/low-high-empathy-7253-v2.csv', index_col=0) # DataFrame
+    df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0) # DataFrame
     dict_train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised = False) # dataloader object
     
@@ -445,7 +445,7 @@ if __name__ == "__main__":
 # 567774: full 50 epochs
 # 56775: 100 epochs 
 # 56980: experiment 3 50 epochs
-
+# 57002: experiment 3b: no rewrite and prompt tokens, only [HIGH] and [LOW] @ 50 EPOCHS
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
