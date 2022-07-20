@@ -33,7 +33,6 @@ def encoded_df(df, tokenizer, supervised, train=False):
         semantic_label = df['semantic'].values.tolist()
         transformation_label = df['transformation_label'].values.tolist()
     
-
     # # concatenate df columns horizontally, joining with the respective tokens
     # formatted_input = []
     # for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
@@ -44,11 +43,34 @@ def encoded_df(df, tokenizer, supervised, train=False):
         
     #     formatted_input.append(input)
 
-    # concatenate df columns horizontally, joining with the respective tokens
+    # # EXPERIMENT 3
+    # formatted_input = []
+    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
+
+    #     input = ''
+
+    #     # instead of [REWRITE], we use [HIGH] or [LOW]
+    #     if t == 'HIGH':
+    #         input += '[HIGH]'
+    #     elif t == 'LOW':
+    #         input += '[LOW]'
+    #     else:
+    #         raise Exception("No transformation listed!")
+        
+    #     input += e + '[SEP]' + b + '[REWRITE]'
+
+    #     # if training dataset for supervised learning, append the rewritings as well
+
+    #     if supervised and train:
+    #         input += r
+        
+    #     formatted_input.append(input)
+    
+    # EXPERIMENT 3B
     formatted_input = []
     for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-        # input = ''
-        input = e + '[SEP]' + b # + '[REWRITE]'
+
+        input = e + '[SEP]' + b 
         # instead of [REWRITE], we use [HIGH] or [LOW]
         if t == 'HIGH':
             input += '[HIGH]'
@@ -56,9 +78,8 @@ def encoded_df(df, tokenizer, supervised, train=False):
             input += '[LOW]'
         else:
             raise Exception("No transformation listed!")
-        # input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + 
-        # if training dataset for supervised learning, append the rewritings as well
 
+        # if training dataset for supervised learning, append the rewritings as well
         if supervised and train:
             input += r
         
@@ -323,7 +344,7 @@ def run_RL():
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0) # DataFrame
     dict_train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
-    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised = False) # dataloader object
+    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train = False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
@@ -435,7 +456,7 @@ def run_RL():
 
 
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 ##### LOGS #####
 # data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
@@ -472,4 +493,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 56917: with the 50 epoch best model
+# 57168: experiment 3b checkpoint 30000
+#   https://wandb.ai/alicialawjy/satbot/runs/ts1udy3j
