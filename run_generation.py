@@ -294,15 +294,15 @@ def run_RL():
         "lr": 1e-5,
         "init_kl_coef":0.2,
         "seed": 1,
-        "target": 1,
+        "target": 6,
         "horizon":10000,
         "gamma":1,
         "lam":0.95,
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 3,    # logits range from 0 - 0.9
-        "semantic_weight": 0.3, # logits range from 0 - 20
+        "empathy_weight": 2,    # logits range from 0 - 0.9
+        "semantic_weight": 0.25, # logits range from 0 - 20
         "fluency_weight": 1
     }
 
@@ -494,5 +494,6 @@ if __name__ == "__main__":
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57170: experiment 3b checkpoint 30000
-#   https://wandb.ai/alicialawjy/satbot/runs/ts1udy3j
-# 
+#   https://wandb.ai/alicialawjy/satbot/runs/3keb8s2g?workspace=user-alicialawjy
+# 57172: experiment 3
+#   
