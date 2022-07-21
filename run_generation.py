@@ -188,8 +188,8 @@ class GPT2RewritingDataset(Dataset):
 #     print('decoded pred:', )
 
 ############# Fluency computation ############# 
-def compute_fluency(encoding, gpt2_model_ref):
-    loss = gpt2_model_ref(input_ids=encoding, labels=encoding).loss
+def compute_fluency(encoding, gpt2_eval_model):
+    loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
     perplexity = np.exp(loss)
 
     token_seen = []
@@ -417,7 +417,7 @@ def run_RL():
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score - inverse perplexity - repetition penalty
             with torch.no_grad():
-                fluency_score = [compute_fluency(encoding) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
+                fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
             print(fluency_score)
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
@@ -513,7 +513,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57170: experiment 3b checkpoint 30000
-#   https://wandb.ai/alicialawjy/satbot/runs/3keb8s2g?workspace=user-alicialawjy
-# 57198: experiment 3
+# 57404: experiment 3 w/ fluency score
 #   
