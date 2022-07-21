@@ -16,7 +16,7 @@ import random
 from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
-def encoded_df(df, tokenizer, supervised, train=False):
+def encoded_df(df, tokenizer, supervised):
     '''
     supervised (bool): true if supervised learning, false if reinforcement learning
     train (bool): true if training dataset, false is test/validation. only relevant for supervised learning.
@@ -33,37 +33,38 @@ def encoded_df(df, tokenizer, supervised, train=False):
         semantic_label = df['semantic'].values.tolist()
         transformation_label = df['transformation_label'].values.tolist()
     
-    # # concatenate df columns horizontally, joining with the respective tokens
+    # EXPERIMENT0
+    # concatenate df columns horizontally, joining with the respective tokens
+    formatted_input = []
+    for (e, b, r) in list(zip(emotion, base, rewriting)):
+        input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
+        # if supervised, append the rewritings as well
+        if supervised:
+            input += r
+        
+        formatted_input.append(input)
+
+    # # EXPERIMENT 3
     # formatted_input = []
-    # for (g, a, e, b, r) in list(zip(gender, age, emotion, base, rewriting)):
-    #     input = '[PROMPT]' + g + '[SEP]' + a + '[SEP]' + e + '[SEP]' + b + '[REWRITE]'
-    #     # if supervised, append the rewritings as well
+    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
+
+    #     input = ''
+
+    #     # instead of [REWRITE], we use [HIGH] or [LOW]
+    #     if t == 'HIGH':
+    #         input += '[HIGH]'
+    #     elif t == 'LOW':
+    #         input += '[LOW]'
+    #     else:
+    #         raise Exception("No transformation listed!")
+        
+    #     input += e + '[SEP]' + b + '[REWRITE]'
+
+    #     # if training for supervised learning (i.e. not inference/ RL), append the rewritings as well
     #     if supervised:
     #         input += r
         
     #     formatted_input.append(input)
-
-    # EXPERIMENT 3
-    formatted_input = []
-    for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-
-        input = ''
-
-        # instead of [REWRITE], we use [HIGH] or [LOW]
-        if t == 'HIGH':
-            input += '[HIGH]'
-        elif t == 'LOW':
-            input += '[LOW]'
-        else:
-            raise Exception("No transformation listed!")
-        
-        input += e + '[SEP]' + b + '[REWRITE]'
-
-        # if training for supervised learning (i.e. not inference/ RL), append the rewritings as well
-        if supervised and train:
-            input += r
-        
-        formatted_input.append(input)
     
     # # EXPERIMENT 3B
     # formatted_input = []
@@ -208,7 +209,7 @@ def compute_fluency(encoding, gpt2_eval_model):
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-experiment3b/50'
+    main_dir = 'rewriting/gpt2-supervised-experiment0/100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -228,9 +229,9 @@ def run_supervised():
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
     # additional tokens for conditional generation
-    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  
+    additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  
     # additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}
-    additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]'}
+    # additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]'}
     tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
         setattr(tokenizer, token_name, token)                                       # assign corr. names (used in dataloader)
@@ -240,12 +241,12 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_supervised = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv',index_col=0).sample(frac=1)
+    df_supervised = pd.read_csv('ddata/empathy/ex0-full_ep/experiment0.csv',index_col=0).sample(frac=1)
     df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    dict_train = encoded_df(df=df_train, supervised=True, train=True, tokenizer=tokenizer)
-    dict_val = encoded_df(df=df_val, supervised=True, train=True, tokenizer=tokenizer) 
+    dict_train = encoded_df(df=df_train, supervised=True, tokenizer=tokenizer)
+    dict_val = encoded_df(df=df_val, supervised=True, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
@@ -260,7 +261,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 100,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -367,7 +368,7 @@ def run_RL():
 
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0).sample(frac=1) # DataFrame
-    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, train=False, tokenizer=gpt2_tokenizer) # format and encode
+    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
@@ -421,7 +422,6 @@ def run_RL():
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
-            print(fluency_score)
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
@@ -480,7 +480,7 @@ def run_RL():
 
 #### Code to execute #####
 if __name__ == "__main__":
-    run_RL()
+    run_supervised()
 
 
 ##### LOGS #####
@@ -518,5 +518,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57407: experiment 3 w/ fluency score
-#   
+# 57488: experiment 3 w/ wf=3, rp 0.01
+#   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
