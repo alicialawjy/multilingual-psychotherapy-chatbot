@@ -204,7 +204,7 @@ def compute_fluency(encoding, gpt2_eval_model):
 
     return fluency
 
-############# Main Code ############# 
+############# Supervised Learning Main Code ############# 
 def run_supervised():
     main_dir = 'rewriting/gpt2-supervised-experiment3b/50'
     os.environ["WANDB_DISABLED"] = "true"
@@ -296,6 +296,7 @@ def run_supervised():
 
     print(f'Training Completed! See {main_dir}/best-model for the best-model with lowest eval_loss')
 
+############# Reinforcement Learning Main Code ############# 
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
@@ -356,7 +357,7 @@ def run_RL():
     gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                            # gpt2 tokenizer
 
     GPT2_EVAL_PRETRAINED_NAME = config['lm_eval_name']
-    gpt2_eval_model = GPT2HeadWithValueModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)  # model for fluency evaluation
+    gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)  # model for fluency evaluation
     gpt2_eval_tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)                  # gpt2 tokenizer
     gpt2_eval_model.resize_token_embeddings(len(gpt2_eval_tokenizer))                               # resize the model token embedding space
     
@@ -415,7 +416,7 @@ def run_RL():
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
-            # fluency score - inverse perplexity - repetition penalty
+            # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
             print(fluency_score)
@@ -475,8 +476,10 @@ def run_RL():
                 stdev_min = reward_std
 
 
+#### Code to execute #####
 if __name__ == "__main__":
     run_RL()
+
 
 ##### LOGS #####
 # data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
@@ -513,5 +516,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57404: experiment 3 w/ fluency score
+# 57407: experiment 3 w/ fluency score
 #   
