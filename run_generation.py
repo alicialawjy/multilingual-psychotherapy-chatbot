@@ -189,8 +189,10 @@ class GPT2RewritingDataset(Dataset):
 
 ############# Fluency computation ############# 
 def compute_fluency(encoding, gpt2_eval_model):
-    loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
-    perplexity = np.exp(loss)
+    with torch.no_grad():
+        loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
+
+    perplexity = np.exp(loss.detach().numpy())
 
     token_seen = []
     repetition_penalty = 0
