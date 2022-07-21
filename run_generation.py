@@ -59,8 +59,7 @@ def encoded_df(df, tokenizer, supervised, train=False):
         
         input += e + '[SEP]' + b + '[REWRITE]'
 
-        # if training dataset for supervised learning, append the rewritings as well
-
+        # if training for supervised learning (i.e. not inference/ RL), append the rewritings as well
         if supervised and train:
             input += r
         
@@ -188,6 +187,22 @@ class GPT2RewritingDataset(Dataset):
 
 #     print('decoded pred:', )
 
+############# Fluency computation ############# 
+def compute_fluency(encoding, gpt2_model_ref):
+    loss = gpt2_model_ref(input_ids=encoding, labels=encoding).loss
+    perplexity = np.exp(loss)
+
+    token_seen = []
+    repetition_penalty = 0
+    for token in encoding:
+        if token in token_seen:
+            repetition_penalty += 0.01
+        else:
+            token_seen.append(token)
+    
+    fluency = 1/perplexity - repetition_penalty
+
+    return fluency
 
 ############# Main Code ############# 
 def run_supervised():
@@ -223,16 +238,16 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_supervised = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv',index_col=0)
+    df_supervised = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv',index_col=0).sample(frac=1)
     df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
     dict_train = encoded_df(df=df_train, supervised=True, train=True, tokenizer=tokenizer)
-    dict_val = encoded_df(df=df_val, supervised=True, train=False, tokenizer=tokenizer) # train false makes sure rewriting not appended
+    dict_val = encoded_df(df=df_val, supervised=True, train=True, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
-    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=False) # train false makes sure eos token removed
+    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=True) 
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -284,9 +299,10 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-34500',      # generative model (gpt2) 'uer/gpt2-chinese-cluecorpussmall'
-        "empathy_classifier_name": "empathy_classifier/binary-empathy",               # empathy classifier (xlm-r)
-        "semantic_classifier_name": "semantic_classifier/4e05/best-model",            # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
+        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-34500',         # generative model (gpt2) 
+        "lm_eval_name": 'uer/gpt2-chinese-cluecorpussmall',                             # gpt to compute perplexity
+        "empathy_classifier_name": "empathy_classifier/binary-empathy",                 # empathy classifier (xlm-r)
+        "semantic_classifier_name": "semantic_classifier/4e05/best-model",              # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
         "steps": 10000,                                                                      
         "batch_size": 32, # 2
         "forward_batch_size": 8, # 2
@@ -302,9 +318,9 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,    # logits range from 0 - 0.9
-        "semantic_weight": 0.25, # logits range from 0 - 20
-        "fluency_weight": 1
+        "empathy_weight": 2,        # logits range from 0 - 0.9
+        "semantic_weight": 0.25,    # logits range from 0 - 20
+        "fluency_weight": 2         
     }
 
     # random seed
@@ -335,23 +351,21 @@ def run_RL():
 
     # # GPT2 Language Models
     GPT2_PRETRAINED_NAME = config['lm_name']
-    gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # model to be finetuned
-    gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)    # reference model
-    # gpt2_evaluate = GPT2LMHeadModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)          # used to measure perplexity
-    gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                        # gpt2 tokenizer
+    gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # model to be finetuned
+    gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # reference model
+    gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                            # gpt2 tokenizer
 
+    GPT2_EVAL_PRETRAINED_NAME = config['lm_eval_name']
+    gpt2_eval_model = GPT2HeadWithValueModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)  # model for fluency evaluation
+    gpt2_eval_tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)                  # gpt2 tokenizer
+    gpt2_eval_model.resize_token_embeddings(len(gpt2_eval_tokenizer))                               # resize the model token embedding space
+    
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0).sample(frac=1) # DataFrame
     train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, train=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
-
-    # # sanity check
-    # print(f'text example: {train_text[0]}')
-    # print(f"encoding: {dict_train_encoded['input_ids'][0]}")
-    # print(f'transformation_label:{transformation_label[0]}')
-    # print(f'semantic_label:{semantic_label[0]}')
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
@@ -367,9 +381,9 @@ def run_RL():
         
         # Batch prompts
         batch_idx = random.sample(range(train_dataloader.__len__()),k=config['batch_size'])
-        batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]
+        batch_dict_list = [train_dataloader.__getitem__(n) for n in batch_idx]              
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
-        game_data['prompt'] = [train_text[idx] for idx in batch_idx]                   # prompts
+        game_data['prompt'] = [train_text[idx] for idx in batch_idx]                        # prompts
         batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
         batch_transformation_label = [transformation_label[idx] for idx in batch_idx]    
         
@@ -401,24 +415,26 @@ def run_RL():
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
             semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
-            # # fluency score - inverse perplexity
-            # with torch.no_grad():
-            #     fluency_score = [1/gpt2_evaluate(input_ids=encoding, labels=encoding).loss for encoding in response_tensors[i*fbs:(i+1)*fbs]]
-            # print(fluency_score)
+            # fluency score - inverse perplexity - repetition penalty
+            with torch.no_grad():
+                fluency_score = [compute_fluency(encoding) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
+            print(fluency_score)
+
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
             w_s = config['semantic_weight']
-            # w_f = config['fluency_weight']
-            total_score = [e * w_e + s * w_s for (e,s) in zip(empathy_score, semantic_score)] # removed fluency_score
+            w_f = config['fluency_weight']
+            total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] # removed fluency_score
+
             # convert list of tensors into a single tensor and append
             empathy.append(torch.stack(empathy_score))
             semantic.append(torch.stack(semantic_score))
-            # fluency.append(torch.stack(fluency_score))
+            fluency.append(torch.stack(fluency_score))
             rewards.append(torch.stack(total_score))
-
+        
         empathy = torch.cat(empathy)
         semantic = torch.cat(semantic)
-        #fluency = torch.cat(fluency)
+        fluency = torch.cat(fluency)
         rewards = torch.cat(rewards).to(device)
         timing['time/get_sentiment_preds'] = time.time()-t
 
@@ -429,9 +445,9 @@ def run_RL():
         
         # Log everything
         timing['time/epoch'] = time.time()-t0
-        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, rewards.cpu().tolist())] # removed fluency
+        table_rows = [list(r) for r in zip(game_data['prompt'], game_data['response'], empathy, semantic, fluency, rewards.cpu().tolist())] # removed fluency
         logs.update({'game_log':wandb.Table(
-            columns=['prompt', 'response', 'empathy_logit','sematic_logit','reward'], # removed inv_ppl
+            columns=['prompt', 'response', 'empathy_logit','sematic_logit','fluency','reward'], # removed inv_ppl
             rows=table_rows)})
         logs.update(timing)
         logs.update(stats)
@@ -499,5 +515,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57170: experiment 3b checkpoint 30000
 #   https://wandb.ai/alicialawjy/satbot/runs/3keb8s2g?workspace=user-alicialawjy
-# 57173: experiment 3
+# 57198: experiment 3
 #   
