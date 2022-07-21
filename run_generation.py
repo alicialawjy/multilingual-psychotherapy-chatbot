@@ -192,7 +192,7 @@ def compute_fluency(encoding, gpt2_eval_model):
     with torch.no_grad():
         loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
 
-    perplexity = np.exp(loss.detach().numpy())
+    perplexity = np.exp(loss.cpu().detach().numpy())
 
     token_seen = []
     repetition_penalty = 0
@@ -432,7 +432,7 @@ def run_RL():
             # convert list of tensors into a single tensor and append
             empathy.append(torch.stack(empathy_score))
             semantic.append(torch.stack(semantic_score))
-            fluency.append(torch.stack(fluency_score))
+            fluency.append(torch.tensor(fluency_score))
             rewards.append(torch.stack(total_score))
         
         empathy = torch.cat(empathy)
