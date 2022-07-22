@@ -1,4 +1,5 @@
 from transformers import AutoTokenizer, GPT2LMHeadModel
+from torch.utils.data import TensorDataset, Dataset
 import torch
 import re
 import pandas as pd
@@ -24,7 +25,7 @@ def encoded_df(df, tokenizer):
                             truncation = True
                             )
 
-    return encoded_input 
+    return emotion, base, encoded_input 
 
 class GPT2RewritingDataset(Dataset):
     ''' 
@@ -83,17 +84,17 @@ model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
 df = pd.read_csv('data/empathy/base_utterances/inference.csv', index_col=0)
-encoding_list = encoded_df(df, tokenizer)
+emotion, base, encoding_list = encoded_df(df, tokenizer)
 dataloader = GPT2RewritingDataset(tokenizer=tokenizer, encodings=encoding_list, train=False) # dataloader object
 full_dict_list = [dataloader.__getitem__(n) for n in range(len(df))]              
 full_input_ids = dataloader.collate_fn(full_dict_list)['input_ids'].to(device)   # get prompts (encoded)
 
 print(f'results for {PRE_TRAINED_MODEL_NAME}')
-df_responses = pd.DataFrame(columns = df.columns())
+df_responses = pd.DataFrame(columns = ['emotion','base','rewriting'])
 
-for input_ids in full_input_ids:
+for (e,b,input_ids) in zip(emotion,base,full_input_ids):
     # remove [EOS] token but maintain shape
-    output = model.generate(input_ids,
+    output = model.generate(input_ids.view(1,-1),
                             max_length = 100, 
                             do_sample=True, 
                             temperature=0.7,
@@ -105,18 +106,15 @@ for input_ids in full_input_ids:
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
                             early_stopping = True)
-    
-    print(output)
-    decode = tokenizer.decode(output[0]) #, skip_special_tokens=True
 
-    # break at [PAD] token
-    print(decode.split('[PAD]')[0])
+    start_idx = torch.sum(input_ids!=0) - 1
+    rewritings = [tokenizer.decode(out)[start_idx:].split('[PAD]')[0] for out in output]
+    emo_list = e*len(rewritings)
+    base_list = b*len(rewritings)
+    df_base = pd.DataFrame(columns=['emotion','base','rewritings'], data=zip(emo_list,base_list,rewritings))
+    df_responses = pd.concat([df_responses, df_base], ignore_index=0)
 
-    # rewritings = [tokenizer.decode(out, skip_special_tokens=True) for out in output]
-
-    # for i, r in enumerate(rewritings):
-    #    print(f"{i}: {r}")
-
+df_responses.to_csv('inference_results.csv')
 
 ##### experiment 0 [PROMPT] emo [SEP] base [REWRITE] #####
 # 57509: best model
