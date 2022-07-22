@@ -109,48 +109,47 @@ class GPT2RewritingDataset(Dataset):
 
     #     return loss
 
-main_dir = 'rewriting/gpt2-supervised-experiment0-up/100'
-def compute_metrics(eval_predictions):
-    # Fix Device
-    GPU = True
-    if GPU:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device("cpu")
+# def compute_metrics(eval_predictions):
+#     # Fix Device
+#     GPU = True
+#     if GPU:
+#         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#     else:
+#         device = torch.device("cpu")
 
-    # Eval_predictions gives the logits and loss of the predicted words
-    # Convert predictions into their textual representations
-    response = eval_predictions.predictions
-    all_input_ids = []
-    for r in response:
-        input_ids = []
-        for word in r:
-            # Get the logits
-            logits = torch.unsqueeze(torch.tensor(word),dim=0)
-            # Greedy search: take most likely
-            next_token = torch.argmax(logits, dim=-1).unsqueeze(1)
-            # Append to input_ids
-            input_ids.append(next_token)
+#     # Eval_predictions gives the logits and loss of the predicted words
+#     # Convert predictions into their textual representations
+#     response = eval_predictions.predictions
+#     all_input_ids = []
+#     for r in response:
+#         input_ids = []
+#         for word in r:
+#             # Get the logits
+#             logits = torch.unsqueeze(torch.tensor(word),dim=0)
+#             # Greedy search: take most likely
+#             next_token = torch.argmax(logits, dim=-1).unsqueeze(1)
+#             # Append to input_ids
+#             input_ids.append(next_token)
 
-        input_ids = torch.squeeze(torch.stack(input_ids))
-        all_input_ids.append(input_ids)
+#         input_ids = torch.squeeze(torch.stack(input_ids))
+#         all_input_ids.append(input_ids)
 
-    all_input_ids=torch.stack(all_input_ids).to(device)
-    print(all_input_ids.size())
+#     all_input_ids=torch.stack(all_input_ids).to(device)
+#     print(all_input_ids.size())
     
-    GPT2_EVAL_PRETRAINED_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
-    gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
-    gpt2_tokenizer = AutoTokenizer.from_pretrained(f'{main_dir}')
-    gpt2_eval_model.resize_token_embeddings(len(gpt2_tokenizer))
+#     GPT2_EVAL_PRETRAINED_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
+#     gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
+#     gpt2_tokenizer = AutoTokenizer.from_pretrained('rewriting/gpt2-supervised-experiment0-up/100')
+#     gpt2_eval_model.resize_token_embeddings(len(gpt2_tokenizer))
 
-    with torch.no_grad():
-        perplexity = []
-        for encoding in all_input_ids:
-            loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
-            perplexity.append(np.exp(loss.cpu().detach().numpy()))
-        print(perplexity)
+#     with torch.no_grad():
+#         perplexity = []
+#         for encoding in all_input_ids:
+#             loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
+#             perplexity.append(np.exp(loss.cpu().detach().numpy()))
+#         print(perplexity)
 
-    return {'perplexity': np.mean(perplexity)}
+#     return {'perplexity': np.mean(perplexity)}
 
 ############# Fluency computation ############# 
 def compute_fluency(encoding, gpt2_eval_model):
@@ -244,13 +243,13 @@ def run_supervised():
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
                                     eval_steps = 250,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
-                                    save_steps = 1500,                      # Save every 500 steps
+                                    save_steps = 1000,                      # Save every 500 steps
                                     # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
                                     logging_strategy = 'steps',             # Logging strategy
                                     logging_dir = f'{main_dir}/logs',
-                                    logging_steps = 500,                    # Log every 100 steps
+                                    logging_steps = 250,                    # Log every 100 steps
                                     include_inputs_for_metrics = True,
-                                    metric_for_best_model = 'eval_perplexity',    # Decide based on eval_loss/ perplexity
+                                    metric_for_best_model = 'eval_loss',    # Decide based on eval_loss/ perplexity
                                     greater_is_better = False,              # Lower eval_perplexity is better
                                     load_best_model_at_end = True           # Required by EarlyStoppingCallback
                                     )
