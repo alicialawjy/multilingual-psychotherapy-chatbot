@@ -93,8 +93,9 @@ print(f'results for {PRE_TRAINED_MODEL_NAME}')
 df_responses = pd.DataFrame(columns = ['emotion','base','rewriting'])
 
 for (e,b,input_ids) in zip(emotion,base,full_input_ids):
-    # remove [EOS] token but maintain shape
-    output = model.generate(input_ids.view(1,-1),
+
+    start_idx = len(input_ids)
+    output = model.generate(input_ids.view(1,-1),   # reshape
                             max_length = 100, 
                             do_sample=True, 
                             temperature=0.7,
@@ -106,9 +107,8 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
                             early_stopping = True)
-
-    start_idx = torch.sum(input_ids!=0) - 1
-    rewritings = [tokenizer.decode(out)[start_idx:].split('[PAD]')[0] for out in output]
+    
+    rewritings = [tokenizer.decode(out[start_idx:]).split('[PAD]')[0] for out in output]
     emo_list = [e]*len(rewritings)
     base_list = [b]*len(rewritings)
     df_base = pd.DataFrame(columns=['emotion','base','rewriting'], data=zip(emo_list,base_list,rewritings))
