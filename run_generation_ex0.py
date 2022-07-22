@@ -154,15 +154,23 @@ def compute_fluency(encoding, gpt2_eval_model):
 
     token_seen = []
     repetition_penalty = 0
+    last_seen = 0
     for token in encoding:
-        if token in token_seen:
-            repetition_penalty += 0.01
-        else:
-            token_seen.append(token)
-    
-    fluency = 1/perplexity - repetition_penalty
+        # if repeated the same token consecutively
+        if token in token_seen[-1]:
+            last_seen +=1
+            repetition_penalty += 0.01*last_seen # compound the penalty
 
-    return fluency
+        # if not repeated but previously seen
+        elif token in token_seen:
+            last_seen = 1
+            repetition_penalty += 0.01
+        # if completely not seen before
+        else:
+            last_seen = 1
+            token_seen.append(token)
+
+    return 1/perplexity - repetition_penalty
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
@@ -281,7 +289,7 @@ def run_RL():
         "vf_coef":.1, 
         "empathy_weight": 2,        # logits range from 0 - 0.9
         "semantic_weight": 0.25,    # logits range from 0 - 20
-        "fluency_weight": 2         
+        "fluency_weight": 3         
     }
 
     # random seed
