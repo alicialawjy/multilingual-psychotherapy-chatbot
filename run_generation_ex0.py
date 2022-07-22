@@ -148,6 +148,7 @@ def compute_metrics(eval_predictions):
         for encoding in all_input_ids:
             loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
             perplexity.append(np.exp(loss.cpu().detach().numpy()))
+        print(perplexity)
 
     return {'perplexity': np.mean(perplexity)}
 
@@ -241,7 +242,7 @@ def run_supervised():
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 1,                       # Evaluate every 50 steps
+                                    eval_steps = 250,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
                                     save_steps = 1500,                      # Save every 500 steps
                                     # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
