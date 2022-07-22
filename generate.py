@@ -108,7 +108,7 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
                             return_full_text=False,
                             early_stopping = True)
     
-    rewritings = [tokenizer.decode(out[start_idx:]).split('[PAD]')[0] for out in output]
+    rewritings = [tokenizer.decode(out[start_idx:]) for out in output]
     emo_list = [e]*len(rewritings)
     base_list = [b]*len(rewritings)
     df_base = pd.DataFrame(columns=['emotion','base','rewriting'], data=zip(emo_list,base_list,rewritings))

@@ -176,7 +176,7 @@ def compute_fluency(encoding, gpt2_eval_model):
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-experiment0/100'
+    main_dir = 'rewriting/gpt2-supervised-experiment0-up/100'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -208,8 +208,9 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_supervised = pd.read_csv('data/empathy/ex0-full_ep/experiment0.csv',index_col=0).sample(frac=1)
-    df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
+    df_train = pd.read_csv('data/empathy/ex0-full_ep/experiment0_up_train.csv',index_col=0).sample(frac=1)
+    df_val = pd.read_csv('data/empathy/ex0-full_ep/experiment0_up_test.csv',index_col=0).sample(frac=1)
+    # df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
     dict_train = encoded_df(df=df_train, supervised=True, tokenizer=tokenizer)
@@ -440,7 +441,7 @@ def run_RL():
 
 #### Code to execute #####
 if __name__ == "__main__":
-    run_RL()
+    run_supervised()
 
 
 ##### LOGS #####
