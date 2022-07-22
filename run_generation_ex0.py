@@ -30,7 +30,7 @@ def encoded_df(df, tokenizer, supervised):
 
     if not supervised:
         semantic_label = df['semantic'].values.tolist()
-        transformation_label = df['transformation_label'].values.tolist()
+        # transformation_label = df['transformation_label'].values.tolist()
     
     # EXPERIMENT0
     # concatenate df columns horizontally, joining with the respective tokens
@@ -53,7 +53,7 @@ def encoded_df(df, tokenizer, supervised):
     if supervised:
         return encoded_input 
     else:
-        return formatted_input, semantic_label, transformation_label, encoded_input
+        return formatted_input, semantic_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
     ''' 
@@ -323,7 +323,7 @@ def run_RL():
 
     ##### L O A D  D A T A S E T S #####
     df = pd.read_csv('data/empathy/ex0-full_ep/experiment0.csv', index_col=0).sample(frac=1) # DataFrame
-    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
+    train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
@@ -344,7 +344,6 @@ def run_RL():
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
         game_data['prompt'] = [train_text[idx] for idx in batch_idx]                        # prompts
         batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
-        batch_transformation_label = [transformation_label[idx] for idx in batch_idx]    
         
         # Get the corresponding responses to the prompts
         t = time.time()
@@ -367,9 +366,9 @@ def run_RL():
         fluency = []
         for i in range(int(config['batch_size']/fbs)):
             # empathy score - take the logit for the corr transformation 
-            empathy_score_all = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
-                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
-            empathy_score = [logits[idx] for (logits, idx) in zip(empathy_score_all, batch_transformation_label[i*fbs:(i+1)*fbs])]
+            empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
+            # empathy_score = [logits[idx] for (logits, idx) in zip(empathy_score_all, batch_transformation_label[i*fbs:(i+1)*fbs])]
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
@@ -385,7 +384,7 @@ def run_RL():
             total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] # removed fluency_score
 
             # convert list of tensors into a single tensor and append
-            empathy.append(torch.stack(empathy_score))
+            empathy.append(empathy_score)
             semantic.append(torch.stack(semantic_score))
             fluency.append(torch.tensor(fluency_score))
             rewards.append(torch.stack(total_score))
@@ -475,5 +474,7 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
 # 56901: with the 4500 checkpoint model
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57488: experiment 3 w/ wf=3, rp 0.01
+# 57488: experiment 3 w/ wf=3, rp 0.01 (fail)
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
+# 57512: experiment 0 w/ wf = 2
+#   
