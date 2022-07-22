@@ -109,41 +109,45 @@ class GPT2RewritingDataset(Dataset):
 
     #     return loss
 
-# def compute_metrics(eval_predictions):
-#     # Eval_predictions gives the logits and loss of the predicted words
-#     # Convert predictions into their textual representations
-#     response = eval_predictions.predictions
-#     PRE_TRAINED_MODEL_NAME = 'uer/gpt2-chinese-cluecorpussmall' # 'rewriting/gpt2-supervised-transformation-v2/100'
-#     gpt2tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+def compute_metrics(eval_predictions):
+    # Fix Device
+    GPU = True
+    if GPU:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device("cpu")
 
-#     all_input_ids = []
-#     for r in response:
-#         input_ids = []
-#         for word in r:
-#             # Get the logits
-#             logits = torch.unsqueeze(torch.tensor(word),dim=0)
-#             # Greedy search: take most likely
-#             next_token = torch.argmax(logits, dim=-1).unsqueeze(1)
-#             # Append to input_ids
-#             input_ids.append(next_token)
+    # Eval_predictions gives the logits and loss of the predicted words
+    # Convert predictions into their textual representations
+    response = eval_predictions.predictions
+    all_input_ids = []
+    for r in response:
+        input_ids = []
+        for word in r:
+            # Get the logits
+            logits = torch.unsqueeze(torch.tensor(word),dim=0)
+            # Greedy search: take most likely
+            next_token = torch.argmax(logits, dim=-1).unsqueeze(1)
+            # Append to input_ids
+            input_ids.append(next_token)
 
-#         input_ids = torch.squeeze(torch.stack(input_ids))
-#         all_input_ids.append(input_ids)
+        input_ids = torch.squeeze(torch.stack(input_ids))
+        all_input_ids.append(input_ids)
 
-#     all_input_ids=torch.stack(all_input_ids)
+    all_input_ids=torch.stack(all_input_ids)
+    print(all_input_ids.size())
+    
+    GPT2_EVAL_PRETRAINED_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
+    gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
+    gpt2tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)
 
-#     # Get the scores per textual output
-#     CLASSIFIER_MODEL_NAME = 'saved_models/Knowledge Distillation/2nd-tune-lr1e05-temp5'
-#     classifiertokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
-#     empathy_classifier =  AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_MODEL_NAME).to(device)
+    with torch.no_grad():
+        perplexity = []
+        for encoding in all_input_ids:
+            loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
+            perplexity.append(np.exp(loss.cpu().detach().numpy()))
 
-#     score = 0
-#     for text in all_input_ids:
-#         gpt_decoded = gpt2tokenizer.decode(text[0])
-#         classifier_encoded =  classifiertokenizer(gpt_decoded, padding=True, truncation=True, return_tensors='pt')
-#         empathy_logits = 
-
-#     print('decoded pred:', )
+    return {perplexity: np.mean(perplexity)}
 
 ############# Fluency computation ############# 
 def compute_fluency(encoding, gpt2_eval_model):
@@ -243,7 +247,7 @@ def run_supervised():
                                     logging_dir = f'{main_dir}/logs',
                                     logging_steps = 500,                    # Log every 100 steps
                                     include_inputs_for_metrics = True,
-                                    metric_for_best_model = 'eval_loss',    # Decide based on eval_loss
+                                    metric_for_best_model = 'perplexity',    # Decide based on eval_loss
                                     greater_is_better = False,              # Lower eval_loss is better
                                     load_best_model_at_end = True           # Required by EarlyStoppingCallback
                                     )
@@ -255,7 +259,7 @@ def run_supervised():
                     train_dataset = dataloader_train,
                     eval_dataset = dataloader_val,
                     data_collator = dataloader_train.collate_fn,
-                    #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
+                    compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
                     #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
                     )
 
@@ -454,6 +458,7 @@ if __name__ == "__main__":
 # 56980: experiment 3: [HIGH] EMO [SEP] BASE [REWRITE] 50 epochs
 # 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
 # 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
+# 57553: experiment 0b: balanced @ 100 epochs
 
 
 ##### REINFORCEMENT LEARNING RUNS #####
