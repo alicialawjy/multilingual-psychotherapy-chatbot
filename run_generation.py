@@ -27,7 +27,7 @@ def encoded_df(df, tokenizer, supervised):
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
-    transformation = df['transformation'].values.tolist()
+    # transformation = df['transformation'].values.tolist()
 
     if not supervised:
         semantic_label = df['semantic'].values.tolist()
@@ -241,7 +241,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_supervised = pd.read_csv('ddata/empathy/ex0-full_ep/experiment0.csv',index_col=0).sample(frac=1)
+    df_supervised = pd.read_csv('data/empathy/ex0-full_ep/experiment0.csv',index_col=0).sample(frac=1)
     df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -360,7 +360,7 @@ def run_RL():
     gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                            # gpt2 tokenizer
 
     GPT2_EVAL_PRETRAINED_NAME = config['lm_eval_name']
-    gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)  # model for fluency evaluation
+    gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
     gpt2_eval_tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)                  # gpt2 tokenizer
     gpt2_eval_model.resize_token_embeddings(len(gpt2_eval_tokenizer))                               # resize the model token embedding space
     
@@ -490,8 +490,10 @@ if __name__ == "__main__":
 # 56770: 56759 but with smaller lr 3.5e-05
 # 567774: full 50 epochs
 # 56775: 100 epochs 
-# 56980: experiment 3 50 epochs
-# 57002: experiment 3b: no rewrite and prompt tokens, only [HIGH] and [LOW] @ 50 EPOCHS
+# 56980: experiment 3: [HIGH] EMO [SEP] BASE [REWRITE] 50 epochs
+# 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
+# 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
+
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
@@ -520,3 +522,4 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
+# 57513: 

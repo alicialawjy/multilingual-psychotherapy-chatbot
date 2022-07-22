@@ -153,22 +153,24 @@ def compute_fluency(encoding, gpt2_eval_model):
     perplexity = np.exp(loss.cpu().detach().numpy())
 
     token_seen = []
-    repetition_penalty = 0
+    repetition_penalty = 0 # RP
     last_seen = 0
     for token in encoding:
-        # if repeated the same token consecutively
-        if token in token_seen[-1]:
-            last_seen +=1
-            repetition_penalty += 0.01*last_seen # compound the penalty
-
-        # if not repeated but previously seen
-        elif token in token_seen:
-            last_seen = 1
-            repetition_penalty += 0.01
-        # if completely not seen before
-        else:
+        # if token not seen before, no RP
+        if token not in token_seen:
             last_seen = 1
             token_seen.append(token)
+
+        # if seen and was the same as the last_seen token (i.e. repeated the same token consecutively)
+        elif token in token_seen[-1]:
+            last_seen +=1
+            repetition_penalty += 0.01*last_seen # compound the penalty
+        
+        # seen but not repeated
+        else:
+            # if not repeated but previously seen
+            last_seen = 1
+            repetition_penalty += 0.01
 
     return 1/perplexity - repetition_penalty
 
