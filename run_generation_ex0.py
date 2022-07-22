@@ -413,10 +413,6 @@ def run_RL():
         logs['env/reward_mean'] = reward_mean
         logs['env/reward_std'] = reward_std
         logs['env/reward_dist'] = rewards.cpu().numpy()
-        trans = {'HIGH':0, 'LOW':1}
-        for trans,trans_label in trans.items():
-            key = 'env/reward_' + trans
-            logs[key] = np.mean([r for r, t in zip(logs['env/reward_dist'], batch_transformation_label) if t==trans_label])
         wandb.log(logs)
 
         # save if a better checkpoint observed
