@@ -26,6 +26,49 @@ def encoded_df(df, tokenizer):
 
     return encoded_input 
 
+class GPT2RewritingDataset(Dataset):
+    ''' 
+    DataLoader for GPT-2 Rewriting Task 
+    '''
+    def __init__(self, tokenizer, encodings, train=True): # ok
+        self.encodings = encodings
+        self.tokenizer = tokenizer
+        self.train = train
+
+    def __len__(self): # ok
+        return len(self.encodings['input_ids'])
+
+    def __getitem__(self, idx): 
+        # # need to pass items to collate_fn with the following acceptable keys:
+        # # ['input_ids', 'past_key_values', 'attention_mask', 'token_type_ids', 'position_ids', 'head_mask', 
+        # # 'inputs_embeds','encoder_hidden_states', 'encoder_attention_mask', 'labels', 'use_cache', 
+        # # 'output_attentions', 'output_hidden_states','return_dict', 'labels', 'label', 'label_ids']
+        input_ids = self.encodings['input_ids'][idx]
+        attention_mask = self.encodings['attention_mask'][idx]
+
+        if not self.train:
+            # if not for training, remove the EOS token that automatically gets added by the encoder
+            last_idx = torch.sum(attention_mask) - 1
+            input_ids[last_idx] = 0 
+            attention_mask[last_idx] = 0
+
+        return {'labels': input_ids, 'input_ids': input_ids, 'attention_mask': attention_mask}
+        
+    # Takes batches of the input data
+    def collate_fn(self, batch):
+        # format into tensors
+        input_ids = []
+        attention_mask = []
+        token_type_ids = []
+        labels = []
+        for b in batch:
+            input_ids.append(list(b['input_ids']))
+            attention_mask.append(list(b['attention_mask']))
+            labels.append(list(b['labels']))
+        
+        return {'labels': torch.tensor(labels), 'input_ids': torch.tensor(input_ids), 'attention_mask': torch.tensor(attention_mask)}
+
+
 # Fix Device
 GPU = True
 if GPU:
@@ -41,14 +84,15 @@ tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
 
 df = pd.read_csv('data/empathy/base_utterances/inference.csv', index_col=0)
 encoding_list = encoded_df(df, tokenizer)
+dataloader = GPT2RewritingDataset(tokenizer=tokenizer, encodings=encoding_list, train=False) # dataloader object
+full_dict_list = [dataloader.__getitem__(n) for n in range(len(df))]              
+full_input_ids = dataloader.collate_fn(full_dict_list)['input_ids'].to(device)   # get prompts (encoded)
 
 print(f'results for {PRE_TRAINED_MODEL_NAME}')
 df_responses = pd.DataFrame(columns = df.columns())
 
-for encoding in encoding_list:
+for input_ids in full_input_ids:
     # remove [EOS] token but maintain shape
-    input_ids = encoding['input_ids']
-    input_ids = input_ids[0][:-1].view(1,-1) 
     output = model.generate(input_ids,
                             max_length = 100, 
                             do_sample=True, 
