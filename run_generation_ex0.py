@@ -16,7 +16,7 @@ import random
 from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
-def encoded_df(df, tokenizer, supervised):
+def encoded_df(df, tokenizer, train, supervised):
     '''
     supervised (bool): true if supervised learning, false if reinforcement learning
     '''
@@ -38,7 +38,7 @@ def encoded_df(df, tokenizer, supervised):
     for (e, b, r) in list(zip(emotion, base, rewriting)):
         input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
         # if supervised, append the rewritings as well
-        if supervised:
+        if supervised and not train:
             input += r
         
         formatted_input.append(input)
@@ -134,7 +134,7 @@ def compute_metrics(eval_predictions):
         input_ids = torch.squeeze(torch.stack(input_ids))
         all_input_ids.append(input_ids)
 
-    all_input_ids=torch.stack(all_input_ids)
+    all_input_ids=torch.stack(all_input_ids).to(device)
     print(all_input_ids.size())
     
     GPT2_EVAL_PRETRAINED_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
@@ -147,7 +147,7 @@ def compute_metrics(eval_predictions):
             loss = gpt2_eval_model(input_ids=encoding, labels=encoding).loss
             perplexity.append(np.exp(loss.cpu().detach().numpy()))
 
-    return {perplexity: np.mean(perplexity)}
+    return {'perplexity': np.mean(perplexity)}
 
 ############# Fluency computation ############# 
 def compute_fluency(encoding, gpt2_eval_model):
@@ -217,12 +217,12 @@ def run_supervised():
     # df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    dict_train = encoded_df(df=df_train, supervised=True, tokenizer=tokenizer)
-    dict_val = encoded_df(df=df_val, supervised=True, tokenizer=tokenizer) 
+    dict_train = encoded_df(df=df_train, supervised=True, train=True, tokenizer=tokenizer)
+    dict_val = encoded_df(df=df_val, supervised=True, train=False, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
-    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=True) 
+    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=False) 
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -239,7 +239,7 @@ def run_supervised():
                                     # Early Stopping Arguments
                                     per_device_eval_batch_size = 4,         # Batch size for evaluation
                                     evaluation_strategy = 'steps',          # Number of update steps between two evaluations
-                                    eval_steps = 500,                       # Evaluate every 50 steps
+                                    eval_steps = 1,                       # Evaluate every 50 steps
                                     save_strategy = 'steps',                # Save strategy
                                     save_steps = 1500,                      # Save every 500 steps
                                     # save_total_limit = 50,                  # Save only the 5 latest models. Deletes older models
@@ -247,8 +247,8 @@ def run_supervised():
                                     logging_dir = f'{main_dir}/logs',
                                     logging_steps = 500,                    # Log every 100 steps
                                     include_inputs_for_metrics = True,
-                                    metric_for_best_model = 'perplexity',    # Decide based on eval_loss
-                                    greater_is_better = False,              # Lower eval_loss is better
+                                    metric_for_best_model = 'eval_perplexity',    # Decide based on eval_loss/ perplexity
+                                    greater_is_better = False,              # Lower eval_perplexity is better
                                     load_best_model_at_end = True           # Required by EarlyStoppingCallback
                                     )
 
@@ -459,7 +459,7 @@ if __name__ == "__main__":
 # 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
 # 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
 # 57553: experiment 0b: balanced @ 100 epochs
-
+# 57567: experiment 0b with perplexity compute_metrics
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
