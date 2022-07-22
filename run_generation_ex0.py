@@ -109,6 +109,7 @@ class GPT2RewritingDataset(Dataset):
 
     #     return loss
 
+main_dir = 'rewriting/gpt2-supervised-experiment0-up/100'
 def compute_metrics(eval_predictions):
     # Fix Device
     GPU = True
@@ -139,7 +140,8 @@ def compute_metrics(eval_predictions):
     
     GPT2_EVAL_PRETRAINED_NAME = 'uer/gpt2-chinese-cluecorpussmall' 
     gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
-    gpt2tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)
+    gpt2_tokenizer = AutoTokenizer.from_pretrained(f'{main_dir}')
+    gpt2_eval_model.resize_token_embeddings(len(gpt2_tokenizer))
 
     with torch.no_grad():
         perplexity = []
@@ -448,45 +450,5 @@ if __name__ == "__main__":
     run_supervised()
 
 
-##### LOGS #####
-# data/empathy/low-high-empathy-7253-v2.csv leave for 50 epochs with 20 patience
-# 56749: epoch = 50 >> trained for 13.44 epochs
-# 56759: continue to train for 20 epochs lr = 5e-05
-# 56770: 56759 but with smaller lr 3.5e-05
-# 567774: full 50 epochs
-# 56775: 100 epochs 
-# 56980: experiment 3: [HIGH] EMO [SEP] BASE [REWRITE] 50 epochs
-# 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
-# 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
-# 57553: experiment 0b: balanced @ 100 epochs
-# 57567: experiment 0b with perplexity compute_metrics
-
-##### REINFORCEMENT LEARNING RUNS #####
-# 56175: first run with rewards * 1
-#   https://wandb.ai/alicialawjy/satbot/runs/goxl4q7m?workspace=user-alicialawjy
-# 56181: use rewards *2
-#   https://wandb.ai/alicialawjy/satbot/runs/31ar6kcy
-# 56200: use semantic classifier * 2 + empathy * 2 for rewards
-#   https://wandb.ai/alicialawjy/satbot/runs/23gngqt6
-# 56252: semantic + empathy + fluency
-#   https://wandb.ai/alicialawjy/satbot/runs/3tfhoa2w?workspace=user-alicialawjy
-# 56283: include 2144 empathetic datasets
-#   https://wandb.ai/alicialawjy/satbot/runs/1ldhy878
-# 56286: feed only base utterances
-#   https://wandb.ai/alicialawjy/satbot/runs/242vjtvj?workspace=user-alicialawjy
-# 56302: we = 2, ws = 0.1, no fluency, target KL = 3 (half initial) w/ base utt only
-#   https://wandb.ai/alicialawjy/satbot/runs/2a9cy3wf
-# 56325: we = 4, ws = 0.25, no fluency, target KL = 3 w/ base utt only
-#   https://wandb.ai/alicialawjy/satbot/runs/1gpd4d4a
-# 56589: we = 4, ws = 0.4, no fluency, target KL = 3 w/ summarised base utt (model is exploiting empathy and not generating sensible sentences)
-#   https://wandb.ai/alicialawjy/satbot/runs/2f2nwgdj
-# 56618: lower empathy weightage (2)
-#   https://wandb.ai/alicialawjy/satbot/runs/1va386cz
-# 56863: with the 45000checkpoint model
-#   https://wandb.ai/alicialawjy/satbot/runs/4yy2ql23
-# 56901: with the 4500 checkpoint model
-#   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
-# 57488: experiment 3 w/ wf=3, rp 0.01 (fail)
-#   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
-# 57512: experiment 0 w/ wf = 2
-#   
+##### LOGS for experiment 0-upsample#####
+# 57571: evaluate every 250 epochs
