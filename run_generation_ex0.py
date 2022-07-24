@@ -447,7 +447,7 @@ def run_RL():
 
 #### Code to execute #####
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 
 ##### LOGS for experiment 0-upsample#####
