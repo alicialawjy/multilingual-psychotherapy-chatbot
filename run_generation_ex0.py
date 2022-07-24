@@ -178,7 +178,7 @@ def compute_fluency(encoding, gpt2_eval_model):
             last_seen = 1
             repetition_penalty += 0.01
 
-    return 1/perplexity - repetition_penalty/2
+    return 1/perplexity - repetition_penalty
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
@@ -298,7 +298,7 @@ def run_RL():
         "vf_coef":.1, 
         "empathy_weight": 3,        # logits range from 0 - 0.9
         "semantic_weight": 0.25,    # logits range from 0 - 20
-        "fluency_weight": 3         
+        "fluency_weight": 1         
     }
 
     # random seed
@@ -435,7 +435,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/attempt-3/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/attempt-4/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -458,4 +458,5 @@ if __name__ == "__main__":
 # 57673: wf = 3, w_e = 2.5, w_s = 0.25 *not bad (gpt2-trl)
 #    https://wandb.ai/alicialawjy/satbot/runs/3p2yd0km?workspace=user-alicialawjy
 # 57674: wf=1.5  (gpt2-trl/wf_15)
-# wf = 3, we = 3, rp/2 (gpt2-trl/attempt-3)
+# 57675: wf = 3, we = 3, rp/2 (gpt2-trl/attempt-3)
+# attempt-4: wf = 1, rp/1 
