@@ -389,17 +389,17 @@ def run_RL():
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
-            semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            semantic_score = [logits[idx]/5 if logits[idx]>0 else logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
-            w_s = config['semantic_weight']
-            w_f = config['fluency_weight']
-            total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] # removed fluency_score
-
+            # w_s = config['semantic_weight']
+            # w_f = config['fluency_weight']
+            # total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] # removed fluency_score
+            total_score = [e * w_e + s + f  for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)]
             # convert list of tensors into a single tensor and append
             empathy.append(empathy_score)
             semantic.append(torch.stack(semantic_score))
@@ -435,7 +435,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/attempt-4/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/attempt-5/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -459,4 +459,5 @@ if __name__ == "__main__":
 #    https://wandb.ai/alicialawjy/satbot/runs/3p2yd0km?workspace=user-alicialawjy
 # 57674: wf=1.5  (gpt2-trl/wf_15)
 # 57675: wf = 3, we = 3, rp/2 (gpt2-trl/attempt-3)
-# attempt-4: wf = 1, rp/1 
+# 57676: attempt-4: wf = 1, rp/1 
+# attempt=5: no wf and ws, ws factored if > 0, else penalise the full amount.
