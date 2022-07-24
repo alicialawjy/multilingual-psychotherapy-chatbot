@@ -16,7 +16,7 @@ import random
 from torch.nn import functional as F
 
 ############# Data Loader for GPT-2 ############# 
-def encoded_df(df, tokenizer, train, supervised):
+def encoded_df(df, tokenizer, supervised):
     '''
     supervised (bool): true if supervised learning, false if reinforcement learning
     '''
@@ -38,7 +38,7 @@ def encoded_df(df, tokenizer, train, supervised):
     for (e, b, r) in list(zip(emotion, base, rewriting)):
         input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
         # if supervised, append the rewritings as well
-        if supervised and not train:
+        if supervised:
             input += r
         
         formatted_input.append(input)
@@ -219,8 +219,8 @@ def run_supervised():
     # df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
-    dict_train = encoded_df(df=df_train, supervised=True, train=True, tokenizer=tokenizer)
-    dict_val = encoded_df(df=df_val, supervised=True, train=False, tokenizer=tokenizer) 
+    dict_train = encoded_df(df=df_train, supervised=True, tokenizer=tokenizer)
+    dict_val = encoded_df(df=df_val, supervised=True, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
     dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
