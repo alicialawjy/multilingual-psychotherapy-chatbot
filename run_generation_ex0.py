@@ -261,7 +261,7 @@ def run_supervised():
                     train_dataset = dataloader_train,
                     eval_dataset = dataloader_val,
                     data_collator = dataloader_train.collate_fn,
-                    compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
+                    #compute_metrics = compute_metrics,                     # needed by Trainer.evaluate
                     #callbacks = [trainer_callback]                         # EarlyStoppingCallback module
                     )
 
@@ -296,7 +296,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,        # logits range from 0 - 0.9
+        "empathy_weight": 2.5,        # logits range from 0 - 0.9
         "semantic_weight": 0.25,    # logits range from 0 - 20
         "fluency_weight": 3         
     }
@@ -451,4 +451,5 @@ if __name__ == "__main__":
 
 
 ##### LOGS for experiment 0-upsample#####
-# 57571: evaluate every 250 epochs
+# 57584: perplexity every 1000 steps    'rewriting/gpt2-supervised-experiment0-up-1000/100'
+# 57590: eval_loss every 250 steps  'rewriting/gpt2-supervised-experiment0-up/100' *check this one 
