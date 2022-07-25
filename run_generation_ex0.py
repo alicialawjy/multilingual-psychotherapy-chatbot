@@ -389,7 +389,7 @@ def run_RL():
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
-            semantic_score = [logits[idx]/5 if logits[idx]>0 else logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            semantic_score = [logits[idx]/5 if logits[idx]>0 else logits[idx]*2 for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
@@ -435,7 +435,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/attempt-8/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/attempt-9/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -466,3 +466,4 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/390grx68?workspace=user-alicialawjy
 # 57713:  attempt 7: we=3.5
 # attempt 8: use only 45 base utterances
+# attempt 9: attempt 8 but with semantic logits * 2 when negative
