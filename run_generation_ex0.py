@@ -435,7 +435,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/attempt-9/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/attempt-10/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
