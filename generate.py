@@ -7,8 +7,6 @@ import pandas as pd
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, tokenizer):
     # extract df columns
-    #gender = df['gender'].values.tolist()
-    #age = df['age'].values.tolist()
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     
@@ -79,7 +77,7 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-experiment0/100/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-trl/attempt-7/249'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
@@ -116,8 +114,8 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
 
 df_responses.to_csv('inference_results.csv')
 
-##### experiment 0 [PROMPT] emo [SEP] base [REWRITE] #####
-# 57509: best model
+##### experiment 0 [PROMPT] emo [SEP] base [REWRITE] x upsample #####
+# 57509/ 57189 (w/ df): best model
 
 
 ##### Experiment 3 [HIGH/LOW] emo [SEP] base [REWRITE]##### 
