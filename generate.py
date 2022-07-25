@@ -77,7 +77,7 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-trl/attempt-7/249'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-trl/attempt-7/107'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
@@ -94,13 +94,13 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
 
     start_idx = len(input_ids)
     output = model.generate(input_ids.view(1,-1),   # reshape
-                            max_length = 100, 
+                            max_length = 150, 
                             do_sample=True, 
-                            temperature=0.7,
+                            temperature=1,
                             top_k=50, 
                             top_p=0.95, 
-                            num_return_sequences= 3,
-                            num_beams = 5,
+                            num_return_sequences= 25,
+                            num_beams = 10,
                             no_repeat_ngram_size = 2,
                             clean_up_tokenization_spaces=True,
                             return_full_text=False,
@@ -110,9 +110,10 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
     emo_list = [e]*len(rewritings)
     base_list = [b]*len(rewritings)
     df_base = pd.DataFrame(columns=['emotion','base','rewriting'], data=zip(emo_list,base_list,rewritings))
+    df_base = df_base.drop_duplicates(keep='first') # remove any duplicate sentences
     df_responses = pd.concat([df_responses, df_base],ignore_index=0)
 
-df_responses.to_csv('inference_results.csv')
+df_responses.to_csv('107_inference_results.csv')
 
 ##### experiment 0 [PROMPT] emo [SEP] base [REWRITE] x upsample #####
 # 57509/ 57189 (w/ df): best model
