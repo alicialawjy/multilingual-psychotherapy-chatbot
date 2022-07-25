@@ -282,7 +282,7 @@ def run_RL():
         "empathy_classifier_name": "empathy_classifier/binary-empathy",            # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",         # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
         "steps": 10000,                                                                      
-        "batch_size": 32, # 2
+        "batch_size": 16, # 2
         "forward_batch_size": 8, # 2
         "ppo_epochs": 4,
         "max_len": 50,
@@ -296,7 +296,7 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,        # logits range from 0 - 0.9
+        "empathy_weight": 3.5,     # logits range from 0 - 0.9
         # "semantic_weight": 1,    # logits range from 0 - 20
         # "fluency_weight": 1         
     }
@@ -464,6 +464,6 @@ if __name__ == "__main__":
 #    https://wandb.ai/alicialawjy/satbot/runs/37esza0m
 # 57697: attemp=6: we = 4
 #   https://wandb.ai/alicialawjy/satbot/runs/390grx68?workspace=user-alicialawjy
-# 57713:  attempt 7: we=3.5
+# 57713:  attempt 7: we=3.5 *
 # attempt 8: use only 45 base utterances
 # attempt 9: attempt 8 but with semantic logits * 2 when negative
