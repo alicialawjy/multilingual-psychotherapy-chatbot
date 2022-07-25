@@ -289,14 +289,14 @@ def run_RL():
         "lr": 5e-6,
         "init_kl_coef":0.2,
         "seed": 1,
-        "target": 6,
+        "target": 3,
         "horizon":10000,
         "gamma":1,
         "lam":0.95,
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 3.5,     # logits range from 0 - 0.9
+        "empathy_weight": 4,     # logits range from 0 - 0.9
         # "semantic_weight": 1,    # logits range from 0 - 20
         # "fluency_weight": 1         
     }
@@ -389,7 +389,7 @@ def run_RL():
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
-            semantic_score = [logits[idx]/5 if logits[idx]>0 else logits[idx]*2 for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            semantic_score = [logits[idx]/4 if logits[idx]>0 else logits[idx]*2 for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
@@ -466,4 +466,6 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/390grx68?workspace=user-alicialawjy
 # 57713:  attempt 7: we=3.5 *
 # attempt 8: use only 45 base utterances
-# attempt 9: attempt 8 but with semantic logits * 2 when negative
+# attempt x: attempt 8 but with semantic logits * 2 when negative
+# 57806: attempt 9: empathy 3.5 with only 19 base utterances
+#   https://wandb.ai/alicialawjy/satbot/runs/2r45q0ba
