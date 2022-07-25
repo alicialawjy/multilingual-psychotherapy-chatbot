@@ -77,7 +77,7 @@ else:
 
 print(f"Using {device}")
 
-PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-supervised-experiment0/100/best-model'
+PRE_TRAINED_MODEL_NAME = 'rewriting/gpt2-trl/attempt-6/186'
 model = GPT2LMHeadModel.from_pretrained(PRE_TRAINED_MODEL_NAME).to(device)
 tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)    
 
@@ -113,7 +113,7 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
     df_base = df_base.drop_duplicates(keep='first') # remove any duplicate sentences
     df_responses = pd.concat([df_responses, df_base],ignore_index=0)
 
-df_responses.to_csv('supervised_inference_results.csv')
+df_responses.to_csv('attempt6_186_inference_results.csv')
 
 ##### experiment 0 [PROMPT] emo [SEP] base [REWRITE] x upsample #####
 # 57509/ 57189 (w/ df): best model
