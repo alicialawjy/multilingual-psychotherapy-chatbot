@@ -296,9 +296,9 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 3,        # logits range from 0 - 0.9
-        "semantic_weight": 0.25,    # logits range from 0 - 20
-        "fluency_weight": 1         
+        "empathy_weight": 2,        # logits range from 0 - 0.9
+        # "semantic_weight": 1,    # logits range from 0 - 20
+        # "fluency_weight": 1         
     }
 
     # random seed
@@ -339,7 +339,7 @@ def run_RL():
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/ex0-full_ep/experiment0.csv', index_col=0).sample(frac=1) # DataFrame
+    df = pd.read_csv('data/empathy/ex0-full_ep/experiment0_no_gender_age.csv', index_col=0).sample(frac=1) # DataFrame
     train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
     train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
     
@@ -435,7 +435,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/attempt-5/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/attempt-8/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -460,4 +460,9 @@ if __name__ == "__main__":
 # 57674: wf=1.5  (gpt2-trl/wf_15)
 # 57675: wf = 3, we = 3, rp/2 (gpt2-trl/attempt-3)
 # 57676: attempt-4: wf = 1, rp/1 
-# attempt=5: no wf and ws, ws factored if > 0, else penalise the full amount.
+# 57691: attempt=5: no wf and ws, ws factored if > 0, else penalise the full amount.
+#    https://wandb.ai/alicialawjy/satbot/runs/37esza0m
+# 57697: attemp=6: we = 4
+#   https://wandb.ai/alicialawjy/satbot/runs/390grx68?workspace=user-alicialawjy
+# 57713:  attempt 7: we=3.5
+# attempt 8: use only 45 base utterances
