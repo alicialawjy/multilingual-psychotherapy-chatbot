@@ -1,12 +1,12 @@
+'''
+Script used to train classification models.
+For Knowledge Distillation, please see run_distillation.py
+For evaluating the classification models, see classify.py
+'''
 import pandas as pd
 import torch
-import pickle
-from torch.utils.data import Dataset, DataLoader 
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
-from transformers import Trainer, TrainingArguments
-from sklearn.metrics import classification_report, confusion_matrix, f1_score
-from sklearn.model_selection import train_test_split
-
+from classify import evaluate
 
 def train_model(epoch, 
                 learning_rate,
@@ -25,9 +25,10 @@ def train_model(epoch,
                 evaluate_during_training=False
                 ):
 
-  model_args = ClassificationArgs(num_train_epochs=epoch,  
-                                  train_batch_size=train_batch_size,         
-                                  best_model_dir=best_model_dir,  
+  model_args = ClassificationArgs(num_train_epochs=epoch,     
+                                  learning_rate=learning_rate,                       
+                                  train_batch_size=train_batch_size,   
+                                  # early stopping parameters
                                   use_early_stopping = use_early_stopping,
                                   early_stopping_delta = early_stopping_delta,
                                   early_stopping_metric = early_stopping_metric,
@@ -35,18 +36,19 @@ def train_model(epoch,
                                   early_stopping_patience = early_stopping_patience,
                                   evaluate_during_training_steps = evaluate_during_training_steps, 
                                   evaluate_during_training=evaluate_during_training,
+                                  # model saving parameters          
+                                  best_model_dir=best_model_dir,  
+                                  output_dir = output_dir,
                                   no_cache=True,                  
                                   save_steps=-1,                  
                                   save_model_every_epoch=False,
-                                  output_dir = output_dir,
-                                  overwrite_output_dir = True,
-                                  learning_rate=learning_rate,    
-                                  optimizer='AdamW')            
+                                  overwrite_output_dir = True
+                                  )            
 
-  model = ClassificationModel(model_type="xlmroberta",  # tried xlmroberta, bert
-                            model_name=model_name,      # tried bert-base-chinese, xlm-roberta-base, bert-base-multilingual-cased (mBert), microsoft/infoxlm-base
-                            args = model_args,          # see above
-                            num_labels=4,               # 4 labels - sad, happy, fear, anger
+  model = ClassificationModel(model_type="xlmroberta",  
+                            model_name=model_name,      
+                            args = model_args,          
+                            num_labels=4,               # 4 labels (sad, happy, fear, anger) for emotion classification
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
@@ -54,15 +56,6 @@ def train_model(epoch,
                  
   return model
 
-
-def evaluate(model, df_dataset):
-  y_pred, _ = model.predict(df_dataset.text.tolist())
-  y_true = df_dataset['labels']
-
-  print("Classification Report", classification_report(y_true, y_pred))
-  print("Confusion Matrix", confusion_matrix(y_true, y_pred))
-  print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
-  return f1_score(y_true, y_pred,average='weighted')
 
 # Run finetuning
 if __name__ == "__main__":
