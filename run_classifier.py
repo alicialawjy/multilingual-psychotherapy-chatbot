@@ -1,5 +1,7 @@
 '''
-Script used to train classification models.
+Script used to train the 3 classification models: (i) emotion, (ii) empathy and (iii) semantic.
+The below code is the code for the double finetuned emotion classifier.
+- To train the empathy and semantic classifier, replace train_df, eval_df and num_labels in train_model()
 
 For Knowledge Distillation, please see run_distillation.py
 For evaluating the classification models, see classify.py
@@ -16,6 +18,7 @@ def train_model(epoch,
                 model_name,
                 train_df,
                 eval_df,
+                num_labels,
                 train_batch_size = 8,
                 use_early_stopping=False, 
                 early_stopping_delta=0,
@@ -49,7 +52,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",  
                             model_name=model_name,      
                             args = model_args,          
-                            num_labels=4,               # 4 labels (sad, happy, fear, anger) for emotion classification
+                            num_labels=num_labels,               # 4 labels (sad, happy, fear, anger) for emotion classification
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset
@@ -86,6 +89,7 @@ if __name__ == "__main__":
   # First Finetune (ECM)
   model = train_model(epoch = 20, 
                       learning_rate= 9e-06,
+                      num_labels = 4,
                       model_name = "xlm-roberta-base",
                       output_dir= 'emotion_classifier/1st-tuning/outputs',
                       best_model_dir= 'emotion_classifier/1st-tuning/best-model',
@@ -104,6 +108,7 @@ if __name__ == "__main__":
   # (comment this section if double finetuning not required)
   model = train_model(epoch = 20, 
                       learning_rate = 2e-05, 
+                      num_labels = 4,
                       model_name = 'emotion_classifier/1st-tuning/best-model',      # use the best model from the first tuning
                       best_model_dir = 'emotion_classifier/2nd-tuning/best-model', 
                       output_dir = 'emotion_classifier/2nd-tuning/outputs', 
