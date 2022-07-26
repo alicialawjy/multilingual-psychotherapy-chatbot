@@ -25,9 +25,11 @@ def encoded_df(df, tokenizer, supervised):
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
-    transformation = df['transformation'].values.tolist()
 
-    if not supervised:
+    if supervised:
+        transformation = df['transformation'].values.tolist()
+    else:
+        transformation = ['']*len(base)
         semantic_label = df['semantic'].values.tolist()
 
     # EXPERIMENT 3
@@ -498,5 +500,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
-# 57874: experiment 3 
-# https://wandb.ai/alicialawjy/satbot/runs/3i2r3xiz
+# 57875: experiment 3 
+#   https://wandb.ai/alicialawjy/satbot/runs/3i2r3xiz
