@@ -22,8 +22,6 @@ def encoded_df(df, tokenizer, supervised):
     train (bool): true if training dataset, false is test/validation. only relevant for supervised learning.
     '''
     # extract df columns
-    #gender = df['gender'].values.tolist()
-    #age = df['age'].values.tolist()
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
@@ -31,32 +29,20 @@ def encoded_df(df, tokenizer, supervised):
 
     if not supervised:
         semantic_label = df['semantic'].values.tolist()
-        # transformation_label = df['transformation_label'].values.tolist()
-    
-    # # EXPERIMENT0
-    # # concatenate df columns horizontally, joining with the respective tokens
-    # formatted_input = []
-    # for (e, b, r) in list(zip(emotion, base, rewriting)):
-    #     input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
-    #     # if supervised, append the rewritings as well
-    #     if supervised:
-    #         input += r
-        
-    #     formatted_input.append(input)
 
     # EXPERIMENT 3
     formatted_input = []
     for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-
-        input = ''
-
         # instead of [REWRITE], we use [HIGH] or [LOW]
-        if t == 'HIGH':
-            input += '[HIGH]'
-        elif t == 'LOW':
-            input += '[LOW]'
+        if not supervised:
+            input = '[HIGH]'
         else:
-            raise Exception("No transformation listed!")
+            if t == 'HIGH':
+                input = '[HIGH]'
+            elif t == 'LOW':
+                input = '[LOW]'
+            else:
+                raise Exception("No transformation listed! Needed for supervised learning")
         
         input += e + '[SEP]' + b + '[REWRITE]'
 
@@ -65,25 +51,6 @@ def encoded_df(df, tokenizer, supervised):
             input += r
         
         formatted_input.append(input)
-    
-    # # EXPERIMENT 3B
-    # formatted_input = []
-    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-
-    #     input = e + '[SEP]' + b 
-    #     # instead of [REWRITE], we use [HIGH] or [LOW]
-    #     if t == 'HIGH':
-    #         input += '[HIGH]'
-    #     elif t == 'LOW':
-    #         input += '[LOW]'
-    #     else:
-    #         raise Exception("No transformation listed!")
-
-    #     # if training dataset for supervised learning, append the rewritings as well
-    #     if supervised and train:
-    #         input += r
-        
-    #     formatted_input.append(input)
 
     # encode the formatted input
     encoded_input = tokenizer(formatted_input, 
@@ -303,13 +270,13 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-34500',         # generative model (gpt2) 
+        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-22500',         # generative model (gpt2) 
         "lm_eval_name": 'uer/gpt2-chinese-cluecorpussmall',                             # gpt to compute perplexity
         "empathy_classifier_name": "empathy_classifier/binary-empathy",                 # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",              # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
         "steps": 10000,                                                                      
-        "batch_size": 32, # 2
-        "forward_batch_size": 8, # 2
+        "batch_size": 16, # 2
+        "forward_batch_size": 4, # 2
         "ppo_epochs": 4,
         "max_len": 50,
         "lr": 5e-6,
@@ -322,9 +289,9 @@ def run_RL():
         "cliprange": .2,
         "cliprange_value":.2,
         "vf_coef":.1, 
-        "empathy_weight": 2,        # logits range from 0 - 0.9
-        "semantic_weight": 0.25,    # logits range from 0 - 20
-        "fluency_weight": 2         
+        "empathy_weight": 4,        # logits range from 0 - 0.9
+        # "semantic_weight": 0.25,    # logits range from 0 - 20
+        # "fluency_weight": 2         
     }
 
     # random seed
@@ -355,21 +322,20 @@ def run_RL():
 
     # # GPT2 Language Models
     GPT2_PRETRAINED_NAME = config['lm_name']
+    gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                            # gpt2 tokenizer - shared amongst all models
     gpt2_model = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)            # model to be finetuned
     gpt2_model_ref = GPT2HeadWithValueModel.from_pretrained(GPT2_PRETRAINED_NAME).to(device)        # reference model
-    gpt2_tokenizer = AutoTokenizer.from_pretrained(GPT2_PRETRAINED_NAME)                            # gpt2 tokenizer
 
     GPT2_EVAL_PRETRAINED_NAME = config['lm_eval_name']
     gpt2_eval_model = GPT2LMHeadModel.from_pretrained(GPT2_EVAL_PRETRAINED_NAME).to(device)         # model for fluency evaluation
-    gpt2_eval_tokenizer = AutoTokenizer.from_pretrained(GPT2_EVAL_PRETRAINED_NAME)                  # gpt2 tokenizer
-    gpt2_eval_model.resize_token_embeddings(len(gpt2_eval_tokenizer))                               # resize the model token embedding space
+    gpt2_eval_model.resize_token_embeddings(len(gpt2_tokenizer))                                    # resize the eval model's embedding space to the new tokenizer (has additional tokens)
     
     wandb.watch(gpt2_model, log='all')
 
     ##### L O A D  D A T A S E T S #####
-    df = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv', index_col=0).sample(frac=1) # DataFrame
-    train_text, semantic_label, transformation_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
-    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, train=False) # dataloader object
+    df = pd.read_csv('data/empathy/ex0-full_ep/experiment0_no_gender_age.csv', index_col=0).sample(frac=1) # DataFrame
+    train_text, semantic_label, dict_train_encoded = encoded_df(df=df, supervised=False, tokenizer=gpt2_tokenizer) # format and encode
+    train_dataloader = GPT2RewritingDataset(tokenizer=gpt2_tokenizer, encodings=dict_train_encoded, supervised=False) # dataloader object
     
     ##### P P O  R L  T R A I N I N G  L O O P #####
     ppo_trainer = PPOTrainer(model=gpt2_model, ref_model=gpt2_model_ref, tokenizer=gpt2_tokenizer, **config)
@@ -389,7 +355,6 @@ def run_RL():
         batch_dict = train_dataloader.collate_fn(batch_dict_list)['input_ids'].to(device)   # prompts (encoded)
         game_data['prompt'] = [train_text[idx] for idx in batch_idx]                        # prompts
         batch_semantic_label = [semantic_label[idx] for idx in batch_idx]                   # semantic label corr to the prompt
-        batch_transformation_label = [transformation_label[idx] for idx in batch_idx]    
         
         # Get the corresponding responses to the prompts
         t = time.time()
@@ -412,25 +377,24 @@ def run_RL():
         fluency = []
         for i in range(int(config['batch_size']/fbs)):
             # empathy score - take the logit for the corr transformation 
-            empathy_score_all = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
-                                                        attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
-            empathy_score = [logits[idx] for (logits, idx) in zip(empathy_score_all, batch_transformation_label[i*fbs:(i+1)*fbs])]
+            empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
+                                                        attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
-            semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            semantic_score = [logits[idx]/4 if logits[idx]>0 else logits[idx]*2 for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
             w_e = config['empathy_weight']
-            w_s = config['semantic_weight']
-            w_f = config['fluency_weight']
-            total_score = [e * w_e + s * w_s + f * w_f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] # removed fluency_score
+            # w_s = config['semantic_weight']
+            # w_f = config['fluency_weight']
+            total_score = [e * w_e + s + f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
 
             # convert list of tensors into a single tensor and append
-            empathy.append(torch.stack(empathy_score))
+            empathy.append(empathy_score)
             semantic.append(torch.stack(semantic_score))
             fluency.append(torch.tensor(fluency_score))
             rewards.append(torch.stack(total_score))
@@ -459,16 +423,16 @@ def run_RL():
         logs['env/reward_mean'] = reward_mean
         logs['env/reward_std'] = reward_std
         logs['env/reward_dist'] = rewards.cpu().numpy()
-        trans = {'HIGH':0, 'LOW':1}
-        for trans,trans_label in trans.items():
-            key = 'env/reward_' + trans
-            logs[key] = np.mean([r for r, t in zip(logs['env/reward_dist'], batch_transformation_label) if t==trans_label])
+        # trans = {'HIGH':0, 'LOW':1}
+        # for trans,trans_label in trans.items():
+        #     key = 'env/reward_' + trans
+        #     logs[key] = np.mean([r for r, t in zip(logs['env/reward_dist'], batch_transformation_label) if t==trans_label])
         wandb.log(logs)
 
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/ex-3/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -480,7 +444,7 @@ def run_RL():
 
 #### Code to execute #####
 if __name__ == "__main__":
-    run_supervised()
+    run_RL()
 
 
 ##### LOGS #####
@@ -494,6 +458,8 @@ if __name__ == "__main__":
 # 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
 # 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
 # 57552: experiment 0 upsampled
+# 57866: experiment 3 again (like 56980)
+
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
