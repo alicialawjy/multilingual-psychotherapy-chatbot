@@ -163,16 +163,26 @@ def compute_fluency(encoding, gpt2_eval_model):
     perplexity = np.exp(loss.cpu().detach().numpy())
 
     token_seen = []
-    repetition_penalty = 0
+    repetition_penalty = 0 # RP
+    last_seen = 0
     for token in encoding:
-        if token in token_seen:
-            repetition_penalty += 0.01
-        else:
+        # if token not seen before, no RP
+        if token not in token_seen:
+            last_seen = 1
             token_seen.append(token)
-    
-    fluency = 1/perplexity - repetition_penalty
 
-    return fluency
+        # if seen and was the same as the last_seen token (i.e. repeated the same token consecutively)
+        elif token in token_seen[-1]:
+            last_seen +=1
+            repetition_penalty += 0.01*last_seen # compound the penalty
+        
+        # seen but not repeated
+        else:
+            # if not repeated but previously seen
+            last_seen = 1
+            repetition_penalty += 0.01
+
+    return 1/perplexity - repetition_penalty
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
@@ -488,4 +498,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
-# 57513: 
+# 57874: experiment 3 
+# https://wandb.ai/alicialawjy/satbot/runs/3i2r3xiz
