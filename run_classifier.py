@@ -7,47 +7,6 @@ from transformers import Trainer, TrainingArguments
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
 
-# Convert dataframe into dictionary of text and labels
-def reader(df):
-    texts = df['text'].values.tolist()
-    labels = df['labels'].values.tolist()
-
-    return {'texts':texts, 'labels':labels}
-
-# DataLoader
-class OlidDataset(Dataset):
-  def __init__(self, tokenizer, input_set):
-    # input_set: dictionary version of the df
-    self.texts = input_set['texts']
-    self.labels = input_set['labels']
-    self.tokenizer = tokenizer
-
-  def collate_fn(self, batch):
-    texts = []
-    labels = []
-
-    for b in batch:
-      texts.append(str(b['text']))
-      labels.append(b['label'])
-
-    encodings = self.tokenizer(
-      texts,                        # what to encode
-      return_tensors = 'pt',        # return pytorch tensors
-      add_special_tokens = True,    # incld tokens like [SEP], [CLS]
-      padding = "max_length",       # pad to max sentence length
-      truncation = True,            # truncate if too long
-      max_length= 128)              
-
-    encodings['labels'] = torch.tensor(labels)
-    return encodings
-
-  def __len__(self):
-    return len(self.texts)
-
-  def __getitem__(self, idx):
-    item = {'text': self.texts[idx], 'label': self.labels[idx]}
-
-    return item
 
 def train_model(epoch, 
                 learning_rate,
@@ -182,37 +141,3 @@ if __name__ == "__main__":
   # EN Result
   print('EN Test Set')
   evaluate(best_model, df_EN)
-
-# LOGS:
-# Last Run: 52657 for Twitter Finetuning
-# 52660 for hyperparm tuning of twitter model on EP
-# 52666 for sentiment40k finetuning + hyperparam tune on EP
-# 52676 for single hyperparm tune on EP
-# 53981: twitter hypertune (done with twitter)
-# 53982 (too high patience + delta): ECM hypertune
-# 54034: Tune with eval_loss instead of mcc. 
-#       ECM (lr=5e-05 STOPPED, TOO LARGE, epoch=5, patience=5, delta = 0.0001) and EP (epoch=20, patience=10, delta=0.0001)
-# 54035: 34 with ECM(lr=3e-05, promising)
-# 54036: 34 with ECM(lr=1e-05, smaller better!)
-# 54048: 34 with ECM(lr=5e-06, )
-# 54050: 34 with ECM(lr=2e-05 )
-# 54061: 34 with ECM(lr=8e-06 )
-# 54062: 34 with ECM(lr=9e-06, batch size = 8, BEST)
-# 54074: 62 with batch size = 16, eval_steps = 150
-# 54076: 62 with batch size = 32, eval_steps = 80
-# 54077: 62 with batch size = 64, eval_steps = 40: too big cannot run
-# 54082: 62 with batch size = 128, eval_steps = 20: too big cannot run
-# 54118: 2nd-finetuning with 5e-05
-# 54119: 2nd-finetuning with 3e-05
-# 54122: 2nd-finetuning with 5e-05 with 20 patience
-# 54128: 22 with larger eval steps 
-# 54133: 28 with 1e-05
-# 54135: 28 with 3e-05
-# 54151: 28 with 5e-05
-# 54153: 28 with 7e-05
-# 54159: 28 with 5e-06
-# 54160: 28 with 1e-06
-# 54165: 28 with 9e-06
-# 54170: 28 with 2e-05
-# 54248: 170 with batch size = 16
-# 54247: 170 with batch size = 32
