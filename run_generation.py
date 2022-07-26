@@ -282,7 +282,7 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-22500',         # generative model (gpt2) 
+        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-10500',         # generative model (gpt2) 
         "lm_eval_name": 'uer/gpt2-chinese-cluecorpussmall',                             # gpt to compute perplexity
         "empathy_classifier_name": "empathy_classifier/binary-empathy",                 # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",              # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
@@ -302,7 +302,7 @@ def run_RL():
         "cliprange_value":.2,
         "vf_coef":.1, 
         "empathy_weight": 4,        # logits range from 0 - 0.9
-        # "semantic_weight": 0.25,    # logits range from 0 - 20
+        "semantic_weight": 0.25,    # logits range from 0 - 20
         # "fluency_weight": 2         
     }
 
@@ -391,20 +391,19 @@ def run_RL():
             # empathy score - take the logit for the corr transformation 
             empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
-            empathy_score = [score*8 if score < 0 else score * 4 for score in empathy_score]
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
-            semantic_score = [logits[idx]/4 if logits[idx]>0 else logits[idx]*2 for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
+            semantic_score = [logits[idx] for (logits, idx) in zip(semantic_score_all, batch_semantic_label[i*fbs:(i+1)*fbs])]
             # fluency score = inverse perplexity - repetition penalty
             with torch.no_grad():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
-            # w_e = config['empathy_weight']
-            # w_s = config['semantic_weight']
+            w_e = config['empathy_weight']
+            w_s = config['semantic_weight']
             # w_f = config['fluency_weight']
-            total_score = [e + s + f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
+            total_score = [w_e * e + w_s * s + f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
 
             # convert list of tensors into a single tensor and append
             empathy.append(empathy_score)
@@ -445,7 +444,7 @@ def run_RL():
         # save if a better checkpoint observed
         if reward_mean > mean_max or reward_std < stdev_min: 
             # if only one of the metrics are better, save for consideration
-            output_dir = f"rewriting/gpt2-trl/ex-3/{epoch}"
+            output_dir = f"rewriting/gpt2-trl/last/{epoch}"
             gpt2_model.save_pretrained(output_dir)
             gpt2_tokenizer.save_pretrained(output_dir)
             
@@ -501,5 +500,3 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
-# 57876: experiment 3 
-#   https://wandb.ai/alicialawjy/satbot/runs/3i2r3xiz
