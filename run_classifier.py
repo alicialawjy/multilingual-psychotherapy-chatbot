@@ -6,8 +6,8 @@ The below code is the code for the double finetuned emotion classifier.
 For Knowledge Distillation, please see run_distillation.py
 For evaluating the classification models, see classify.py
 '''
-import pandas as pd
 import torch
+import pandas as pd
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
 from classify import evaluate
 

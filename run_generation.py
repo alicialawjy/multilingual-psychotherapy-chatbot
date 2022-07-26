@@ -1,19 +1,20 @@
-from transformers import AutoTokenizer, EarlyStoppingCallback, Trainer, TrainingArguments, AutoModelForSequenceClassification, \
-    GPT2LMHeadModel, GPT2Tokenizer
-from torch.utils.data import TensorDataset, Dataset
 import os
+import random
+import time
 import torch
+import wandb
 import numpy as np
 import pandas as pd
-import wandb
 from tqdm import tqdm
-from sklearn.model_selection import train_test_split
-import time
-from trl.gpt2 import GPT2HeadWithValueModel, respond_to_batch
 from trl.ppo import PPOTrainer
-from trl.core import build_bert_batch_from_txt
-import random
 from torch.nn import functional as F
+from trl.core import build_bert_batch_from_txt
+from torch.utils.data import TensorDataset, Dataset
+from sklearn.model_selection import train_test_split
+from trl.gpt2 import GPT2HeadWithValueModel, respond_to_batch
+from transformers import AutoTokenizer, EarlyStoppingCallback, Trainer, TrainingArguments, AutoModelForSequenceClassification, \
+    GPT2LMHeadModel, GPT2Tokenizer
+
 
 ############# Data Loader for GPT-2 ############# 
 def encoded_df(df, tokenizer, supervised):

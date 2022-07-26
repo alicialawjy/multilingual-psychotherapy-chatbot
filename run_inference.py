@@ -1,8 +1,7 @@
+import torch
+import pandas as pd
 from transformers import AutoTokenizer, GPT2LMHeadModel
 from torch.utils.data import TensorDataset, Dataset
-import torch
-import re
-import pandas as pd
 from run_generation import GPT2RewritingDataset
 
 ############# Data Loader for Inference ############# 
