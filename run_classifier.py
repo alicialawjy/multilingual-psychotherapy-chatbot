@@ -1,5 +1,6 @@
 '''
 Script used to train classification models.
+
 For Knowledge Distillation, please see run_distillation.py
 For evaluating the classification models, see classify.py
 '''
@@ -85,9 +86,9 @@ if __name__ == "__main__":
   # First Finetune (ECM)
   model = train_model(epoch = 20, 
                       learning_rate= 9e-06,
-                      output_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-8/outputs',
-                      best_model_dir= 'emotion_classifier/2-tuned-ECM-9e06/batch-8/best-ECM',
                       model_name = "xlm-roberta-base",
+                      output_dir= 'emotion_classifier/1st-tuning/outputs',
+                      best_model_dir= 'emotion_classifier/1st-tuning/best-model',
                       train_df = df_train_ECM[['text','labels']],
                       eval_df = df_test_ECM[['text','labels']],
                       train_batch_size = 8,
@@ -100,11 +101,12 @@ if __name__ == "__main__":
                       evaluate_during_training= True)
 
   # Second Finetune (EP)
+  # (comment this section if double finetuning not required)
   model = train_model(epoch = 20, 
                       learning_rate = 2e-05, 
-                      model_name = 'emotion_classifier/2-tuned-ECM-9e06/1st-tuning/best-ECM', 
-                      best_model_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/best-final', 
-                      output_dir = 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/outputs', 
+                      model_name = 'emotion_classifier/1st-tuning/best-model',      # use the best model from the first tuning
+                      best_model_dir = 'emotion_classifier/2nd-tuning/best-model', 
+                      output_dir = 'emotion_classifier/2nd-tuning/outputs', 
                       use_early_stopping = True, 
                       early_stopping_delta = 0.0001, 
                       early_stopping_metric = "eval_loss", 
@@ -118,7 +120,7 @@ if __name__ == "__main__":
 
   # load the best model for this epoch
   best_model = ClassificationModel(model_type="xlmroberta", 
-                                  model_name= 'emotion_classifier/2-tuned-ECM-9e06/2nd-tuning-2e05/batch-8/best-final', 
+                                  model_name= 'emotion_classifier/2nd-tuning/best-model', 
                                   num_labels=4, 
                                   use_cuda=cuda_available)
 
