@@ -1,3 +1,7 @@
+'''
+Script used to train classification models.
+'''
+
 import pandas as pd
 import torch
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
@@ -5,16 +9,19 @@ from simpletransformers.classification import ClassificationModel
 
 def evaluate(model, df_dataset):
   '''
-  Function used to evaluate model performance.
+  Function used to evaluate model performance. 
+  Prints classification report, confusion matrix and F1-score.
   - model [ClassificationModel object]: model to be evaluated 
   - df_dataset [DataFrame object]: dataset with columns 'text' (the input) and 'labels' (corr. true labels)
+
+  Returns: F1 score
   '''
   y_pred, _ = model.predict(df_dataset.text.tolist())
   y_true = df_dataset['labels']
 
   print("Classification Report", classification_report(y_true, y_pred))
   print("Confusion Matrix", confusion_matrix(y_true, y_pred))
-  print("F1-Score", f1_score(y_true, y_pred,average='weighted'))
+  print("F1-Score", f1_score(y_true, y_pred, average='weighted'))
   return f1_score(y_true, y_pred,average='weighted')
 
 def predictions(model, input_list, filename):
