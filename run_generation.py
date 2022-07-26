@@ -27,44 +27,44 @@ def encoded_df(df, tokenizer, supervised):
     emotion = df['emotion'].values.tolist()
     base = df['base'].values.tolist()
     rewriting = df['rewriting'].values.tolist()
-    # transformation = df['transformation'].values.tolist()
+    transformation = df['transformation'].values.tolist()
 
     if not supervised:
         semantic_label = df['semantic'].values.tolist()
-        transformation_label = df['transformation_label'].values.tolist()
+        # transformation_label = df['transformation_label'].values.tolist()
     
-    # EXPERIMENT0
-    # concatenate df columns horizontally, joining with the respective tokens
-    formatted_input = []
-    for (e, b, r) in list(zip(emotion, base, rewriting)):
-        input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
-        # if supervised, append the rewritings as well
-        if supervised:
-            input += r
-        
-        formatted_input.append(input)
-
-    # # EXPERIMENT 3
+    # # EXPERIMENT0
+    # # concatenate df columns horizontally, joining with the respective tokens
     # formatted_input = []
-    # for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
-
-    #     input = ''
-
-    #     # instead of [REWRITE], we use [HIGH] or [LOW]
-    #     if t == 'HIGH':
-    #         input += '[HIGH]'
-    #     elif t == 'LOW':
-    #         input += '[LOW]'
-    #     else:
-    #         raise Exception("No transformation listed!")
-        
-    #     input += e + '[SEP]' + b + '[REWRITE]'
-
-    #     # if training for supervised learning (i.e. not inference/ RL), append the rewritings as well
+    # for (e, b, r) in list(zip(emotion, base, rewriting)):
+    #     input = '[PROMPT]' + e + '[SEP]' + b + '[REWRITE]'
+    #     # if supervised, append the rewritings as well
     #     if supervised:
     #         input += r
         
     #     formatted_input.append(input)
+
+    # EXPERIMENT 3
+    formatted_input = []
+    for (t, e, b, r) in list(zip(transformation, emotion, base, rewriting)):
+
+        input = ''
+
+        # instead of [REWRITE], we use [HIGH] or [LOW]
+        if t == 'HIGH':
+            input += '[HIGH]'
+        elif t == 'LOW':
+            input += '[LOW]'
+        else:
+            raise Exception("No transformation listed!")
+        
+        input += e + '[SEP]' + b + '[REWRITE]'
+
+        # if training for supervised learning (i.e. not inference/ RL), append the rewritings as well
+        if supervised:
+            input += r
+        
+        formatted_input.append(input)
     
     # # EXPERIMENT 3B
     # formatted_input = []
@@ -95,17 +95,17 @@ def encoded_df(df, tokenizer, supervised):
     if supervised:
         return encoded_input 
     else:
-        return formatted_input, semantic_label, transformation_label, encoded_input
+        return formatted_input, semantic_label, encoded_input
 
 class GPT2RewritingDataset(Dataset):
     ''' 
     DataLoader for GPT-2 Rewriting Task 
 
     '''
-    def __init__(self, tokenizer, encodings, train=True): # ok
+    def __init__(self, tokenizer, encodings, supervised): # ok
         self.encodings = encodings
         self.tokenizer = tokenizer
-        self.train = train
+        self.supervised = supervised
 
     def __len__(self): # ok
         return len(self.encodings['input_ids'])
@@ -118,8 +118,8 @@ class GPT2RewritingDataset(Dataset):
         input_ids = self.encodings['input_ids'][idx]
         attention_mask = self.encodings['attention_mask'][idx]
 
-        if not self.train:
-            # if not for training, remove the EOS token that automatically gets added by the encoder
+        if not self.supervised:
+            # if for reinforcement learning, remove the EOS token that automatically gets added by the encoder
             last_idx = torch.sum(attention_mask) - 1
             input_ids[last_idx] = 0 
             attention_mask[last_idx] = 0
@@ -209,7 +209,7 @@ def compute_fluency(encoding, gpt2_eval_model):
 
 ############# Supervised Learning Main Code ############# 
 def run_supervised():
-    main_dir = 'rewriting/gpt2-supervised-experiment0/100'
+    main_dir = 'rewriting/gpt2-supervised-experiment3/50'
     os.environ["WANDB_DISABLED"] = "true"
 
     # Fix Device
@@ -229,8 +229,8 @@ def run_supervised():
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)               # model tokenizer 
     # additional tokens for conditional generation
-    additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  
-    # additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}
+    # additional_tokens = {'rewrite_token':'[REWRITE]', 'prompt_token':'[PROMPT]'}  
+    additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]', 'rewrite_token':'[REWRITE]'}
     # additional_tokens = {'high_token':'[HIGH]', 'low_token':'[LOW]'}
     tokenizer.add_tokens(list(additional_tokens.values()), special_tokens=True)     # add into tokenizer vocabulary (found in added_tokens.json)
     for token_name, token in additional_tokens.items():
@@ -241,7 +241,7 @@ def run_supervised():
 
     ##### D A T A S E T S #####
     # DataFrames
-    df_supervised = pd.read_csv('data/empathy/ex0-full_ep/experiment0.csv',index_col=0).sample(frac=1)
+    df_supervised = pd.read_csv('data/empathy/ex3-low_high_noextra/experiment3_train.csv',index_col=0).sample(frac=1)
     df_train, df_val = train_test_split(df_supervised, test_size=0.2, shuffle=True, random_state=0)
 
     # Format and encode df with encoded_df()
@@ -249,8 +249,8 @@ def run_supervised():
     dict_val = encoded_df(df=df_val, supervised=True, tokenizer=tokenizer) 
 
     # Get DataLoader object, used by Trainer
-    dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, train=True) 
-    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, train=True) 
+    dataloader_train = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_train, supervised=True) 
+    dataloader_val = GPT2RewritingDataset(tokenizer=tokenizer, encodings=dict_val, supervised=True) 
 
     ##### T R A I N I N G #####
     # Early Stopping Module
@@ -261,7 +261,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 100,                  # Number of training epochs
+                                    num_train_epochs = 50,                  # Number of training epochs
                                     warmup_steps = 100,
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
@@ -493,7 +493,7 @@ if __name__ == "__main__":
 # 56980: experiment 3: [HIGH] EMO [SEP] BASE [REWRITE] 50 epochs
 # 57002: experiment 3b: EMO [SEP] BASE [HIGH/LOW] @ 50 EPOCHS
 # 57494: experiment 0: [PROMPT] EMO [SEP] BASE [REWRITE] REWRITE @ 100 EPOCHS
-
+# 57552: experiment 0 upsampled
 
 ##### REINFORCEMENT LEARNING RUNS #####
 # 56175: first run with rewards * 1
