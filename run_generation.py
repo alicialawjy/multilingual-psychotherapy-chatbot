@@ -282,7 +282,7 @@ def run_supervised():
 def run_RL():
     ##### P A R A M E T E R S ######
     config = {
-        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-10500',         # generative model (gpt2) 
+        "lm_name": 'rewriting/gpt2-supervised-experiment3/50/checkpoint-4500',         # generative model (gpt2) 
         "lm_eval_name": 'uer/gpt2-chinese-cluecorpussmall',                             # gpt to compute perplexity
         "empathy_classifier_name": "empathy_classifier/binary-empathy",                 # empathy classifier (xlm-r)
         "semantic_classifier_name": "semantic_classifier/4e05/best-model",              # semantic classifier (xlm-r) "saved_models/Emotion Classifier/2-tuned", 
@@ -500,3 +500,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
+
+# LAST TRY: 57897 = https://wandb.ai/alicialawjy/satbot/runs/7j5x5kaa
