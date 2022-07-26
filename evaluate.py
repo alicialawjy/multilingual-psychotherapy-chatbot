@@ -14,8 +14,9 @@ def evaluate(model, df_dataset):
 
 def predictions(model, df_dataset):
   y_pred, _ = model.predict(df_dataset.tolist())
-  df = pd.DataFrame(zip(df_dataset, y_pred), columns=['rewriting','class'])
-  df.to_csv('data/empathy/model_labelled.csv')
+  df = pd.DataFrame(zip(df_dataset, y_pred), columns=['rewriting','empathy'])
+  print(df['empathy'].value_counts(normalize=True))
+  df.to_csv('rewritings_empathy_labelled.csv')
 
 # test data
 # df_ECM_test = pd.read_csv('data/emotions/sentiment-40k/sentiment-40k_test.csv')
@@ -24,18 +25,19 @@ def predictions(model, df_dataset):
 # df_native = pd.read_csv('data/emotions/EmpatheticPersonas/roy_native.csv')
 # df_codeswitch = pd.read_csv('data/emotions/EmpatheticPersonas/EP_codeswitch.csv')
 # df_empathy_test = pd.read_csv('data/empathy/empatheticpersonas/balanced/ZH_test.csv')
-df_empatheticrewrite = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv')
+# df_empatheticrewrite = pd.read_csv('data/empathy/EP_empathy_2144_ZH.csv')
+df_generated = pd.read_csv('data/rewritings/empathetic_rewritings.csv',index_col=0)
 
-# models we want to test
-models = {'empathy': 'empathy_classifier/empathy4e05best'}
+# Model
+models = {'empathy': 'empathy_classifier/binary-empathy'}
 
-for checkpt,model_name in models.items():
+for checkpt, model_name in models.items():
   cuda_available = torch.cuda.is_available()
 
   # Load the best model
   model_best = ClassificationModel(model_type="xlmroberta", 
                                   model_name=model_name, 
-                                  num_labels=3, # 3 for empathy, 4 for emotion classifier 
+                                  num_labels=2, # 3 for empathy, 4 for emotion classifier 
                                   use_cuda=cuda_available)
 
   # print(f'ECM finetuning results for {checkkpt}')
@@ -50,7 +52,7 @@ for checkpt,model_name in models.items():
   # print('CodeSwitch Set')
   # evaluate(model_best, df_codeswitch)
   # print(f'Code Switching for Model: {checkpt}')
-  predictions(model_best, df_empatheticrewrite['rewriting'])
+  predictions(model_best, df_generated['rewriting'])
 
 
 ####### LOGS #########
