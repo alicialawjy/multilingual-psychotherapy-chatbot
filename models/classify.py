@@ -1,5 +1,5 @@
 '''
-Script used to train classification models.
+Script used to evaluate classification models/ use them for predictions.
 '''
 
 import pandas as pd
