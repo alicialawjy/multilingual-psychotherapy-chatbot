@@ -391,6 +391,7 @@ def run_RL():
             # empathy score - take the logit for the corr transformation 
             empathy_score = empathy_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0][:, 1].detach()   # this is shape (batch_size x num_of_empathy_labels=2)
+            empathy_score = [score*8 if score < 0 else score * 4 for score in empathy_score]
             # semantic score - take the logit for the corr semantic
             semantic_score_all = semantic_classifier.forward(classifier_inputs[i*fbs:(i+1)*fbs],
                                                         attention_masks[i*fbs:(i+1)*fbs])[0].detach()   # this is shape (batch_size x num_of_semantic_labels=20)
@@ -400,10 +401,10 @@ def run_RL():
                 fluency_score = [compute_fluency(encoding, gpt2_eval_model) for encoding in response_tensors[i*fbs:(i+1)*fbs]]
 
             # total score - multiply both logits by w_e, w_s = 2 (hyperparam w_e*e + w_s*s)
-            w_e = config['empathy_weight']
+            # w_e = config['empathy_weight']
             # w_s = config['semantic_weight']
             # w_f = config['fluency_weight']
-            total_score = [e * w_e + s + f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
+            total_score = [e + s + f for (e,s,f) in zip(empathy_score, semantic_score, fluency_score)] 
 
             # convert list of tensors into a single tensor and append
             empathy.append(empathy_score)
@@ -500,5 +501,5 @@ if __name__ == "__main__":
 #   https://wandb.ai/alicialawjy/satbot/runs/2lhyoc29
 # 57488: experiment 3 w/ wf=3, rp 0.01
 #   https://wandb.ai/alicialawjy/satbot/runs/1ep0kuqx?workspace=user-alicialawjy
-# 57875: experiment 3 
+# 57876: experiment 3 
 #   https://wandb.ai/alicialawjy/satbot/runs/3i2r3xiz
