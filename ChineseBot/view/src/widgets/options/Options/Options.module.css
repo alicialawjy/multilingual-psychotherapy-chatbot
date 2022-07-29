@@ -1,0 +1,22 @@
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-left: 12.5px;
+  margin-right: 12.5px;
+}
+
+.option {
+  border-radius: 25px;
+  padding: 8px;
+  border: 1px solid #4A4A4A;
+  color: #4A4A4A;
+  font-family: arial;
+  font-size: 1.1rem;
+  margin: 4px 4px;
+  background: transparent;
+}
+
+/* .option::selection {
+  color: #173e3f;
+} */

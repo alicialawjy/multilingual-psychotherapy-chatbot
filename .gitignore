@@ -4,4 +4,11 @@ venv/
 outputs/
 saved_models/
 prism-master/
-LisaBot/
+ChineseBot/ChineseBot/
+ChineseBot/model/__pycache__/
+ChineseBot/model/emotion-classifier-distilled/
+ChineseBot/model/migrations/
+ChineseBot/model/SS/
+ChineseBot/view/node_modules/
+SS/
+

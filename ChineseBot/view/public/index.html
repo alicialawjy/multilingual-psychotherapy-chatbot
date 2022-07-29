@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <style>
+     iframe {
+      width: 100%;
+      height: 96.5%;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      position: relative;
+      background: #ffffff;
+      top: 0px;
+      left: 0px;
+    }
+    .box {
+      position: fixed;
+      margin: 0.54% 0px;
+      left: 54.5%;
+      align: right;
+      background-color:#ffffff;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #B8BABA;
+      border-radius: 5px;
+      top: 0px;
+      header: None;
+      box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
+      height: 97.1vh;
+      width: 44.8%;
+      margin-right: 0.3%;
+    }
+    .circle {
+      position: fixed;
+      margin: 4.5% 0px;
+      /* 80px */
+      top: 59.55%;
+      background-color:#ffffff;
+      border-color: #B8BABA;
+      border-radius: 5px;
+      border-style: solid;
+      border-width: 1px;
+      header: None;
+      align: right;
+      box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
+      height: 30.5%;
+      width: 53.15%;
+    }
+    *[data-tooltip] {
+    position: relative;
+    }
+    *[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+
+    top: -5px;
+    right: -10px;
+    width: 100%;
+    pointer-events: none;
+    opacity: 0;
+    -webkit-transition: opacity .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out;
+    -ms-transition: opacity .15s ease-in-out;
+    -o-transition: opacity .15s ease-in-out;
+    transition: opacity .15s ease-in-out;
+
+    display: block;
+    font-size: 16px;
+    font-style: justify;
+    font-family: arial;
+    color: #4A4A4A;
+    line-height: 18px;
+    background: #ffffff;
+    padding: 8px 8px;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 2px 4px 5px rgba(91, 81, 81, 0.4);
+    }
+
+    *[data-tooltip]:hover::after {
+    opacity: 1;
+    }
+
+    #div1 {
+    display: inline-block;
+    }
+    #div2 {
+    display: inline-block;
+    }
+    #div3 {
+    display: inline-block;
+    }
+    #div4 {
+    display: inline-block;
+    }
+    #div5 {
+    display: inline-block;
+    }
+
+    </style>
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div>
+    <div id="root">
+    </div>
+
+
+     <div class=circle>
+      <div style="height: 16px; font-family: Arial; color: #4A4A4A; border-top-left-radius: 5px;
+      border-top-right-radius: 5px; background-color: #EBECED; padding: 8px; border-bottom: 1px solid #B8BABA;">Personas</div>
+
+       <div id="div1" data-tooltip="Kai is conditioned on text data collected from people regardless of their age and gender." style="padding-left: 7%; padding-right: 1%;padding-top: 5%; width:16%;">
+        <img src="kai.png" width=80% alt="Kai" style=""> </img>
+       </div>
+       <div id="div2" data-tooltip="Robert is conditioned on text data collected from males aged 40-69." style="padding-left: 1%; padding-right: 1%; padding-top: 5%;width:16%;">
+        <img src="robert.png" alt="Robert" width="80%" style=""> </img>
+       </div>
+       <div id="div3" data-tooltip="Gabrielle is conditioned on text data collected from females aged 40-69." style="padding-left: 1%x; padding-right: 1%; padding-top: 5%;width:16%;">
+        <img src="gabrielle.png" width="80%" style=""> </img>
+       </div>
+       <div id="div4" data-tooltip="Arman is conditioned on text data collected from males aged 18-39." style="padding-left: 1%; padding-right: 1%; padding-top: 5%;width:16%; ">
+        <img src="arman.png" width="80%" style=""> </img>
+       </div>
+       <div id="div5" data-tooltip="Olivia is conditioned on text data collected from females aged 18-39." style="padding-left: 1%; padding-right: 1%; padding-top: 5%;width:16%; ">
+        <img src="olivia.png" width="80%" style=""> </img>
+       </div>
+       </div>
+
+
+
+  <div class=box>
+
+     <div style="height: 16px; font-family: Arial; color: #4A4A4A; border-top-left-radius: 5px;
+     border-top-right-radius: 5px; background-color: #EBECED; padding: 8px; border-bottom: 1px solid #B8BABA;">Protocol viewer</div>
+
+     <iframe id="iframe" allowtransparency="true" style="background: #ffffff; position: sticky"
+     src="SATprotocols.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitW"
+     frameborder="0" position="left"
+     >
+     </iframe>
+
+   </div>
+
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <!-- <div class="embed-responsive embed-responsive-4by3"> -->
+
+    <!-- <iframe id="iframe" allowtransparency="true" style="background: #ffffff"
+    src="https://arxiv.org/pdf/1510.02377.pdf#toolbar=0&navpanes=0"
+    width="46%" height="page-height" frameborder="0" align="right"
+    >
+    </iframe>
+  </div>-->
+
+    <!-- <div height="100vh" width='49%' align="right"> -->
+
+
+  <!-- </div> -->
+
+  </body>
+</html>
