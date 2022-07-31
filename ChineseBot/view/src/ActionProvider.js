@@ -208,7 +208,8 @@ class ActionProvider {
       currentOptionToShow: optionsToShow,
     }));
 
-    // Responses are either strings or list of strings
+    // Display chatbot message
+    // (i) Only a single sentence
     if (typeof dataReceived.chatbot_response === "string") {
       const messages = this.createChatBotMessage(dataReceived.chatbot_response, {
         withAvatar: true,
@@ -216,7 +217,7 @@ class ActionProvider {
       });
       this.addMessageToBotState(messages);
     } 
-    
+    // (ii) Multiple sentence bubbles 
     else {
       for (let i = 0; i < dataReceived.chatbot_response.length; i++) {
         let widget = null;

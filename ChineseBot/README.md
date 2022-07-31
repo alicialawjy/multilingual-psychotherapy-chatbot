@@ -33,7 +33,7 @@ $ python3 -m flask db upgrade
 
 $ nano .env   ---->  add DATABASE_URL="sqlite:////YOUR LOCAL PATH TO THE app.db FILE" to the .env file, save and exit
 
-$ flask run
+$ python3 -m flask run
 
 
 #### To launch the front end, open another terminal tab and do:

@@ -124,17 +124,13 @@ def create_app():
             db.session.commit()
 
             # Clear everything
-            decision_maker.clear_names(user.id)
             decision_maker.initialise_remaining_choices(user.id)
-            # decision_maker.initialise_prev_questions(user.id)
             decision_maker.clear_suggestions(user.id)
             decision_maker.clear_choices(user.id)
             decision_maker.clear_language(user.id)
             decision_maker.clear_datasets(user.id)
             decision_maker.user_choices[user.id]["current_session_id"] = new_session.id
-
-            # Initialise for a new run
-            decision_maker.clear_emotion_scores(user.id)
+            decision_maker.clear_emotion_predictions(user.id)
             decision_maker.create_new_run(user.id, db.session, new_session)
 
             # Update language preferences
@@ -142,9 +138,8 @@ def create_app():
 
             # Start: Ask them how they're feeling
             opening_decision = decision_maker.QUESTIONS["ask_feeling"]                              # dict of format: {model_prompt: ... , choices: ... , protocols: ...}
-            model_prompt = opening_decision["model_prompt"](user.id)                       # The prompt
+            model_prompt = opening_decision["model_prompt"](user.id)                                # The prompt
             choices = opening_decision["choices"]                                                   # The response method (open text in this case)
-            
             decision_maker.user_choices[user.id]["choices_made"]["current_choice"] = "ask_feeling"  # As this is the first decision saved, initialise the current_choice
 
             # Send info to frontend (ActionParser.js)

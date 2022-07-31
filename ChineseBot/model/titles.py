@@ -1,0 +1,48 @@
+titles = {
+    "English(EN)": [
+        "0: None",
+        "1: Connecting with the Child",
+        "2: Laughing at our Two Childhood Pictures",
+        "3: Falling in Love with the Child",
+        "4: Vow to Adopt the Child as Your Own Child",
+        "5: Maintaining a Loving Relationship with the Child",
+        "6: An exercise to Process the Painful Childhood Events",
+        "7: Protocols for Creating Zest for Life",
+        "8: Loosening Facial and Body Muscles",
+        "9: Protocols for Attachment and Love of Nature",
+        "10: Laughing at, and with One's Self",
+        "11: Processing Current Negative Emotions",
+        "12: Continuous Laughter",
+        "13: Changing Our Perspective for Getting Over Negative Emotions",  # noqa
+        "14: Protocols for Socializing the Child",
+        "15: Recognising and Controlling Narcissism and the Internal Persecutor",  # noqa
+        "16: Creating an Optimal Inner Model",
+        "17: Solving Personal Crises",
+        "18: Laughing at the Harmless Contradiction of Deep-Rooted Beliefs/Laughing at Trauma",  # noqa
+        "19: Changing Ideological Frameworks for Creativity",
+        "20: Affirmations",
+    ],
+    "中文(ZH)":[
+        "0: None",
+        "1: 与童年般的自己建立关系",
+        "2: 对两张自己童年的照片笑",
+        "3: 对童年的自我示爱",
+        "4: 许诺关怀童年的自己",
+        "5: 与童年的自己保持爱护的关系",
+        "6: 处理痛苦的童年回忆",
+        "7: 对生活产生热情",
+        "8: 放松脸部及身体肌肉",
+        "9: 对大自然与环境产生欣赏",
+        "10: 欣赏自己的成就，无论大小",
+        "11:通过自我安慰而面对负面情绪",
+        "12: 以笑减压",
+        "13: 通过更换个人观点而处理负面情绪",  
+        "14: 认识童年自我的不良行为",
+        "15: 认识并控制过度自念或自责行为",  
+        "16: 优化自我内心状态",
+        "17: 解决个人危机",
+        "18: 认出无害矛盾性并从其去了",
+        "19: 通过体验不同细想挂架而提高想象力",
+        "20: 利用名言实施自我鼓励",
+    ]
+}
