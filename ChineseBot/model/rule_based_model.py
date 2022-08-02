@@ -4,7 +4,6 @@ from tkinter import E
 import nltk
 from regex import P
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
-from model.classifiers import get_emotion
 import pandas as pd
 import numpy as np
 import random
@@ -13,7 +12,7 @@ import re
 import datetime
 import time
 from titles import titles
-from utils import get_sentence, split_sentence
+from utils import get_sentence, split_sentence, get_emotion
 
 
 class ModelDecisionMaker:
@@ -115,7 +114,7 @@ class ModelDecisionMaker:
                 }
             },
             
-            ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY)
+            ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY) #############
             "after_classification_negative": {
                 "model_prompt": lambda user_id: self.get_model_prompt(
                     user_id, 
@@ -717,7 +716,7 @@ class ModelDecisionMaker:
                         "No (end session)": "ending_prompt",
                     }, 
                     "中文(ZH)":{
-                        "是 (其它协议)": lambda user_id: self.determine_next_prompt_new_protocol(user_id),
+                        "是（其它协议）": lambda user_id: self.determine_next_prompt_new_protocol(user_id),
                         "是（从头开始）": "restart_prompt",
                         "否（结束对话）": "ending_prompt",
                     }
@@ -799,7 +798,7 @@ class ModelDecisionMaker:
         - language [str]: either "中文(ZH)" or "English(EN)"
         '''
         self.language[user_id] = language
-        self.datasets[user_id] = pd.read_csv(f'{language}.csv') 
+        self.datasets[user_id] = pd.read_csv(f'utterances/{language}.csv') 
 
         self.PROTOCOL_TITLES[user_id] = titles[language]
 
@@ -927,11 +926,12 @@ class ModelDecisionMaker:
     def get_after_classification(self, user_id, emotion):
         '''
         Triggered when emotions are predicted wrongly by the model and users are prompted to select the correct emotion they're feeling.
-        Updates the user_emotion and guess_emotion_predictions 
+        (i) Updates the user_emotion and guess_emotion_predictions 
+        (ii) Returns the next prompt heading
         - user_id [int]
         - emotion [str]: must be one of the following ['Sad','Angry','Anxious/Scared','Happy/Content'] in EN only 
 
-        Returns: "after_classification_negative" or "after_classification_positive" 
+        Returns [str]: "after_classification_negative" or "after_classification_positive" 
         '''
         self.guess_emotion_predictions[user_id] = emotion
         self.user_emotions[user_id] = emotion
@@ -1088,7 +1088,7 @@ class ModelDecisionMaker:
 
         current_choice = self.user_choices[user_id]["choices_made"]["current_choice"]   # the current prompt
         print("curr_choice", current_choice)
-        # the choices available for the current prompt
+        # current_choice_for_question: the choices available for the current prompt
         try:
             current_choice_for_question = self.QUESTIONS[current_choice]["choices"][self.language[user_id]]  # if buttons, will have language key    
         except KeyError:
@@ -1098,7 +1098,7 @@ class ModelDecisionMaker:
             print(f'{current_choice} is a function')
             current_choice_for_question = self.QUESTIONS[current_choice]["choices"](user_id)
 
-        # the protocols available for the current prompt
+        # current_protocols: the protocols available for the current prompt
         try:
             current_protocols = self.QUESTIONS[current_choice]["protocols"][self.language[user_id]]     
         except KeyError:
@@ -1108,6 +1108,7 @@ class ModelDecisionMaker:
             print(f'{current_choice} is a function')
             current_protocols = self.QUESTIONS[current_choice]["protocols"](user_id)
 
+        # Get the next_choice (i.e next prompt_heading) and protocols_chosen
         # If it's a button selection
         if input_type != "open_text":
             if current_choice not in ["suggestions", "event_is_recent", "more_questions", "after_classification_positive", "user_found_useful", "check_emotion", "new_protocol_better", "new_protocol_worse", "project_emotion", "after_classification_negative"]:
@@ -1123,20 +1124,29 @@ class ModelDecisionMaker:
                 next_choice = current_choice_for_question[protocol_choice]
                 protocols_chosen = current_protocols[protocol_choice]
 
-            elif current_choice == "check_emotion":  
-                if user_choice not in ["Sad", "Angry", "Anxious/Scared", "Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"]:
-                    raise Exception(f'user_choice should only contain ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"] but received {user_choice} instead.')
+            # elif current_choice == "check_emotion":  
+            #     if user_choice not in ["Sad", "Angry", "Anxious/Scared", "Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"]:
+            #         raise Exception(f'user_choice should only contain ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"] but received {user_choice} instead.')
 
-                next_choice = current_choice_for_question[user_choice]
-                protocols_chosen = current_protocols[user_choice]
-
+            #     next_choice = current_choice_for_question[user_choice]
+            #     protocols_chosen = current_protocols[user_choice]
+            
             else:
                 next_choice = current_choice_for_question[user_choice]
                 protocols_chosen = current_protocols[user_choice]
 
+        # if open text
         else:
             next_choice = current_choice_for_question["open_text"]  # determine_next_prompt_opening() 
             protocols_chosen = current_protocols["open_text"]       # []
+        
+        # for guess_emotion, next_choice is a dict and needs to be referenced
+        if current_choice == "guess_emotion" and user_choice.lower() in ["yes","对，这是正确的"]:
+            if self.guess_emotion_predictions[user_id] in ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"]:
+                next_choice = next_choice[self.guess_emotion_predictions[user_id]]
+
+            else:
+                raise Exception(f'self.guess_emotion_predictions[user_id] should only contain ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"] but contains {self.guess_emotion_predictions[user_id]}.')
 
         # get the next_choice in string form, if it's a function
         if callable(next_choice):
@@ -1144,26 +1154,20 @@ class ModelDecisionMaker:
 
         print("next_choice", next_choice)
 
-        if current_choice == "guess_emotion" and user_choice.lower() in ["yes","对，这是正确的"]:
-            # for guess_emotion, next_choice is a dict
-            if self.guess_emotion_predictions[user_id] in ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"]:
-                next_choice = next_choice[self.guess_emotion_predictions[user_id]]
-
-            else:
-                raise Exception(f'self.guess_emotion_predictions[user_id] should only contain ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"] but contains {self.guess_emotion_predictions[user_id]}.')
-
-        # not used i think 
+        # get the protocols_chosen in string form, if it's a function 
         if callable(protocols_chosen):
             protocols_chosen = protocols_chosen(user_id)
 
-        # get the next model prompt ([str] or <function>)\
-        next_prompt = self.QUESTIONS[next_choice]["model_prompt"]           # 
+        # Get the next prompt ([str] or <function>)
+        next_prompt = self.QUESTIONS[next_choice]["model_prompt"]           
         if callable(next_prompt):
             next_prompt = next_prompt(user_id)   # if function, get the string prompt
 
+        # Update protocol suggestions
         if (len(protocols_chosen) > 0 and current_choice != "suggestions"):
             self.update_suggestions(user_id, protocols_chosen)
 
+        # Get the next prompt's choices
         if next_choice == "suggestions":
             next_choices = self.get_suggestions(user_id)
 
