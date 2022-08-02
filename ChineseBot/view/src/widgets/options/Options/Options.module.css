@@ -2,19 +2,20 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  margin-left: 12.5px;
+  margin-left: 55px;
   margin-right: 12.5px;
+  margin-bottom: 15px;
 }
 
 .option {
   border-radius: 25px;
-  padding: 8px;
-  border: 1px solid #4A4A4A;
-  color: #4A4A4A;
+  padding: 6px 12px 6px 12px;
+  border: 1px solid #cdd4aa;
+  color: #fff;
   font-family: arial;
-  font-size: 1.1rem;
-  margin: 4px 4px;
-  background: transparent;
+  font-size: 0.8rem;
+  margin: 4px;
+  background: #D9DDC2;
 }
 
 /* .option::selection {
