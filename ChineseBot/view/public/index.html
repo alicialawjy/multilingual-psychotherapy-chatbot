@@ -19,6 +19,7 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="stylesheet" href="%PUBLIC_URL%/styles.css" >
+    <script src="%PUBLIC_URL%/protocols.js"></script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -48,76 +49,70 @@
     
     <div class="web_content">
       <div id="root">
-    </div>
+      </div>
 
-    <div class="menu menu_ZH">
-      <div class="title">CHINESE PROTOCOLS</div>
-      <ul class="nav">
-        <li><a href="#">1: 与童年般的自己建立关系</a></li>
-        <li><a href="#">2: 对两张自己童年的照片笑</a></li>
-        <li><a href="#">3: 对童年的自我示爱</a></li>
-        <li><a href="#">4: 许诺关怀童年的自己</a></li>
-        <li><a href="#">5: 与童年的自己保持爱护的关系</a></li>
-        <li><a href="#">6: 处理痛苦的童年回忆</a></li>
-        <li><a href="#">7: 对生活产生热情</a></li>
-        <li><a href="#">8: 放松脸部及身体肌肉</a></li>
-        <li><a href="#">9: 对大自然与环境产生欣赏</a></li>
-        <li><a href="#">10: 欣赏自己的成就，无论大小</a></li>
-        <li><a href="#">11: 通过自我安慰而面对负面情绪</a></li>
-        <li><a href="#">12: 以笑减压</a></li>
-        <li><a href="#">13: 通过更换个人观点而处理负面情绪</a></li>
-        <li><a href="#">14: 认识童年自我的不良行为</a></li>
-        <li><a href="#">15: 认识并控制过度自念或自责行为</a></li>
-        <li><a href="#">16: 优化自我内心状态</a></li>
-        <li><a href="#">17: 解决个人危机</a></li>
-        <li><a href="#">18: 认出无害矛盾性并从其去了</a></li>
-        <li><a href="#">19: 通过体验不同细想挂架而提高想象力</a></li>
-        <li><a href="#">20: 利用名言实施自我鼓励</a></li>
-      </ul>
-  </div>
-  
-  <div class="menu menu_EN">
-    <div class="title">ENGLISH PROTOCOLS</div>
-    <ul class="nav">
-      <li><a href="#">1: Connecting with the Child</a></li>
-      <li><a href="#">2: Laughing at our Two Childhood Pictures </a></li>
-      <li><a href="#">3: Falling in Love with the Child</a></li>
-      <li><a href="#">4: Vow to Adopt the Child as Your Own Child</a></li>
-      <li><a href="#">5: Maintaining a Loving Relationship with the Child</a></li>
-      <li><a href="#">6: An exercise to Process the Painful Childhood Events </a></li>
-      <li><a href="#">7: Protocols for Creating Zest for Life</a></li>
-      <li><a href="#">8: Loosening Facial and Body Muscles</a></li>
-      <li><a href="#">9: Protocols for Attachment and Love of Nature</a></li>
-      <li><a href="#">10: Laughing at, and with One's Self</a></li>
-      <li><a href="#">11: Processing Current Negative Emotions</a></li>
-      <li><a href="#">12: Continuous Laughter</a></li>
-      <li><a href="#">13: Changing Our Perspective for Getting Over Negative Emotions</a></li>
-      <li><a href="#">14: Protocols for Socializing the Child</a></li>
-      <li><a href="#">15: Recognising and Controlling Narcissism and the Internal Persecutor </a></li>
-      <li><a href="#">16: Creating an Optimal Inner Model</a></li>
-      <li><a href="#">17: Solving Personal Crises</a></li>
-      <li><a href="#">18: Laughing at the Harmless Contradiction of Deep-Rooted Beliefs/Laughing at Trauma</a></li>
-      <li><a href="#">19: Changing Ideological Frameworks for Creativity</a></li>
-      <li><a href="#">20: Affirmations</a></li>
-    </ul>
-  </div>
+      <div class="menu menu_ZH">
+        <div class="title">CHINESE PROTOCOLS | 中文版 </div>
+        <ul class="nav">
+          <li><a id="1_ZH">1: 与童年般的自己建立关系</a></li>
+          <li><a id="2_ZH">2: 对两张自己童年的照片笑</a></li>
+          <li><a id="3_ZH">3: 对童年的自我示爱</a></li>
+          <li><a id="4_ZH">4: 许诺关怀童年的自己</a></li>
+          <li><a id="5_ZH">5: 与童年的自己保持爱护的关系</a></li>
+          <li><a id="6_ZH">6: 处理痛苦的童年回忆</a></li>
+          <li><a id="7_ZH">7: 对生活产生热情</a></li>
+          <li><a id="8_ZH">8: 放松脸部及身体肌肉</a></li>
+          <li><a id="9_ZH">9: 对大自然与环境产生欣赏</a></li>
+          <li><a id="10_ZH">10: 欣赏自己的成就，无论大小</a></li>
+          <li><a id="11_ZH">11: 通过自我安慰而面对负面情绪</a></li>
+          <li><a id="12_ZH">12: 以笑减压</a></li>
+          <li><a id="13_ZH">13: 通过更换个人观点而处理负面情绪</a></li>
+          <li><a id="14_ZH">14: 认识童年自我的不良行为</a></li>
+          <li><a id="15_ZH">15: 认识并控制过度自念或自责行为</a></li>
+          <li><a id="16_ZH">16: 优化自我内心状态</a></li>
+          <li><a id="17_ZH">17: 解决个人危机</a></li>
+          <li><a id="18_ZH">18: 认出无害矛盾性并从其去了</a></li>
+          <li><a id="19_ZH">19: 通过体验不同细想挂架而提高想象力</a></li>
+          <li><a id="20_ZH">20: 利用名言实施自我鼓励</a></li>
+        </ul>
+      </div>
+    
+      <div class="menu menu_EN">
+        <div class="title">
+          ENGLISH PROTOCOLS ｜ 英文版
+        </div>
+        <ul class="nav">
+          <li><a id="1_EN">1: Connecting with the Child</a></li>
+          <li><a id="2_EN">2: Laughing at our Two Childhood Pictures </a></li>
+          <li><a id="3_EN">3: Falling in Love with the Child</a></li>
+          <li><a id="4_EN">4: Vow to Adopt the Child as Your Own Child</a></li>
+          <li><a id="5_EN">5: Maintaining a Loving Relationship with the Child</a></li>
+          <li><a id="6_EN">6: An exercise to Process the Painful Childhood Events </a></li>
+          <li><a id="7_EN">7: Protocols for Creating Zest for Life</a></li>
+          <li><a id="8_EN">8: Loosening Facial and Body Muscles</a></li>
+          <li><a id="9_EN">9: Protocols for Attachment and Love of Nature</a></li>
+          <li><a id="10_EN">10: Laughing at, and with One's Self</a></li>
+          <li><a id="11_EN">11: Processing Current Negative Emotions</a></li>
+          <li><a id="12_EN">12: Continuous Laughter</a></li>
+          <li><a id="13_EN">13: Changing Our Perspective for Getting Over Negative Emotions</a></li>
+          <li><a id="14_EN">14: Protocols for Socializing the Child</a></li>
+          <li><a id="15_EN">15: Recognising and Controlling Narcissism and the Internal Persecutor </a></li>
+          <li><a id="16_EN">16: Creating an Optimal Inner Model</a></li>
+          <li><a id="17_EN">17: Solving Personal Crises</a></li>
+          <li><a id="18_EN">18: Laughing at the Harmless Contradiction of Deep-Rooted Beliefs/Laughing at Trauma</a></li>
+          <li><a id="19_EN">19: Changing Ideological Frameworks for Creativity</a></li>
+          <li><a id="20_EN">20: Affirmations</a></li>
+        </ul>
+      </div>
 
-  <div class="viewer">
-    Hover over the menu to see the full list of protocols.<br> 
-    Click on the protocols for the description. 
-  </div>
-
-    <!-- <div id="s1">
-      <img src="%PUBLIC_URL%/SATprotocols_EN/Slide1.png">
-    </div> -->
-
-      <!-- <div class=box>
-
-        <!-- <iframe id="iframe" allowtransparency="true"
-        src="SATprotocols.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitW"
-        frameborder="0" position="left">
-        </iframe> -->
-
+      <div class="viewer">
+        <div class="protocol_title">Welcome to SATbot. 欢迎来到SATbot。</div>
+        
+        <div class="protocol_content">
+          If you would like to view our full list of protocols and their descriptions, please hover over the grey panes on the right and click on your protocol of choice. 
+          If you are new to SAT, feel free to speak to Kai, who will be able to advise you on the best protocols for today. <br><br>
+          如果您想参看每项SAT协议与它详细内容，请把鼠标悬停在右手边的导航窗格，然后选出您想查看的协议。要是您没尝试过SAT，欢迎您使用左边的聊天框跟凯谈一谈。凯可以根据您们的对话内容介绍一些合适的协议。
+        </div>
       </div>
     </div>
   </body>
@@ -146,3 +141,10 @@
 
 
   <!-- </div> -->
+
+  <!-- <div class=box>
+
+        <!-- <iframe id="iframe" allowtransparency="true"
+        src="SATprotocols.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitW"
+        frameborder="0" position="left">
+        </iframe> -->
