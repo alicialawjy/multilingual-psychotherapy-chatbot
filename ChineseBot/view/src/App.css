@@ -15,15 +15,14 @@
 }
 
 .chatbot-header{
-  height: 42px;
+  height: 75px;
   font-family: 'Arial';
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   font-size: 24px;
-  background-color: #E8D9C0; 
+  background-color: #D7B69F; 
   color: #fff; 
-  padding: 25px 10px 10px 10px;
-
+  padding: 15px 10px 10px 10px;
   justify-content: center;
   vertical-align: middle;
   display:flex;
@@ -42,7 +41,7 @@ border-radius: 50%;
 font-size: 1.2rem;
 margin-right: 10px;
 margin-left: 10px;
-background-color: #FCD7BF;
+background-color: #fcc6b2;
 display: flex;
 justify-content: center;
 align-items: center;
@@ -64,7 +63,7 @@ padding:12px;
 margin-left: 0 !important;
 margin-right: 100px;
 width: max-content !important;
-background-color: #FCD7BF;
+background-color: #fcc6b2;
 color: #fff;
 padding: 10px 20px 10px 15px;
 border-radius: 15px;
@@ -80,7 +79,7 @@ width: 0;
 height: 0;
 border-top: 8px solid transparent;
 border-bottom: 8px solid transparent;
-border-right: 8px solid #FCD7BF; 
+border-right: 8px solid #fcc6b2; 
 position: absolute;
 left: -7px;
 top: 13px;
@@ -129,7 +128,7 @@ animation-delay: 0.4s;
   border-radius: 50%;
   margin-left: 20px;
   margin-right: 10px;
-  background-color: #ccd5ae;
+  background-color: #e7d4b3;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -142,7 +141,7 @@ animation-delay: 0.4s;
 }
 
 .react-chatbot-kit-user-chat-message {
-  background-color: #ccd5ae; 
+  background-color: #e7d4b3; 
   color: rgb(255, 255, 255);
   padding: 10px 15px 10px 20px;
   border-radius: 15px;
@@ -158,7 +157,7 @@ animation-delay: 0.4s;
   height: 0;
   border-top: 8px solid transparent;
   border-bottom: 8px solid transparent;
-  border-left: 8px solid #ccd5ae;
+  border-left: 8px solid #e7d4b3;
   position: absolute;
   right: -7px;
   top: 13px;
@@ -173,7 +172,7 @@ animation-delay: 0.4s;
   height: 100%;
   border-radius: 30px;
   margin-bottom: 0px;
-  background-color: #E8D9C0;
+  background-color: #D7B69F;
 }
 
 .react-chatbot-kit-chat-header {
@@ -202,7 +201,7 @@ animation-delay: 0.4s;
   /* padding: 0 0px 6px 0px; */
   overflow: scroll;
   top: 50px;
-  min-height: 65vh; /*59vh;*/
+  min-height: 60vh; /*59vh;*/
   border-top-left-radius: 35px;
   border-top-right-radius: 35px;
   background-color: #FFF8F0;

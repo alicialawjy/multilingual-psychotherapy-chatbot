@@ -38,8 +38,8 @@ const config = {
   },
 
   customComponents: {
-    header: () => <div class = "chatbot-header">S A T b o t</div>,
-    botAvatar: () => <div class="react-chatbot-kit-chat-bot-avatar-container"><p class="react-chatbot-kit-chat-bot-avatar-letter">S</p></div>
+    header: () => <div class = "chatbot-header"><img src="kai.png" alt=""></img></div>,
+    botAvatar: () => <div class="react-chatbot-kit-chat-bot-avatar-container"><p class="react-chatbot-kit-chat-bot-avatar-letter">K</p></div>
   },
 
   widgets: [
