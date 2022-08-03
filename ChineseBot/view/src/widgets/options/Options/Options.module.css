@@ -10,12 +10,12 @@
 .option {
   border-radius: 25px;
   padding: 6px 12px 6px 12px;
-  border: 1px solid #e7d4b3;
+  border: 1px solid #f4d5bb;
   color: #fff;
   font-family: arial;
   font-size: 0.8rem;
   margin: 4px;
-  background: #e7d4b3;
+  background: #f4d5bb;
 }
 
 /* .option::selection {
