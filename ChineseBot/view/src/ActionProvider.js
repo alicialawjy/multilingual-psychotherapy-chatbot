@@ -231,8 +231,8 @@ class ActionProvider {
         });
         this.addMessageToBotState(message_to_add);
       }
-
     }
+    
   };
 
   handleButtonsEmotion = (userID, sessionID, userInput, userInputType) => {

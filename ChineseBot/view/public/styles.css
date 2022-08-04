@@ -4,6 +4,9 @@ body{
   position: fixed;
 }
 
+/*////////////////////////////////////////////////*/
+/*              C O N T A I N E R S               */
+/*////////////////////////////////////////////////*/
 #top{
   height: 20%;
 }
@@ -18,32 +21,9 @@ body{
   display: none;
 }
 
-/* iframe {
-  width: 100%;
-  height: 100%;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  background: #ffffff;
-  overflow-y: scroll; 
-  overflow-x:visible;
-  /* top: 0px;
-  left: 0px; */
-} */
-  
-
-.box {
-  border-style: solid;
-  border-width: 1px;
-  border-color: #B8BABA;
-  border-radius: 5px;
-  /* top: 0px; */
-  /* flex: 0 0 65%; */
-  box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
-  /* height: 100%; */
-  /* float: right; */
-  margin: 10px;
-}
-
+/*///////////////////////////////////////////////*/
+/*               T O P  N A V  B A R             */
+/*///////////////////////////////////////////////*/
 #top_1 {
   background-color: #fff;
   padding: 20px;
@@ -60,6 +40,10 @@ body{
   text-decoration: none;
   letter-spacing: 3px;
   
+}
+
+#top_1 a:hover{
+  color: #D7B69F;
 }
 
 .top_2 {
@@ -84,25 +68,13 @@ body{
 }
 
 .top_2 a:hover {
-  background-color: #ddd;
-  color: black;
+  background-color: #D7B69F;
 }
 
-/* .protocol_viewer{
-  height: 24px; 
-  font-family: Arial; 
-  color: #4A4A4A; 
-  border-top-left-radius: 5px; 
-  border-top-right-radius: 5px; 
-  background-color: #EBECED; 
-  padding: 8px; 
-  border-bottom: 1px solid #B8BABA;
-} */
-
-
-
- /*EXTRA STUFF*/
- .menu {
+/*////////////////////////////////////////////////*/
+ /* P R O T O C O L  N A V I G A T I O N  P A N E */
+ /*////////////////////////////////////////////////*/
+.menu {
   font-weight: 100;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   background: #D7B69F;
@@ -182,6 +154,9 @@ body{
   }
 }
 
+/*////////////////////////////////////////////////*/
+/*         P R O T O C O L  D I S P L A Y         */
+/*////////////////////////////////////////////////*/
 .protocol_title{
   text-align: left;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -198,11 +173,16 @@ body{
   font-weight: lighter;
   font-size: 16px;
   margin:auto;
-  line-height: 2em;
+  line-height: 1.5em;
 }
 
 #gestalt-vase{
   margin: auto;
   height: 250px;
   width: auto;
+}
+
+/* removes outline box in forms */
+*:focus {
+  outline: none;
 }

@@ -13,11 +13,12 @@
   border: 1px solid #f4d5bb;
   color: #fff;
   font-family: arial;
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin: 4px;
   background: #f4d5bb;
+  text-align: left;
 }
 
-/* .option::selection {
-  color: #173e3f;
-} */
+.option:hover {
+  background-color: #D7B69F;
+}

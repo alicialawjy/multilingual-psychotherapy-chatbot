@@ -768,9 +768,6 @@ class ModelDecisionMaker:
         db_session.commit()
         self.current_run_ids[user_id] = new_run.id
         return new_run
-    
-    # def clear_suggested_protocols(self):
-    #     self.protocols_to_suggest = []
 
     def clear_language(self, user_id):
         self.language[user_id] = ""
@@ -909,14 +906,19 @@ class ModelDecisionMaker:
         '''
         Get prompt for base utterance 17.
         '''
-        prompt = {
+        prompt_selected = {
             "English(EN)": "You have selected Protocol ",
             "中文(ZH)": "您选了协议"
         }
+        prompt_view = {
+            "English(EN)": "Your selected protocol is displayed on the right. ",
+            "中文(ZH)": "请观看右边所显示的协议内容。"
+        }
         column_name = "All emotions - Please try to go through this protocol now. When you finish, press 'continue'"
-        question = get_sentence(column_name=column_name, dataset=self.datasets[user_id], language=self.language[user_id])
+        question = prompt_selected[self.language[user_id]] + str(self.current_protocol_ids[user_id][0]) + ". " + \
+        prompt_view[self.language[user_id]] + get_sentence(column_name=column_name, dataset=self.datasets[user_id], language=self.language[user_id])
         
-        return [prompt[self.language[user_id]] + str(self.current_protocol_ids[user_id][0]) + ". ", split_sentence(question)]
+        return split_sentence(question)
 
     
     ################################################################################
@@ -1082,12 +1084,15 @@ class ModelDecisionMaker:
     def determine_next_choice(self, user_id, input_type, user_choice):
         '''
         Actions the follow-up prompt.
+        - user_id [int]
+        - input_type [str]: eg. "opent_text" (see "choices" in self.QUESTIONS)
+        - user_choice [str]: selection made by the user (either typed text/ name of button selected)
 
         Returns [dict]: {"model_prompt": next_prompt, "choices": next_choices}
         '''
-
-        current_choice = self.user_choices[user_id]["choices_made"]["current_choice"]   # the current prompt
+        current_choice = self.user_choices[user_id]["choices_made"]["current_choice"]                       # the current prompt
         print("curr_choice", current_choice)
+
         # current_choice_for_question: the choices available for the current prompt
         try:
             current_choice_for_question = self.QUESTIONS[current_choice]["choices"][self.language[user_id]]  # if buttons, will have language key    
@@ -1123,13 +1128,6 @@ class ModelDecisionMaker:
                 protocol_choice = self.PROTOCOL_TITLES[user_id][current_protocol]
                 next_choice = current_choice_for_question[protocol_choice]
                 protocols_chosen = current_protocols[protocol_choice]
-
-            # elif current_choice == "check_emotion":  
-            #     if user_choice not in ["Sad", "Angry", "Anxious/Scared", "Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"]:
-            #         raise Exception(f'user_choice should only contain ["Sad","Angry","Anxious/Scared","Happy/Content", "悲伤", "愤怒", "快乐", "焦虑"] but received {user_choice} instead.')
-
-            #     next_choice = current_choice_for_question[user_choice]
-            #     protocols_chosen = current_protocols[user_choice]
             
             else:
                 next_choice = current_choice_for_question[user_choice]

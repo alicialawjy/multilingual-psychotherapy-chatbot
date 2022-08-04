@@ -1,4 +1,4 @@
-var protocol_dict = {
+const protocol_dict = {
     "1_EN": {
         "title": "Connecting with the Child",
         "content": "Try to imagine the happy childhood photo/avatar and reflect on relevant positive affects, then imagine the unhappy photo and relevant negative affects. Repeat many times until this is easy to do. Try to imagine that the child, as you were, is near you (either in happy or unhappy state), and then imagine that you are embracing/cuddling the child. You can also imagine playing with the child. "
@@ -229,26 +229,27 @@ var protocol_dict = {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Default view
     
-    // Direct to appropriate protocol view based on protocol selected
+    // Listen for button clicks in the navigation pane on the right
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', (e) => {
             // Log the click
             console.log(e.target.id + ' clicked')  
 
             // Retrieve link id
-            let protocol_id = e.target.id;
-            
+            let key = e.target.id;
 
-            // Display content in viewer
-            let title = protocol_dict[protocol_id]["title"]
-            let content = protocol_dict[protocol_id]["content"]
-
-            document.querySelector('.protocol_title').innerHTML = title
-            document.querySelector('.protocol_content').innerHTML = content
+            show_protocol(key);
         });
     });
-    
 });
+
+function show_protocol (key) {
+    // Display content in viewer
+    let title = protocol_dict[key]["title"]
+    let content = protocol_dict[key]["content"]
+
+    document.querySelector('.protocol_title').innerHTML = title
+    document.querySelector('.protocol_content').innerHTML = content
+}
 
