@@ -1,16 +1,8 @@
-from lib2to3.pgen2.pgen import DFAState
-from locale import D_FMT
-from tkinter import E
-import nltk
-from regex import P
-from model.models import UserModelSession, Choice, UserModelRun, Protocol
+from model.models import Choice, UserModelRun, Protocol
 import pandas as pd
 import numpy as np
 import random
 from collections import deque
-import re
-import datetime
-import time
 from titles import titles
 from utils import get_sentence, split_sentence, get_emotion
 
