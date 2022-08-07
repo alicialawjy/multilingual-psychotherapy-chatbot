@@ -48,9 +48,9 @@ def create_app():
     from model import models  # noqa
     from model.models import User, UserModelSession  # noqa
 
-    # @app.route('/')
-    # def home():
-    #     return "ok"
+    @app.route('/')
+    def home():
+        return "ok"
 
     @app.route("/api/login", methods=["POST"])
     def login():

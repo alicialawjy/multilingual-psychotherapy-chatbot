@@ -2,7 +2,7 @@ import pandas as pd
 import random
 import re
 import torch
-from simpletransformers.classification import ClassificationModel
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 ##############################################################################
 ########           E M O T I O N  C L A S S I F I C A T I O N         ########
@@ -11,13 +11,11 @@ from simpletransformers.classification import ClassificationModel
 
 # load emotion classifier outside function to avoid loading model each time during fuinction call
 with torch.no_grad():
-  cuda_available = torch.cuda.is_available()
-  # Empathy Classifier
-  EMOTION_CLASSIFIER_NAME = 'emotion-classifier-distilled'
-  emotion_classifier = ClassificationModel(model_type="xlmroberta", 
-                                          model_name=EMOTION_CLASSIFIER_NAME, 
-                                          num_labels=4,
-                                          use_cuda=cuda_available)
+    # Empathy Classifier
+    EMOTION_CLASSIFIER_MODEL = 'emotion-classifier-distilled'
+    EMOTION_CLASSIFIER_TOKENIZER = 'xlm-roberta-base'
+    emotion_classifier = AutoModelForSequenceClassification.from_pretrained(EMOTION_CLASSIFIER_MODEL)
+    tokenizer = AutoTokenizer.from_pretrained(EMOTION_CLASSIFIER_TOKENIZER)
 
 def get_emotion(user_input, language):
     '''
@@ -29,11 +27,13 @@ def get_emotion(user_input, language):
     "English(EN)": {0:"Sad", 1:"Angry", 2:"Happy/Content", 3:"Anxious/Scared"}
     }
 
-    y_pred, _ = emotion_classifier.predict([user_input])
+    encoded_input = tokenizer(user_input, return_tensors='pt')
+    output = emotion_classifier(**encoded_input)
+    label = int(torch.argmax(output.logits))
 
     labels_map_in_lang = labels[language]
 
-    return labels_map_in_lang[y_pred[0]]
+    return labels_map_in_lang[label]
   
 ##############################################################################
 ########             S E N T E N C E  P R O C E S S I N G             ########
