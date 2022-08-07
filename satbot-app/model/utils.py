@@ -19,7 +19,11 @@ with torch.no_grad():
 
 def get_emotion(user_input, language):
     '''
-    Classifies and returns the underlying emotion of a text string
+    Classifies and returns the underlying emotion of a text string.
+    - user_input [str]
+    - language [str]: "中文(ZH)" or "English(EN)"
+
+    Returns: emotion in corr language [str]
     '''
     # emotion classification labels corr to the language
     labels = {
@@ -69,7 +73,7 @@ def get_sentence(dataset, column_name, language):
 def split_sentence(sentence):
     '''
     To make conversations easier to understand, we split each sentence into separate messages using this function.
-    - sentence [string]: bot message to be shown to user.
+    - sentence [str]: bot message to be shown to user.
 
     Returns:
     - the sentences to be outputed in separate segments [tuple]

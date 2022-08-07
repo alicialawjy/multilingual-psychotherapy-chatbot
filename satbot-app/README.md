@@ -42,4 +42,4 @@ $ cd ./SATbot/view
 
 $ npm i
 
-$ npm run start
+$ 3
