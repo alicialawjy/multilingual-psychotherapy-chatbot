@@ -8,12 +8,8 @@ Self-Attachment Therapy (SAT) is a form of psychotheraphy treatment. As part of 
 1. <i>data</i><br>
 Contains the dataset used to train the machine learning models used by the chatbot.
 
-2. <i>nlp-models</i><br>
+2. <i>nlp-scripts</i><br>
 Contains python scripts used to train NLP classifier models (XLM-Roberta) and generation models (Chinese GPT-2).
 
 3. <i>satbot-app</i><br>
 Contains the implementation files of the chatbot web app. 
-
-4. <i>trial-evaluation</i><br>
-Contains the human trial results and their analysis.
-
