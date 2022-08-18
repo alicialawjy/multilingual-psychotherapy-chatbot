@@ -1,9 +1,5 @@
 .app-chatbot-container {
-  margin: 20px 10px 10px 50px;
-  /* display: flex;
-  justify-content: center; */
-  /* position:absolute; */
-  /* z-index: 9999; */
+  margin: 50px 10px 10px 50px;
   box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
@@ -163,7 +159,6 @@ animation-delay: 0.4s;
   top: 13px;
 }
 
-
 .react-chatbot-kit-chat-container {
   position: relative;
 }
@@ -200,8 +195,7 @@ animation-delay: 0.4s;
 .react-chatbot-kit-chat-message-container {
   /* padding: 0 0px 6px 0px; */
   overflow: scroll;
-  top: 50px;
-  min-height: 60vh; /*59vh;*/
+  min-height: 55vh; /*59vh;*/
   border-top-left-radius: 35px;
   border-top-right-radius: 35px;
   background-color: #FFF8F0;

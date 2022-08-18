@@ -31,7 +31,7 @@ class ModelDecisionMaker:
             "ask_feeling": {
                 "model_prompt": lambda user_id: self.ask_feeling(user_id), #db_session, curr_session, app
                 "choices": {
-                    "open_text": lambda user_id: self.determine_next_prompt_opening(user_id)
+                    "open_text": lambda user_id: self.run_classification(user_id)
                 },
                 "protocols": {"open_text": []},
             },
@@ -673,12 +673,12 @@ class ModelDecisionMaker:
                 "choices": {
                     "English(EN)": {
                         "Yes (show follow-up suggestions)": lambda user_id: self.determine_next_prompt_new_protocol(user_id),
-                        "Yes (restart questions)": "restart_prompt",
+                        "Yes (restart questions)": "ask_feeling", 
                         "No (end session)": "ending_prompt",
                     }, 
                     "中文(ZH)":{
                         "是（其它协议）":lambda user_id: self.determine_next_prompt_new_protocol(user_id),
-                        "是（从头开始）":"restart_prompt",
+                        "是（从头开始）":"ask_feeling", 
                         "否（结束对话）":"ending_prompt",
                     }
                 },
@@ -704,12 +704,12 @@ class ModelDecisionMaker:
                 "choices": {
                     "English(EN)": {
                         "Yes (show follow-up suggestions)": lambda user_id: self.determine_next_prompt_new_protocol(user_id),
-                        "Yes (restart questions)": "restart_prompt",
+                        "Yes (restart questions)": "ask_feeling", 
                         "No (end session)": "ending_prompt",
                     }, 
                     "中文(ZH)":{
                         "是（其它协议）": lambda user_id: self.determine_next_prompt_new_protocol(user_id),
-                        "是（从头开始）": "restart_prompt",
+                        "是（从头开始）": "ask_feeling", 
                         "否（结束对话）": "ending_prompt",
                     }
                 },
@@ -736,15 +736,6 @@ class ModelDecisionMaker:
                 "protocols": {
                     "any": []
                 }
-            },
-
-            "restart_prompt": {
-                "model_prompt": lambda user_id: self.get_restart_prompt(user_id),
-
-                "choices": {
-                    "open_text": lambda user_id: self.determine_next_prompt_opening(user_id)
-                },
-                "protocols": {"open_text": []},
             },
         }
 
@@ -808,22 +799,11 @@ class ModelDecisionMaker:
         Opening prompt: ask users how they feel.
         '''
         opening_prompt = {
-            'English(EN)': "Hello, my name is Kai and I will be here to assist you today! How are you feeling today?",
-            "中文(ZH)": "你好，我叫凯。我是您今天的助手！请问您今天感觉如何?"
+            'English(EN)': "May I know how are you feeling today?",
+            "中文(ZH)": "请问您今天感觉如何?"
         }
         
         return opening_prompt[self.language[user_id]]
-
-    def get_restart_prompt(self, user_id):
-        '''
-        Restart prompt: ask users how they feel again.
-        '''
-        restart_prompt = {
-            'English(EN)': "Please tell me again, how are you feeling today?",
-            "中文(ZH)": "请您再告诉我您今天感觉如?"
-        }
-        
-        return restart_prompt[self.language[user_id]]
 
     def get_model_prompt_project_emotion(self, user_id):
         '''
@@ -866,7 +846,12 @@ class ModelDecisionMaker:
             'English(EN)': "Envy, jealousy, greed, hatred, mistrust, malevolence, or revengefulness?",
             "中文(ZH)":"嫉妒、贪婪、仇恨、不信任、恶意或报复感"
         }
-        column_name = self.user_emotions[user_id] + " - Have you strongly felt or expressed any of the following emotions towards someone:"
+        if self.user_emotions[user_id] in ['悲伤','愤怒','焦虑']:
+            zh2en = {'悲伤':'Sad', '愤怒':'Angry', '焦虑':"Anxious/Scared"}
+            column_name = zh2en[self.user_emotions[user_id]] + " - Have you strongly felt or expressed any of the following emotions towards someone:"
+        else:
+            column_name = self.user_emotions[user_id] + " - Have you strongly felt or expressed any of the following emotions towards someone:"
+
         question = get_sentence(column_name=column_name, dataset=self.datasets[user_id], language=self.language[user_id])
         
         return [split_sentence(question), other_emotions[self.language[user_id]]]
@@ -966,12 +951,12 @@ class ModelDecisionMaker:
         self.remaining_choices[user_id].remove(selected_choice)
         return selected_choice
 
-    def determine_next_prompt_opening(self, user_id):
+    def run_classification(self, user_id):
         '''
         Triggered when user replies about how they feel.
         Updates guess_emotion_predictions and user_emotions dict.
 
-        Returns: "guess_emotion"
+        Returns: "guess_emotion" (the next conversation)
         '''
         user_response = self.user_choices[user_id]["choices_made"]["ask_feeling"]
         emotion = get_emotion(user_response, self.language[user_id])
@@ -1083,27 +1068,22 @@ class ModelDecisionMaker:
         Returns [dict]: {"model_prompt": next_prompt, "choices": next_choices}
         '''
         current_choice = self.user_choices[user_id]["choices_made"]["current_choice"]                       # the current prompt
-        print("curr_choice", current_choice)
 
         # current_choice_for_question: the choices available for the current prompt
         try:
-            current_choice_for_question = self.QUESTIONS[current_choice]["choices"][self.language[user_id]]  # if buttons, will have language key    
+            current_choice_for_question = self.QUESTIONS[current_choice]["choices"][self.language[user_id]] # has a language key (all button options)
         except KeyError:
-            print(f'{current_choice} does not have a language key in choices')
-            current_choice_for_question = self.QUESTIONS[current_choice]["choices"]                          # if open_text or protocol buttons, no lanugage key
+            current_choice_for_question = self.QUESTIONS[current_choice]["choices"]                         # no lanugage key (if open_text or protocol buttons)
         except TypeError:
-            print(f'{current_choice} is a function')
-            current_choice_for_question = self.QUESTIONS[current_choice]["choices"](user_id)
+            current_choice_for_question = self.QUESTIONS[current_choice]["choices"](user_id)                # is a function
 
         # current_protocols: the protocols available for the current prompt
         try:
-            current_protocols = self.QUESTIONS[current_choice]["protocols"][self.language[user_id]]     
+            current_protocols = self.QUESTIONS[current_choice]["protocols"][self.language[user_id]]         # has a language key
         except KeyError:
-            print(f'{current_choice} does not have a language key in protocols')
-            current_protocols = self.QUESTIONS[current_choice]["protocols"]
+            current_protocols = self.QUESTIONS[current_choice]["protocols"]                                 # does not have a language key
         except TypeError:
-            print(f'{current_choice} is a function')
-            current_protocols = self.QUESTIONS[current_choice]["protocols"](user_id)
+            current_protocols = self.QUESTIONS[current_choice]["protocols"](user_id)                        # is a function
 
         # Get the next_choice (i.e next prompt_heading) and protocols_chosen
         # If it's a button selection
@@ -1141,8 +1121,6 @@ class ModelDecisionMaker:
         # get the next_choice in string form, if it's a function
         if callable(next_choice):
             next_choice = next_choice(user_id) 
-
-        print("next_choice", next_choice)
 
         # get the protocols_chosen in string form, if it's a function 
         if callable(protocols_chosen):

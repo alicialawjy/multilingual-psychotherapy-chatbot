@@ -134,20 +134,23 @@ class ActionProvider {
     // valid match:
     else {
       let m = {
-        "English(EN)": "Login successful! ",
-        "中文(ZH)": "登录成功！",
+        "English(EN)": ["Login successful! ", "Hello, my name is Kai and I will be here to assist you today!"],
+        "中文(ZH)": ["登录成功！","你好，我叫凯。我是您今天的助手!"],
+      }
+
+      for (let i = 0; i < m[language].length; i++) {
+        const message_to_add = this.createChatBotMessage(
+          m[language][i], 
+          {withAvatar: true,}
+        );
+        this.addMessageToBotState(message_to_add);
       }
 
       let model_prompt = dataReceived.model_prompt
       this.setState((state) => ({ ...state, userState: dataReceived.userID, inputType: dataReceived.choices, sessionID: dataReceived.sessionID }));
-      let message = this.createChatBotMessage(
-        m[language], 
-        {withAvatar: true}
-      );
 
       // Opening prompt -> open text
-      this.addMessageToBotState(message);
-      message = this.createChatBotMessage(
+      let message = this.createChatBotMessage(
         model_prompt, 
         {withAvatar: true}
       );

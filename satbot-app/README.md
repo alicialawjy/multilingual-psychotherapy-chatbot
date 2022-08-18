@@ -3,7 +3,7 @@ This directory contains both the frontend and backend of the SATbot web app, cur
 
 ### Notes: 
 
-1) Before running the code in this folder, you will require a emotion classifier. <br>
+1) Before running the code in this folder, you will require an emotion classifier. <br>
 (i) Please save your classifier in the `model` directory (eg. satbot-app/model/emotion-classifier/) <br>
 (ii) Change `EMOTION_CLASSIFIER_MODEL` and `EMOTION_CLASSIFIER_TOKENIZER` in utils.py to the name of your classifier folder (eg: 'emotion-classifier')
 
