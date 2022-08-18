@@ -40,7 +40,7 @@ def predictions(model, input_list, filename):
 
 if __name__ == "__main__":
   # Test data
-  df_test = pd.read_csv('data/rewritings/empathetic_rewritings.csv',index_col=0)
+  df_test = pd.read_csv('data/classification/empathy-classifier/ZH_labelled/EP_ZH_test.csv',index_col=0)
 
   # Use GPU
   cuda_available = torch.cuda.is_available()
@@ -52,7 +52,4 @@ if __name__ == "__main__":
                                   num_labels = 2,                 # 2 for empathy, 4 for emotion classifier 
                                   use_cuda = cuda_available)
 
-  predictions(model_best, df_test['rewriting'].tolist(), filename='rewritings_empathy_labelled.csv')
-
-
-# 57886: evaluate our rewritings (89.68% empathetic responses)
+  evaluate(model_best, df_test)
