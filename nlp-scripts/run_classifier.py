@@ -9,7 +9,7 @@ For evaluating the classification models, see classify.py
 import torch
 import pandas as pd
 from simpletransformers.classification import ClassificationModel, ClassificationArgs
-from classify import evaluate
+from run_classifier import evaluate
 
 def train_model(epoch, 
                 learning_rate,
@@ -52,7 +52,7 @@ def train_model(epoch,
   model = ClassificationModel(model_type="xlmroberta",  
                             model_name=model_name,      
                             args = model_args,          
-                            num_labels=num_labels,               # 4 labels (sad, happy, fear, anger) for emotion classification
+                            num_labels=num_labels,      # 4 labels (sad, happy, fear, anger) for emotion classification
                             use_cuda=cuda_available)    # use GPU
 
   model.train_model(train_df = train_df,                # training dataset

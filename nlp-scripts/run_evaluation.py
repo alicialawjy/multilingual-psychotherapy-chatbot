@@ -40,16 +40,16 @@ def predictions(model, input_list, filename):
 
 if __name__ == "__main__":
   # Test data
-  df_test = pd.read_csv('data/classification/empathy-classifier/ZH_labelled/EP_ZH_test.csv',index_col=0)
+  df_test = pd.read_csv('data/generation/empathetic_rewritings.csv',index_col=0)
 
   # Use GPU
   cuda_available = torch.cuda.is_available()
 
   # Load the model
-  CLASSIFIER_NAME = "empathy_classifier/binary-empathy"           # give relative path of model directory where classifier is stored
+  CLASSIFIER_NAME = "semantic_classifier/4e05/best-model"           # give relative path of model directory where classifier is stored
   model_best = ClassificationModel(model_type = "xlmroberta", 
                                   model_name = CLASSIFIER_NAME, 
-                                  num_labels = 2,                 # 2 for empathy, 4 for emotion classifier 
+                                  num_labels = 20,                  # 2 for empathy, 4 for emotion, 20 for semantic classifier
                                   use_cuda = cuda_available)
 
-  evaluate(model_best, df_test)
+  predictions(model_best, df_test['rewriting'].tolist(), filename='rewritings_empathy_labelled.csv')
