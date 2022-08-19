@@ -15,12 +15,12 @@ def compute_ppl(input):
     '''
     encoding = tokenizer(input, 
                         return_tensors = 'pt',
-                        padding = True,
-                        truncation = True
+                        # padding = True,
+                        # truncation = True
                         )
 
     with torch.no_grad():
-        loss = model(input_ids=encoding, labels=encoding).loss
+        loss = model(input_ids=encoding.input_ids, labels=encoding.input_ids).loss
 
     return np.exp(loss.cpu().detach().numpy())
 
