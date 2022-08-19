@@ -17,7 +17,7 @@ def compute_ppl(input):
                         return_tensors = 'pt',
                         # padding = True,
                         # truncation = True
-                        )
+    ).to(device)
 
     with torch.no_grad():
         loss = model(input_ids=encoding.input_ids, labels=encoding.input_ids).loss
@@ -43,4 +43,4 @@ print('std dev = ', np.std(perplexity))
 print('mean = ', np.mean(perplexity))
 
 df['perplexity'] = perplexity
-df.to_csv('rewritings_ppl.csv')
+df.to_csv('rewritings_ppl2.csv')
