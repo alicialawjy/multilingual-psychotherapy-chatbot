@@ -4,7 +4,7 @@ The below code is the code for the double finetuned emotion classifier.
 - To train the empathy and semantic classifier, replace train_df, eval_df and num_labels in train_model()
 
 For Knowledge Distillation, please see run_distillation.py
-For evaluating the classification models, see classify.py
+For evaluating the classification models, see run_evaluation.py
 '''
 import torch
 import pandas as pd

@@ -1,5 +1,7 @@
-# Knowledge Distillation Code adapted from: 
-# https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
+'''
+Knowledge Distillation Code was adapted from: 
+https://github.com/philschmid/knowledge-distillation-transformers-pytorch-sagemaker/blob/master/sagemaker-distillation.ipynb
+'''
 
 import pandas as pd
 import os

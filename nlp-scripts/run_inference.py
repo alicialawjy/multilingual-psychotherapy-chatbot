@@ -1,3 +1,7 @@
+'''
+Script used to obtain rewritings from the generative model.
+'''
+
 import torch
 import pandas as pd
 from transformers import AutoTokenizer, GPT2LMHeadModel

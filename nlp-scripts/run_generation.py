@@ -1,3 +1,8 @@
+'''
+Section on Reinforcement Learning with PPO was done with reference to:
+https://github.com/lvwerra/trl
+'''
+
 import os
 import random
 import time
