@@ -61,7 +61,7 @@ for (e,b,input_ids) in zip(emotion,base,full_input_ids):
                             num_beams = 10,
                             no_repeat_ngram_size = 2,
                             clean_up_tokenization_spaces = True,
-                            repetition_penalty = 1.2,               
+                            repetition_penalty = 1.2,               # as per CTRL paper
                             early_stopping = True)
     
     rewritings = [tokenizer.decode(out[start_idx:]) for out in output]

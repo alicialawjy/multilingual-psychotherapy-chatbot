@@ -215,7 +215,7 @@ def run_supervised():
     training_args = TrainingArguments(output_dir = main_dir,                # Output directory where checkpoints + models are saved
                                     overwrite_output_dir = True,            # Overwrite the output directory if populated
                                     learning_rate = 1e-5,                   # Learning rate
-                                    num_train_epochs = 50,                  # Number of training epochs
+                                    num_train_epochs = 1,                  # Number of training epochs
                                     warmup_steps = 100,                     # Number of warmup steps
                                     per_device_train_batch_size = 4,        # Batch size for training
                                     # Early Stopping Arguments
