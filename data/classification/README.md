@@ -8,4 +8,4 @@ This classifier is <b>used directly</b> by the chatbot to predict user's emotion
 Used during GPT-2 training of the empathetic rewriting task. Classifier assesses whether a sentence is empathetic or not.
 
 3. semantic-classifier <br>
-Used during GPT-2 training (transformer reinforcement learning only) of the empathetic rewriting task. Classifier assesses whether a generated sentence matches the semantics of the base utterance it is meant to rewrite.
+Used during GPT-2 training of the empathetic rewriting task. Classifier assesses whether a generated sentence matches the semantics of the base utterance it is meant to rewrite.

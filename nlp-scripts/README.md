@@ -1,14 +1,14 @@
 ### NLP Scripts
-This folder contains all the training, inference and evaluation scripts used to train the various nlp models.
+This folder contains all the training, inference and evaluation scripts used during the development of the SATbot nlp models.
 
-1. classify.py <br>
-Script used to get evaluation/ predictions for classifiers.
-
-2. run_classifier.py <br>
+1. run_classifier.py <br>
 Training script used to train the (i) emotion, (ii) empathy and (iii) semantic classifiers.
 
-3. run_distillation.py <br>
+2. run_distillation.py <br>
 Training script used to run knowledge distillation (using Triple Loss) for the emotion classifier.
+
+3. run_evaluation.py <br>
+Script used to get evaluation/ predictions for classifiers.
 
 4. run_generation.py <br>
 Training script used to train a text generation model. Includes: <br>

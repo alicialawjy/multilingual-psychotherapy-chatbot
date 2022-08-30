@@ -8,7 +8,7 @@ Data used to train the generative model (Chinese GPT-2).
 
 These datasets have been cleaned and formatted from the <i>EmpatheticPersonas</i> dataset:
 - <i>empatheticPersonasEN.csv</i>: the original dataset sourced from Alazraki [1] in English.
-- <i>empatheticPersonasZH.csv</i>: translated version of the EN dataset by Hu [2] into Mandarin.
+- <i>empatheticPersonasZH.csv</i>: machine translated version of the EN dataset by Hu [2] into Mandarin.
 
 Formatting done using <i>EP_formatting.ipynb</i>
 <br><br>

@@ -1,5 +1,5 @@
 ## SAT Chatbot Web App
-This directory contains both the frontend and backend of the SATbot web app, currently available on: http://52.207.175.233 
+This directory contains both the frontend and backend of the SATbot web app, currently available on: http://52.207.175.233 (no longer active)
 
 ### Notes: 
 
