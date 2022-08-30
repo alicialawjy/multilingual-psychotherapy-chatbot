@@ -1,6 +1,6 @@
 # multilingual-psychotherapy-chatbot
-### Welcome to the SAT Chatbot Repository
-Self-Attachment Therapy (SAT) is a form of psychotheraphy treatment. As part of my final year MSc Individual Project at Imperial, I have developed a NLP chatbot web application that provides advice on SAT treatment. The chatbot uses neural classifiers to understand patient emotions, and natural language generation models trained using reinforcement learning to develop empathetic responses during conversation. While the chatbot has been developed primarily focusing on Mandarin, it has multilingual understanding capabilities.
+### Welcome to the SATbot Repository
+As part of my final year MSc Individual Project at Imperial, I have developed a NLP-assisted chatbot web application for Self Attachment Therapy (SAT). The project focuses on extending previous English-based chatbots to non-English languages. The project involves the use of multilingual transformers (XLM-R) for emotion classification, and natural language generation models (GPT-2) trained using reinforcement learning with proximal policy optimisation to develop empathetic responses during conversation. We also apply Knowledge Distillation, to obtain cheaper, quicker yet performant models suitable for deployment. 
 
 ![satbot-demo](https://user-images.githubusercontent.com/79727686/182863543-fa990870-79a3-4e29-ac94-beaaabc1cbb1.gif)
 
