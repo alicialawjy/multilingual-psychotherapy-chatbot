@@ -20,7 +20,7 @@ const config = {
     {
       withAvatar: true,
     }),
-    createChatBotMessage("你好，欢迎来到SATbot。请问您想用以下哪个语言来进行今天的活动？",
+    createChatBotMessage("你好，欢迎来到SATbot。请问你想用以下哪个语言来进行今天的活动？",
     {
       withAvatar: true,
       widget: "Language", // show widget only at the end sentence

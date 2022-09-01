@@ -31,7 +31,7 @@ class ActionProvider {
     // The askForUsername prompt in different languages
     let m = {
       "English(EN)": "Please enter your username:",
-      "中文(ZH)":  "请输入您的用户名:",
+      "中文(ZH)":  "请输入你的用户名:",
     }
 
     const messages = this.createChatBotMessage(
@@ -63,7 +63,7 @@ class ActionProvider {
     // The askForPassword prompt in different languages
     let m = {
       "English(EN)": "Please enter your password:",
-      "中文(ZH)": "请输入您的用户密码:",
+      "中文(ZH)": "请输入你的用户密码:",
     }
 
     // Output the message
@@ -112,7 +112,7 @@ class ActionProvider {
     if (!dataReceived.validID) {
       let m = {
         "English(EN)": "The user ID and password combination is not valid. Please enter user ID again.",
-        "中文(ZH)": "对不起，您所输入的用户名或密码不正确。请重新输入您的用户名。"
+        "中文(ZH)": "对不起，你所输入的用户名或密码不正确。请重新输入你的用户名。"
       };
 
       // Output error message
@@ -135,7 +135,7 @@ class ActionProvider {
     else {
       let m = {
         "English(EN)": ["Login successful! ", "Hello, my name is Kai and I will be here to assist you today!"],
-        "中文(ZH)": ["登录成功！","你好，我叫凯。我是您今天的助手!"],
+        "中文(ZH)": ["登录成功！","你好，我叫凯。我是你今天的助手!"],
       }
 
       for (let i = 0; i < m[language].length; i++) {

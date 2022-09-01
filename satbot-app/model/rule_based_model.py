@@ -800,7 +800,7 @@ class ModelDecisionMaker:
         '''
         opening_prompt = {
             'English(EN)': "May I know how are you feeling today?",
-            "中文(ZH)": "请问您今天感觉如何?"
+            "中文(ZH)": "请问你今天感觉如何?"
         }
         
         return opening_prompt[self.language[user_id]]
@@ -811,7 +811,7 @@ class ModelDecisionMaker:
         '''
         prompt = {
             'English(EN)': "Thank you. While I have a think about which protocols would be best for you, please take your time now and try to project your current emotions onto your childhood self. When you are able to do this, please press 'continue' to receive your suggestions.",
-            "中文(ZH)": "谢谢你，我现在会考虑哪种练习最适合你。请在这时候尝试把您现在的情绪投射到童年时期的自己上。当您做到这点时，请按按“继续。"
+            "中文(ZH)": "谢谢你，我现在会考虑哪种练习最适合你。请在这时候尝试把你现在的情绪投射到童年时期的自己上。当你做到这点时，请按按“继续。"
         }
         return split_sentence(prompt[self.language[user_id]])
 
@@ -872,7 +872,7 @@ class ModelDecisionMaker:
         '''
         prompt = {
             "English(EN)": "You have been disconnected. Refresh the page if you would like to start over.",
-            "中文(ZH)": "如果您改变了主意，想重新开始，请刷新网页。"
+            "中文(ZH)": "如果你改变了主意，想重新开始，请刷新网页。"
         }
         column_name = "All emotions - Thank you for taking part. See you soon"
         question = get_sentence(column_name=column_name, dataset=self.datasets[user_id], language=self.language[user_id])
@@ -885,7 +885,7 @@ class ModelDecisionMaker:
         '''
         prompt_selected = {
             "English(EN)": "You have selected Protocol ",
-            "中文(ZH)": "您选了协议"
+            "中文(ZH)": "你选了协议"
         }
         prompt_view = {
             "English(EN)": "Your selected protocol is displayed on the right. ",
