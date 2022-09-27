@@ -11,7 +11,7 @@ body{
 /*              C O N T A I N E R S               */
 /*////////////////////////////////////////////////*/
 #top{
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
   width: 100%;
   height: 15%;
   position: relative;
