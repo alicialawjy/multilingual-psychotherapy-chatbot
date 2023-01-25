@@ -1,6 +1,9 @@
 # multilingual-psychotherapy-chatbot
 ### Welcome to the SATbot Repository
-As part of my MSc Individual Project at Imperial, I have developed a NLP-assisted chatbot web application for Self Attachment Therapy (SAT). The primary focus was to extend previous English-based chatbots to non-English languages. The project involves the use of multilingual transformers (XLM-R) for emotion classification, and transformer text generation models (GPT-2) trained using reinforcement learning with proximal policy optimisation to develop empathetic rewritings that are fluent and semantically accurate during conversation. We also apply Knowledge Distillation, to obtain cheaper, quicker yet performant models that are practical for deployment. 
+Domains: Natural Language Processing, Reinforcement Learning, Software Engineering. </br>
+This project was done in collaboration with the Algorithmin Human Development Group, and the UKRI Centre for Doctoral Training in AI for Healthcare.
+
+For this project, I have developed a NLP-assisted chatbot web application for Self Attachment Therapy (SAT). The primary focus was to extend previous English-based chatbots to non-English languages. The project involves the use of multilingual transformers (XLM-R) for emotion classification, and transformer text generation models (GPT-2) trained using reinforcement learning with proximal policy optimisation to develop empathetic rewritings that are fluent and semantically accurate during conversation. We also apply Knowledge Distillation, to obtain cheaper, quicker yet performant models that are practical for deployment. 
 
 ![satbot-demo](https://user-images.githubusercontent.com/79727686/182863543-fa990870-79a3-4e29-ac94-beaaabc1cbb1.gif)
 
